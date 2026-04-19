@@ -4,5 +4,5 @@
  * Ex: 'https://orcamentos-api.onrender.com'
  */
 const CONFIG = {
-  API_BASE: 'https://lookorcamento.onrender.com'  // ← ALTERE AQUI
+  API_BASE: 'https://sistemaorcamentolook.onrender.com'  // ← ALTERE AQUI
 };
