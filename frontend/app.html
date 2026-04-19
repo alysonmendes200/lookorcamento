@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Orçamentos</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── LAYOUT ────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span>📋</span><span>Orçamentos</span>
+    </div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sb-av">A</div>
+      <div>
+        <div class="sb-name" id="sb-name">—</div>
+        <div class="sb-role" id="sb-role">—</div>
+      </div>
+    </div>
+
+    <div class="nav-section">Orçamentos</div>
+    <button class="nav-btn active" id="nav-novo" onclick="goPage('novo')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <span>Novo Orçamento</span>
+    </button>
+    <button class="nav-btn" id="nav-historico" onclick="goPage('historico')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <span>Histórico</span>
+    </button>
+
+    <div class="nav-section" id="nav-sec-admin" style="display:none">Administração</div>
+    <button class="nav-btn" id="nav-relatorios" onclick="goPage('relatorios')" style="display:none">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      <span>Relatórios</span>
+    </button>
+    <button class="nav-btn" id="nav-usuarios" onclick="goPage('usuarios')" style="display:none">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      <span>Usuários</span>
+    </button>
+
+    <div class="nav-section">Conta</div>
+    <button class="nav-btn" id="nav-perfil" onclick="goPage('perfil')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Meu Perfil</span>
+    </button>
+    <div style="flex:1"></div>
+    <button class="nav-btn danger" onclick="logout()">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      <span>Sair</span>
+    </button>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ═══ NOVO / EDITAR ═══ -->
+    <div class="page active" id="page-novo">
+      <div class="page-header">
+        <div class="page-title" id="form-title">Novo Orçamento</div>
+        <div class="page-sub">Preencha os dados para gerar o orçamento</div>
+      </div>
+
+      <div class="edit-bar" id="edit-bar">
+        ✏️ <strong>Modo Edição</strong> — Orçamento <span id="edit-bar-num"></span>
+        <button class="btn btn-ghost" style="margin-left:auto;padding:3px 9px;font-size:11px" onclick="cancelEdit()">Cancelar</button>
+      </div>
+
+      <div class="num-badge">N° <span id="num-display">…</span></div>
+
+      <!-- CLIENTE -->
+      <div class="card">
+        <div class="card-title">Dados do Cliente</div>
+        <div class="form-row">
+          <div class="fg"><label>Nome do Cliente</label>
+            <input id="f-nome" type="text" placeholder="Ex: João Silva" oninput="syncCom()"></div>
+          <div class="fg"><label>Comércio / Projeto</label>
+            <input id="f-com" type="text" placeholder="Ex: Padaria do João" oninput="stopSync()"></div>
+        </div>
+      </div>
+
+      <!-- CONDIÇÕES -->
+      <div class="card">
+        <div class="card-title">Condições da Proposta</div>
+        <div class="form-row">
+          <div class="fg"><label>Prazo de Entrega</label><input id="f-prazo" value="Á combinar"></div>
+          <div class="fg"><label>Validade</label><input id="f-val" value="60 dias"></div>
+          <div class="fg"><label>Forma de Pagamento</label><input id="f-pag" value="Imediato"></div>
+        </div>
+      </div>
+
+      <!-- STATUS FINANCEIRO (apenas em modo edição) -->
+      <div class="card" id="card-status" style="display:none">
+        <div class="card-title">Status Financeiro</div>
+        <div class="form-row">
+          <div class="fg">
+            <label>Situação</label>
+            <select id="f-pago">
+              <option value="false">🔴 Não Recebido</option>
+              <option value="true">🟢 Recebido / Pago</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Valor Recebido (R$)</label>
+            <input id="f-vreceb" type="number" min="0" step="0.01" placeholder="0,00">
+          </div>
+          <div class="fg">
+            <label>Status NF</label>
+            <select id="f-nfstatus">
+              <option value="nao_emitida">❌ NF Não Emitida</option>
+              <option value="emitida">✅ NF Emitida</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ITENS -->
+      <div class="card">
+        <div class="card-title">Itens do Orçamento</div>
+        <div class="items-head">
+          <div>Descrição do Produto / Serviço</div><div>Qtd</div>
+          <div>V. Unit. (R$)</div><div>Total</div><div></div>
+        </div>
+        <div id="items-container"></div>
+        <button class="add-item-btn" onclick="addItem()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Adicionar item
+        </button>
+        <div class="total-bar">
+          <span class="total-label">VALOR TOTAL:</span>
+          <span class="total-val" id="grand-total">R$ 0,00</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn-salvar" onclick="salvar()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <span id="btn-salvar-txt">Salvar Orçamento</span>
+        </button>
+        <button class="btn btn-docx" id="btn-docx" onclick="baixarDocx(null)">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Baixar DOCX
+        </button>
+        <button class="btn btn-nota" onclick="abrirNota(null)">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          Texto para NF
+        </button>
+        <button class="btn btn-ghost" onclick="novoForm()">Limpar</button>
+      </div>
+    </div>
+
+    <!-- ═══ HISTÓRICO ═══ -->
+    <div class="page" id="page-historico">
+      <div class="page-header">
+        <div class="page-title">Histórico de Orçamentos</div>
+        <div class="page-sub">Todos os orçamentos registrados</div>
+      </div>
+      <div class="stats-row" id="hist-stats"></div>
+
+      <!-- Filtros -->
+      <div class="filter-bar">
+        <div class="fg" style="min-width:180px;max-width:260px">
+          <label>Buscar cliente</label>
+          <input id="flt-busca" type="text" placeholder="Nome ou comércio…" oninput="renderHist()">
+        </div>
+        <div class="fg"><label>Status</label>
+          <select id="flt-pago" onchange="renderHist()">
+            <option value="">Todos</option>
+            <option value="pago">Recebidos</option>
+            <option value="nao">Não recebidos</option>
+          </select>
+        </div>
+        <div class="fg"><label>NF</label>
+          <select id="flt-nf" onchange="renderHist()">
+            <option value="">Todas</option>
+            <option value="sim">Emitida</option>
+            <option value="nao">Não emitida</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:14px" onclick="limparFiltros()">Limpar</button>
+      </div>
+
+      <div class="card">
+        <div id="hist-content"><div class="empty">Carregando…</div></div>
+      </div>
+    </div>
+
+    <!-- ═══ RELATÓRIOS ═══ -->
+    <div class="page" id="page-relatorios">
+      <div class="page-header">
+        <div class="page-title">Relatórios</div>
+        <div class="page-sub">Análise financeira e operacional</div>
+      </div>
+
+      <!-- Filtros de período -->
+      <div class="card">
+        <div class="card-title">Filtrar período</div>
+        <div class="form-row">
+          <div class="fg"><label>Mês</label>
+            <select id="rel-mes">
+              <option value="">Todos</option>
+              <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+              <option value="3">Março</option><option value="4">Abril</option>
+              <option value="5">Maio</option><option value="6">Junho</option>
+              <option value="7">Julho</option><option value="8">Agosto</option>
+              <option value="9">Setembro</option><option value="10">Outubro</option>
+              <option value="11">Novembro</option><option value="12">Dezembro</option>
+            </select>
+          </div>
+          <div class="fg"><label>Ano</label>
+            <input id="rel-ano" type="number" placeholder="Ex: 2025" min="2020" max="2099">
+          </div>
+          <div class="fg"><label>Data início</label><input id="rel-di" type="date"></div>
+          <div class="fg"><label>Data fim</label><input id="rel-df" type="date"></div>
+          <div style="display:flex;align-items:flex-end">
+            <button class="btn btn-primary" onclick="carregarRelatorio()">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              Filtrar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Abas de relatório -->
+      <div class="rel-tabs">
+        <button class="rel-tab active" onclick="relTab('resumo',this)">📊 Resumo Geral</button>
+        <button class="rel-tab" onclick="relTab('mensal',this)">📅 Por Mês</button>
+        <button class="rel-tab" onclick="relTab('operador',this)">👤 Por Operador</button>
+        <button class="rel-tab" onclick="relTab('nf',this)">🧾 Com NF Emitida</button>
+        <button class="rel-tab" onclick="relTab('lista',this)">📋 Lista Completa</button>
+      </div>
+
+      <div class="rel-section active" id="rel-resumo">
+        <div class="stats-row" id="rel-stats-cards"></div>
+        <div class="card" id="rel-chart-card" style="display:none">
+          <div class="card-title">Evolução por Mês</div>
+          <div class="bar-chart" id="rel-chart"></div>
+        </div>
+      </div>
+
+      <div class="rel-section" id="rel-mensal">
+        <div class="card">
+          <div class="card-title">Resultado por Mês</div>
+          <div id="rel-mensal-content"></div>
+        </div>
+      </div>
+
+      <div class="rel-section" id="rel-operador">
+        <div class="card">
+          <div class="card-title">Resultado por Operador</div>
+          <div id="rel-op-content"></div>
+        </div>
+      </div>
+
+      <div class="rel-section" id="rel-nf">
+        <div class="card">
+          <div class="card-title">Orçamentos com Nota Fiscal Emitida</div>
+          <div id="rel-nf-content"></div>
+        </div>
+      </div>
+
+      <div class="rel-section" id="rel-lista">
+        <div class="card">
+          <div class="card-title">Lista Completa do Período</div>
+          <div id="rel-lista-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ USUÁRIOS ═══ -->
+    <div class="page" id="page-usuarios">
+      <div class="page-header">
+        <div class="page-title">Gerenciar Usuários</div>
+        <div class="page-sub">Controle de acesso ao sistema</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Novo Usuário</div>
+        <div class="form-row">
+          <div class="fg"><label>Nome</label><input id="nu-nome" placeholder="Nome completo"></div>
+          <div class="fg"><label>Login</label><input id="nu-user" placeholder="usuario" autocomplete="off"></div>
+          <div class="fg"><label>Senha</label><input id="nu-pass" type="password" autocomplete="new-password"></div>
+          <div class="fg"><label>Perfil</label>
+            <select id="nu-role"><option value="user">Operador</option><option value="admin">Administrador</option></select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="criarUser()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Criar Usuário
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-title">Usuários cadastrados</div>
+        <div id="users-list"><div class="empty">Carregando…</div></div>
+      </div>
+    </div>
+
+    <!-- ═══ PERFIL ═══ -->
+    <div class="page" id="page-perfil">
+      <div class="page-header">
+        <div class="page-title">Meu Perfil</div>
+        <div class="page-sub">Altere seus dados de acesso</div>
+      </div>
+      <div class="card perfil-section">
+        <div class="card-title">Informações da Conta</div>
+        <div class="form-row">
+          <div class="fg"><label>Nome completo</label><input id="p-nome" placeholder="Seu nome"></div>
+          <div class="fg"><label>Usuário (login)</label><input id="p-user" placeholder="seu.usuario"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>Nova Senha</label><input id="p-pass1" type="password" placeholder="Deixe em branco para não alterar"></div>
+          <div class="fg"><label>Confirmar Nova Senha</label><input id="p-pass2" type="password" placeholder="Repita a senha"></div>
+        </div>
+        <button class="btn btn-primary" onclick="salvarPerfil()">Salvar Alterações</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══ MODAL: NOTA FISCAL TEXTO ═══ -->
+<div class="modal-overlay" id="modal-nf-txt">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-nf-txt')">✕</button>
+    <div class="modal-title">Texto para Nota Fiscal</div>
+    <div class="modal-sub" id="nf-txt-sub">Copie o texto abaixo</div>
+    <div class="nota-txt" id="nf-txt-content"></div>
+    <button class="copy-btn" id="copy-btn" onclick="copiarNF()">📋 Copiar texto</button>
+  </div>
+</div>
+
+<!-- ═══ MODAL: UPLOAD / GESTÃO NF ═══ -->
+<div class="modal-overlay" id="modal-nf-upload">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-nf-upload')">✕</button>
+    <div class="modal-title">Nota Fiscal</div>
+    <div class="modal-sub" id="nf-up-sub">Gerencie a NF deste orçamento</div>
+
+    <!-- Status atual -->
+    <div id="nf-status-atual" style="margin-bottom:16px"></div>
+
+    <!-- Upload -->
+    <div class="card-title">Anexar / Substituir NF</div>
+    <div class="nf-zone" id="nf-dropzone" onclick="document.getElementById('nf-file-input').click()">
+      <div id="nf-drop-txt">📎 Clique para selecionar o arquivo<br><small style="opacity:.6">PDF, PNG, JPG, XML — máx. 20MB</small></div>
+    </div>
+    <input type="file" id="nf-file-input" accept=".pdf,.png,.jpg,.jpeg,.xml" style="display:none" onchange="previewNFFile()">
+    <div id="nf-preview-name" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-upload-nf" onclick="uploadNF()" disabled>
+        📤 Enviar NF
+      </button>
+      <button class="btn btn-danger" id="btn-del-nf" onclick="removerNF()" style="display:none">
+        🗑️ Remover NF
+      </button>
+      <button class="btn btn-docx" id="btn-ver-nf" onclick="API.openNF(currentNFOrcId)" style="display:none">
+        👁️ Ver NF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script src="utils.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let currentUser = null;
+let editingId   = null;
+let autoSync    = true;
+let itemCount   = 0;
+let orcList     = [];
+let nextNum     = 324;
+let currentNFOrcId = null;
+let relData     = null;
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  currentUser = requireAuth();
+  if (!currentUser) return;
+
+  // Sidebar
+  document.getElementById('sb-av').textContent = currentUser.nome.charAt(0).toUpperCase();
+  document.getElementById('sb-av').className   = 'avatar ' + currentUser.role;
+  document.getElementById('sb-name').textContent = currentUser.nome;
+  document.getElementById('sb-role').textContent  = currentUser.role === 'admin' ? 'Administrador' : 'Operador';
+
+  // Admin-only nav
+  if (isAdmin()) {
+    document.getElementById('nav-sec-admin').style.display  = '';
+    document.getElementById('nav-relatorios').style.display = 'flex';
+    document.getElementById('nav-usuarios').style.display   = 'flex';
+  }
+
+  // Preenche perfil
+  document.getElementById('p-nome').value = currentUser.nome;
+  document.getElementById('p-user').value = currentUser.username;
+
+  await carregarNextNum();
+  novoForm();
+});
+
+// ═══════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════════════════
+function goPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  const nb = document.getElementById('nav-' + p);
+  if (nb) nb.classList.add('active');
+
+  if (p === 'historico') carregarHist();
+  if (p === 'usuarios' && isAdmin()) carregarUsers();
+  if (p === 'relatorios' && isAdmin()) carregarRelatorio();
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('currentUser');
+  window.location.href = 'index.html';
+}
+
+// ═══════════════════════════════════════════════════
+// NUMERAÇÃO
+// ═══════════════════════════════════════════════════
+async function carregarNextNum() {
+  try {
+    const d = await API.get('/orcamentos/nextnum');
+    nextNum = d.nextNum;
+  } catch { nextNum = 324; }
+  atualizaNumDisplay();
+}
+
+function atualizaNumDisplay() {
+  document.getElementById('num-display').textContent = String(nextNum).padStart(3, '0');
+}
+
+// ═══════════════════════════════════════════════════
+// FORMULÁRIO
+// ═══════════════════════════════════════════════════
+function syncCom() {
+  if (autoSync) document.getElementById('f-com').value = document.getElementById('f-nome').value;
+}
+function stopSync() { autoSync = false; }
+
+function addItem(desc='', qty='', unit='') {
+  itemCount++;
+  const id = 'r' + itemCount;
+  const div = document.createElement('div');
+  div.className = 'item-row'; div.id = id;
+  div.innerHTML = `
+    <input type="text" placeholder="Descrição do produto/serviço" value="${esc(desc)}" oninput="calcRow('${id}')">
+    <input type="number" placeholder="1" min="0" value="${qty}" oninput="calcRow('${id}')">
+    <input type="number" placeholder="0,00" min="0" step="0.01" value="${unit}" oninput="calcRow('${id}')">
+    <div class="item-total" id="t-${id}">R$ 0,00</div>
+    <button class="rm-btn" onclick="document.getElementById('${id}').remove();calcGrand()" title="Remover">×</button>
+  `;
+  document.getElementById('items-container').appendChild(div);
+  if (desc && qty && unit) calcRow(id);
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+function calcRow(id) {
+  const row = document.getElementById(id);
+  if (!row) return;
+  const ins = row.querySelectorAll('input');
+  document.getElementById('t-' + id).textContent = fBRL((parseFloat(ins[1].value)||0) * (parseFloat(ins[2].value)||0));
+  calcGrand();
+}
+
+function calcGrand() {
+  let s = 0;
+  document.querySelectorAll('.item-total').forEach(el => s += pBRL(el.textContent));
+  document.getElementById('grand-total').textContent = fBRL(s);
+}
+
+function getItems() {
+  return [...document.querySelectorAll('.item-row')].map(row => {
+    const ins = row.querySelectorAll('input');
+    const desc = ins[0].value.trim(), qty = parseFloat(ins[1].value)||0, unit = parseFloat(ins[2].value)||0;
+    return { desc, qty, unit, total: qty * unit };
+  }).filter(i => i.desc && i.qty > 0);
+}
+
+function novoForm() {
+  editingId = null; autoSync = true;
+  ['f-nome','f-com'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-prazo').value = 'Á combinar';
+  document.getElementById('f-val').value   = '60 dias';
+  document.getElementById('f-pag').value   = 'Imediato';
+  document.getElementById('items-container').innerHTML = '';
+  itemCount = 0;
+  addItem(); addItem();
+  calcGrand();
+  document.getElementById('form-title').textContent     = 'Novo Orçamento';
+  document.getElementById('btn-salvar-txt').textContent = 'Salvar Orçamento';
+  document.getElementById('edit-bar').classList.remove('show');
+  document.getElementById('card-status').style.display  = 'none';
+  atualizaNumDisplay();
+}
+
+function editarOrc(orc) {
+  editingId = orc.id; autoSync = false;
+  document.getElementById('f-nome').value  = orc.nome;
+  document.getElementById('f-com').value   = orc.comercio;
+  document.getElementById('f-prazo').value = orc.prazo;
+  document.getElementById('f-val').value   = orc.validade;
+  document.getElementById('f-pag').value   = orc.pagamento;
+  document.getElementById('f-pago').value     = String(orc.pago || false);
+  document.getElementById('f-vreceb').value   = orc.valorRecebido || '';
+  document.getElementById('f-nfstatus').value = orc.nfStatus || 'nao_emitida';
+  document.getElementById('items-container').innerHTML = '';
+  itemCount = 0;
+  (orc.items || []).forEach(i => addItem(i.desc, i.qty, i.unit));
+  calcGrand();
+  document.getElementById('form-title').textContent     = 'Editar Orçamento';
+  document.getElementById('btn-salvar-txt').textContent = 'Salvar Alterações';
+  document.getElementById('edit-bar').classList.add('show');
+  document.getElementById('edit-bar-num').textContent   = 'N° ' + String(orc.num).padStart(3,'0');
+  document.getElementById('card-status').style.display  = '';
+  document.getElementById('num-display').textContent    = String(orc.num).padStart(3,'0');
+  goPage('novo');
+  window.scrollTo(0,0);
+}
+
+function cancelEdit() { novoForm(); carregarNextNum(); }
+
+// ═══════════════════════════════════════════════════
+// SALVAR
+// ═══════════════════════════════════════════════════
+async function salvar() {
+  const nome = document.getElementById('f-nome').value.trim();
+  if (!nome) { toast('Preencha o nome do cliente.','error'); return; }
+  const items = getItems();
+  if (!items.length) { toast('Adicione pelo menos um item.','error'); return; }
+
+  const payload = {
+    nome, comercio: document.getElementById('f-com').value.trim() || nome,
+    prazo: document.getElementById('f-prazo').value.trim(),
+    validade: document.getElementById('f-val').value.trim(),
+    pagamento: document.getElementById('f-pag').value.trim(),
+    items
+  };
+
+  const btn = document.getElementById('btn-salvar');
+  btn.disabled = true;
+
+  try {
+    if (editingId) {
+      payload.pago         = document.getElementById('f-pago').value === 'true';
+      payload.valorRecebido = parseFloat(document.getElementById('f-vreceb').value) || 0;
+      payload.nfStatus     = document.getElementById('f-nfstatus').value;
+      await API.put('/orcamentos/' + editingId, payload);
+      toast('Orçamento atualizado!', 'success');
+    } else {
+      const orc = await API.post('/orcamentos', payload);
+      nextNum = orc.num + 1;
+      atualizaNumDisplay();
+      toast(`Orçamento N° ${String(orc.num).padStart(3,'0')} salvo!`, 'success');
+    }
+    cancelEdit();
+  } catch(e) {
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// DOCX
+// ═══════════════════════════════════════════════════
+async function baixarDocx(orc) {
+  let id = orc ? orc.id : editingId;
+  if (!id) {
+    toast('Salve o orçamento primeiro para baixar o DOCX.', 'info');
+    return;
+  }
+  const num = orc ? orc.num : (orcList.find(o=>o.id===id)||{}).num || '?';
+  const nome = orc ? orc.nome : document.getElementById('f-nome').value;
+  try {
+    toast('Gerando DOCX...','info');
+    await API.download(`/orcamentos/${id}/docx`, `Orcamento_${String(num).padStart(3,'0')}_${nome.replace(/\s+/g,'_')}.docx`);
+    toast('Download iniciado!','success');
+  } catch(e) {
+    toast(e.message,'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// NOTA FISCAL (TEXTO)
+// ═══════════════════════════════════════════════════
+function abrirNota(orc) {
+  if (!orc) {
+    const nome = document.getElementById('f-nome').value.trim();
+    if (!nome) { toast('Preencha o nome do cliente.','error'); return; }
+    const items = getItems();
+    orc = { num: editingId ? (orcList.find(o=>o.id===editingId)||{}).num : nextNum, nome, items,
+             total: items.reduce((s,i)=>s+i.total,0) };
+  }
+  document.getElementById('nf-txt-content').textContent = gerarTextoNF(orc);
+  document.getElementById('nf-txt-sub').textContent = `N° ${String(orc.num).padStart(3,'0')} — ${orc.nome}`;
+  document.getElementById('copy-btn').classList.remove('ok');
+  document.getElementById('copy-btn').textContent = '📋 Copiar texto';
+  openModal('modal-nf-txt');
+}
+
+function copiarNF() {
+  navigator.clipboard.writeText(document.getElementById('nf-txt-content').textContent).then(() => {
+    const b = document.getElementById('copy-btn');
+    b.textContent = '✓ Copiado!'; b.classList.add('ok');
+    setTimeout(()=>{ b.textContent='📋 Copiar texto'; b.classList.remove('ok'); }, 2200);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// UPLOAD NF
+// ═══════════════════════════════════════════════════
+function abrirUploadNF(orc) {
+  currentNFOrcId = orc.id;
+  document.getElementById('nf-up-sub').textContent = `N° ${String(orc.num).padStart(3,'0')} — ${orc.nome}`;
+  document.getElementById('nf-file-input').value = '';
+  document.getElementById('nf-preview-name').textContent = '';
+  document.getElementById('btn-upload-nf').disabled = true;
+  document.getElementById('nf-drop-txt').innerHTML = '📎 Clique para selecionar o arquivo<br><small style="opacity:.6">PDF, PNG, JPG, XML — máx. 20MB</small>';
+  document.getElementById('nf-dropzone').className = 'nf-zone';
+
+  const temNF = orc.nfFile;
+  document.getElementById('nf-status-atual').innerHTML = temNF
+    ? `<div style="padding:10px;background:rgba(64,200,120,0.08);border:1px solid rgba(64,200,120,0.25);border-radius:8px;font-size:12px;color:var(--success)">
+        ✅ NF anexada: <strong>${orc.nfOriginalName || orc.nfFile}</strong><br>
+        <span style="color:var(--muted)">Enviada em: ${orc.nfUploadedAt || '—'}</span>
+       </div>`
+    : `<div style="padding:10px;background:rgba(120,120,160,0.08);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--muted)">
+        ❌ Nenhuma NF anexada a este orçamento.
+       </div>`;
+
+  document.getElementById('btn-del-nf').style.display = temNF ? '' : 'none';
+  document.getElementById('btn-ver-nf').style.display = temNF ? '' : 'none';
+  openModal('modal-nf-upload');
+}
+
+function previewNFFile() {
+  const file = document.getElementById('nf-file-input').files[0];
+  if (!file) return;
+  document.getElementById('nf-preview-name').textContent = '📄 ' + file.name;
+  document.getElementById('nf-drop-txt').textContent = '✅ ' + file.name;
+  document.getElementById('nf-dropzone').className = 'nf-zone has-file';
+  document.getElementById('btn-upload-nf').disabled = false;
+}
+
+async function uploadNF() {
+  const file = document.getElementById('nf-file-input').files[0];
+  if (!file || !currentNFOrcId) return;
+  const fd = new FormData();
+  fd.append('nf', file);
+  const btn = document.getElementById('btn-upload-nf');
+  btn.disabled = true; btn.textContent = '⏳ Enviando…';
+  try {
+    await API.upload(`/orcamentos/${currentNFOrcId}/nf`, fd);
+    toast('NF anexada com sucesso!','success');
+    closeModal('modal-nf-upload');
+    carregarHist();
+  } catch(e) {
+    toast(e.message,'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '📤 Enviar NF';
+  }
+}
+
+async function removerNF() {
+  if (!confirm('Remover a nota fiscal anexada?')) return;
+  try {
+    await API.delete(`/orcamentos/${currentNFOrcId}/nf`);
+    toast('NF removida.','success');
+    closeModal('modal-nf-upload');
+    carregarHist();
+  } catch(e) { toast(e.message,'error'); }
+}
+
+// ═══════════════════════════════════════════════════
+// HISTÓRICO
+// ═══════════════════════════════════════════════════
+async function carregarHist() {
+  try {
+    orcList = await API.get('/orcamentos');
+    renderHist();
+    renderHistStats();
+  } catch(e) {
+    document.getElementById('hist-content').innerHTML = `<div class="empty">Erro: ${e.message}</div>`;
+  }
+}
+
+function renderHistStats() {
+  const total = orcList.reduce((s,o)=>s+o.total,0);
+  const pagos = orcList.filter(o=>o.pago).reduce((s,o)=>s+(o.valorRecebido||o.total),0);
+  const faltar = orcList.filter(o=>!o.pago).reduce((s,o)=>s+o.total,0);
+  document.getElementById('hist-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Orçamentos</div><div class="stat-val">${orcList.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Valor Total</div><div class="stat-val sm">${fBRL(total)}</div></div>
+    <div class="stat-card"><div class="stat-label">Recebido</div><div class="stat-val sm green">${fBRL(pagos)}</div></div>
+    <div class="stat-card"><div class="stat-label">A Receber</div><div class="stat-val sm red">${fBRL(faltar)}</div></div>
+    <div class="stat-card"><div class="stat-label">Próximo N°</div><div class="stat-val">${String(nextNum).padStart(3,'0')}</div></div>
+  `;
+}
+
+function limparFiltros() {
+  document.getElementById('flt-busca').value = '';
+  document.getElementById('flt-pago').value  = '';
+  document.getElementById('flt-nf').value    = '';
+  renderHist();
+}
+
+function renderHist() {
+  const busca = (document.getElementById('flt-busca').value||'').toLowerCase();
+  const fpago = document.getElementById('flt-pago').value;
+  const fnf   = document.getElementById('flt-nf').value;
+
+  let list = orcList.filter(o => {
+    if (busca && !o.nome.toLowerCase().includes(busca) && !(o.comercio||'').toLowerCase().includes(busca)) return false;
+    if (fpago === 'pago' && !o.pago) return false;
+    if (fpago === 'nao'  &&  o.pago) return false;
+    if (fnf === 'sim' && o.nfStatus !== 'emitida') return false;
+    if (fnf === 'nao' && o.nfStatus === 'emitida') return false;
+    return true;
+  });
+
+  const cont = document.getElementById('hist-content');
+  if (!list.length) { cont.innerHTML = '<div class="empty">Nenhum orçamento encontrado.</div>'; return; }
+
+  cont.innerHTML = `<div style="overflow-x:auto"><table class="tbl">
+    <thead><tr>
+      <th>N°</th><th>Data</th><th>Cliente</th>
+      ${isAdmin() ? '<th>Operador</th>' : ''}
+      <th>Total</th><th>Status</th><th>NF</th><th>Ações</th>
+    </tr></thead>
+    <tbody id="hist-tbody"></tbody>
+  </table></div>`;
+
+  const tb = document.getElementById('hist-tbody');
+  list.forEach(orc => {
+    const canEdit = isAdmin() || orc.owner === currentUser.username;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="badge badge-orc">${String(orc.num).padStart(3,'0')}</span></td>
+      <td style="color:var(--muted);font-size:11px;white-space:nowrap">${orc.date||'—'}</td>
+      <td>
+        <div style="font-weight:600">${orc.nome}</div>
+        <div style="font-size:11px;color:var(--muted)">${orc.comercio||''}</div>
+        ${orc.editedAt?`<div style="font-size:10px;color:var(--accent)">Edit: ${orc.editedAt}</div>`:''}
+      </td>
+      ${isAdmin()?`<td><span style="font-size:11px;color:var(--muted)">${orc.ownerNome||orc.owner||'—'}</span></td>`:''}
+      <td style="font-family:var(--mono);font-size:12px;color:var(--accent2)">${fBRL(orc.total)}</td>
+      <td><span class="badge ${orc.pago?'badge-pago':'badge-nao-pago'}">${orc.pago?'✅ Pago':'🔴 Pendente'}</span></td>
+      <td><span class="badge ${orc.nfStatus==='emitida'?'badge-nf-sim':'badge-nf-nao'}">${orc.nfStatus==='emitida'?'✅ Emitida':'❌ Não'}</span></td>
+      <td><div class="tbl-actions">
+        ${canEdit?`<button class="ta edit" onclick='editarOrc(${JSON.stringify(orc)})'>✏️</button>`:''}
+        <button class="ta docx" onclick='baixarDocx(${JSON.stringify(orc)})' title="Baixar DOCX">📄</button>
+        <button class="ta nota" onclick='abrirNota(${JSON.stringify(orc)})' title="Texto NF">📋</button>
+        ${canEdit?`<button class="ta nf" onclick='abrirUploadNF(${JSON.stringify(orc)})' title="Gerenciar NF">🧾</button>`:''}
+        ${isAdmin()?`<button class="ta del" onclick="excluir('${orc.id}')">🗑️</button>`:''}
+      </div></td>
+    `;
+    tb.appendChild(tr);
+  });
+}
+
+async function excluir(id) {
+  if (!confirm('Excluir este orçamento permanentemente?')) return;
+  try {
+    const res = await API.delete('/orcamentos/' + id);
+    if (res.nextNum) { nextNum = res.nextNum; atualizaNumDisplay(); }
+    toast('Excluído.','success');
+    orcList = orcList.filter(o=>o.id!==id);
+    renderHist();
+    renderHistStats();
+  } catch(e) { toast(e.message,'error'); }
+}
+
+// ═══════════════════════════════════════════════════
+// RELATÓRIOS
+// ═══════════════════════════════════════════════════
+async function carregarRelatorio() {
+  const params = new URLSearchParams();
+  const mes = document.getElementById('rel-mes').value;
+  const ano = document.getElementById('rel-ano').value;
+  const di  = document.getElementById('rel-di').value;
+  const df  = document.getElementById('rel-df').value;
+  if (mes) params.set('mes', mes);
+  if (ano) params.set('ano', ano);
+  if (di)  params.set('dataInicio', di);
+  if (df)  params.set('dataFim', df);
+
+  try {
+    relData = await API.get('/orcamentos/relatorios?' + params.toString());
+    renderResumo();
+    renderMensal();
+    renderOperador();
+    renderNFList();
+    renderListaCompleta();
+    toast('Relatório carregado!','success');
+  } catch(e) { toast(e.message,'error'); }
+}
+
+function relTab(name, btn) {
+  document.querySelectorAll('.rel-section').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.rel-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('rel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function renderResumo() {
+  if (!relData) return;
+  const r = relData.resumo;
+  document.getElementById('rel-stats-cards').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Orçamentos</div><div class="stat-val">${r.totalOrcamentos}</div></div>
+    <div class="stat-card"><div class="stat-label">Valor Total</div><div class="stat-val sm">${fBRL(r.valorTotal)}</div></div>
+    <div class="stat-card"><div class="stat-label">Recebidos</div><div class="stat-val green">${r.totalPagos}</div></div>
+    <div class="stat-card"><div class="stat-label">Valor Recebido</div><div class="stat-val sm green">${fBRL(r.valorRecebido)}</div></div>
+    <div class="stat-card"><div class="stat-label">A Receber</div><div class="stat-val red">${r.totalFaltaReceber}</div></div>
+    <div class="stat-card"><div class="stat-label">Falta Receber</div><div class="stat-val sm red">${fBRL(r.valorFaltaReceber)}</div></div>
+    <div class="stat-card"><div class="stat-label">Com NF</div><div class="stat-val">${r.comNF}</div></div>
+  `;
+
+  // Gráfico de barras
+  const mensal = relData.porMes;
+  if (mensal && mensal.length > 0) {
+    const maxVal = Math.max(...mensal.map(m=>m.total),1);
+    const chartEl = document.getElementById('rel-chart');
+    chartEl.innerHTML = mensal.map(m => {
+      const pct = Math.round((m.total/maxVal)*100);
+      const [y,mo] = m.key.split('-');
+      const label = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][parseInt(mo)-1]+'/'+y.slice(2);
+      return `<div class="bar-row">
+        <div class="bar-label">${label}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"><span class="bar-val">${fBRL(m.total)}</span></div></div>
+      </div>`;
+    }).join('');
+    document.getElementById('rel-chart-card').style.display = '';
+  }
+}
+
+function renderMensal() {
+  if (!relData) return;
+  const m = relData.porMes;
+  if (!m || !m.length) { document.getElementById('rel-mensal-content').innerHTML = '<div class="empty">Sem dados.</div>'; return; }
+  document.getElementById('rel-mensal-content').innerHTML = `
+    <table class="tbl"><thead><tr>
+      <th>Mês/Ano</th><th>Orçamentos</th><th>Valor Total</th><th>Pagos</th><th>Valor Recebido</th>
+    </tr></thead><tbody>
+    ${m.map(row=>{
+      const [y,mo] = row.key.split('-');
+      const mes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][parseInt(mo)-1];
+      return `<tr>
+        <td><strong>${mes}/${y}</strong></td>
+        <td>${row.qtd}</td>
+        <td style="font-family:var(--mono);color:var(--accent2)">${fBRL(row.total)}</td>
+        <td>${row.pagos}</td>
+        <td style="font-family:var(--mono);color:var(--success)">${fBRL(row.totalPago)}</td>
+      </tr>`;
+    }).join('')}
+    </tbody></table>`;
+}
+
+function renderOperador() {
+  if (!relData) return;
+  const ops = relData.porOperador;
+  if (!ops || !ops.length) { document.getElementById('rel-op-content').innerHTML = '<div class="empty">Sem dados.</div>'; return; }
+  document.getElementById('rel-op-content').innerHTML = `
+    <table class="tbl"><thead><tr><th>Operador</th><th>Orçamentos</th><th>Valor Total</th></tr></thead><tbody>
+    ${ops.map(o=>`<tr>
+      <td><strong>${o.nome}</strong></td>
+      <td>${o.qtd}</td>
+      <td style="font-family:var(--mono);color:var(--accent2)">${fBRL(o.total)}</td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+
+function renderNFList() {
+  if (!relData) return;
+  const list = relData.comNF;
+  if (!list || !list.length) { document.getElementById('rel-nf-content').innerHTML = '<div class="empty">Nenhum orçamento com NF emitida no período.</div>'; return; }
+  document.getElementById('rel-nf-content').innerHTML = `
+    <table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Total</th><th>NF</th><th>Ação</th></tr></thead><tbody>
+    ${list.map(orc=>`<tr>
+      <td><span class="badge badge-orc">${String(orc.num).padStart(3,'0')}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${orc.date||'—'}</td>
+      <td>${orc.nome}</td>
+      <td style="font-family:var(--mono);color:var(--accent2)">${fBRL(orc.total)}</td>
+      <td style="font-size:11px;color:var(--muted)">${orc.nfOriginalName||'NF'}</td>
+      <td><button class="ta docx" onclick="API.openNF('${orc.id}')">👁️ Ver NF</button></td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+
+function renderListaCompleta() {
+  if (!relData) return;
+  const list = relData.lista;
+  if (!list || !list.length) { document.getElementById('rel-lista-content').innerHTML = '<div class="empty">Sem dados no período.</div>'; return; }
+  document.getElementById('rel-lista-content').innerHTML = `
+    <table class="tbl"><thead><tr>
+      <th>N°</th><th>Data</th><th>Cliente</th><th>Operador</th><th>Total</th><th>Pago</th><th>NF</th>
+    </tr></thead><tbody>
+    ${list.map(orc=>`<tr>
+      <td><span class="badge badge-orc">${String(orc.num).padStart(3,'0')}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${orc.date||'—'}</td>
+      <td>${orc.nome}</td>
+      <td style="font-size:11px;color:var(--muted)">${orc.ownerNome||orc.owner||'—'}</td>
+      <td style="font-family:var(--mono);color:var(--accent2)">${fBRL(orc.total)}</td>
+      <td><span class="badge ${orc.pago?'badge-pago':'badge-nao-pago'}">${orc.pago?'✅':'🔴'}</span></td>
+      <td><span class="badge ${orc.nfStatus==='emitida'?'badge-nf-sim':'badge-nf-nao'}">${orc.nfStatus==='emitida'?'✅':'❌'}</span></td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+
+// ═══════════════════════════════════════════════════
+// USUÁRIOS
+// ═══════════════════════════════════════════════════
+async function carregarUsers() {
+  try {
+    const users = await API.get('/auth/users');
+    const cont = document.getElementById('users-list');
+    if (!users.length) { cont.innerHTML = '<div class="empty">Nenhum usuário.</div>'; return; }
+    cont.innerHTML = '';
+    users.forEach(u => {
+      const div = document.createElement('div');
+      div.className = 'user-card';
+      div.innerHTML = `
+        <div class="avatar ${u.role}">${u.nome.charAt(0).toUpperCase()}</div>
+        <div class="user-info">
+          <div class="user-name">${u.nome}</div>
+          <div class="user-meta">@${u.username} · <span class="badge ${u.role==='admin'?'badge-admin':'badge-user'}">${u.role==='admin'?'Admin':'Operador'}</span></div>
+        </div>
+        <div class="user-actions">
+          ${u.id !== currentUser.id
+            ? `<button class="ta del" onclick="excluirUser('${u.id}','${u.nome}')">🗑️ Excluir</button>`
+            : '<span style="font-size:11px;color:var(--muted)">Você</span>'}
+        </div>
+      `;
+      cont.appendChild(div);
+    });
+  } catch(e) { toast(e.message,'error'); }
+}
+
+async function criarUser() {
+  const nome = document.getElementById('nu-nome').value.trim();
+  const user = document.getElementById('nu-user').value.trim();
+  const pass = document.getElementById('nu-pass').value;
+  const role = document.getElementById('nu-role').value;
+  if (!nome || !user || !pass) { toast('Preencha todos os campos.','error'); return; }
+  try {
+    await API.post('/auth/users', { nome, username: user, password: pass, role });
+    toast(`Usuário "${user}" criado!`,'success');
+    ['nu-nome','nu-user','nu-pass'].forEach(id => document.getElementById(id).value = '');
+    carregarUsers();
+  } catch(e) { toast(e.message,'error'); }
+}
+
+async function excluirUser(id, nome) {
+  if (!confirm(`Excluir usuário "${nome}"?`)) return;
+  try {
+    await API.delete('/auth/users/' + id);
+    toast('Usuário excluído.','success');
+    carregarUsers();
+  } catch(e) { toast(e.message,'error'); }
+}
+
+// ═══════════════════════════════════════════════════
+// PERFIL
+// ═══════════════════════════════════════════════════
+async function salvarPerfil() {
+  const nome  = document.getElementById('p-nome').value.trim();
+  const user  = document.getElementById('p-user').value.trim();
+  const pass1 = document.getElementById('p-pass1').value;
+  const pass2 = document.getElementById('p-pass2').value;
+
+  if (!nome || !user) { toast('Nome e usuário são obrigatórios.','error'); return; }
+  if (pass1 && pass1 !== pass2) { toast('As senhas não coincidem.','error'); return; }
+
+  const payload = { nome, username: user };
+  if (pass1) payload.password = pass1;
+
+  try {
+    const updated = await API.put('/auth/users/' + currentUser.id, payload);
+    currentUser = { ...currentUser, ...updated };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    document.getElementById('sb-name').textContent = currentUser.nome;
+    document.getElementById('sb-av').textContent   = currentUser.nome.charAt(0).toUpperCase();
+    document.getElementById('p-pass1').value = '';
+    document.getElementById('p-pass2').value = '';
+    toast('Perfil atualizado com sucesso!','success');
+  } catch(e) { toast(e.message,'error'); }
+}
+
+// ═══════════════════════════════════════════════════
+// MODAL HELPERS
+// ═══════════════════════════════════════════════════
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Fechar modal clicando fora
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
