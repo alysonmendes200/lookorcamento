@@ -138,6 +138,22 @@ if (!process.env.DATABASE_URL) {
     console.log('🔄  Conectando ao banco de dados...');
     await init();   // cria tabelas
     await seed();   // cria admin padrão
+    
+    // ROTA TEMPORÁRIA PARA CRIAR O PRIMEIRO USUÁRIO
+app.get('/setup-inicial', async (req, res) => {
+  try {
+    const { User } = require('./models'); // Certifique-se que o caminho do seu modelo está certo
+    const admin = await User.create({
+      nome: 'Administrador',
+      username: 'admin',
+      password: '123', // O seu sistema deve criptografar isso automaticamente se tiver o hook
+      role: 'admin'
+    });
+    res.send('Usuário Admin criado com sucesso! Agora tente logar.');
+  } catch (err) {
+    res.status(500).send('Erro ao criar: ' + err.message);
+  }
+});
 
     app.listen(PORT, () => {
       console.log(`🚀  Servidor rodando na porta ${PORT}`);
