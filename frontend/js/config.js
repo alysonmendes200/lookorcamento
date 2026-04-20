@@ -1,12 +1,7 @@
 /**
  * config.js
- *
- * ⚠️ IMPORTANTE: Edite este arquivo antes de publicar o site!
- * Coloque aqui a URL do seu backend no Render.
- *
- * Para testar localmente: 'http://localhost:3001'
- * Em produção:            'https://seu-backend.onrender.com'
+ * ⚠️  EDITE ANTES DE PUBLICAR — coloque a URL do seu backend Render
  */
 const CONFIG = {
-  API_BASE: 'https://looksistemadeorcamento.onrender.com'
+  API_BASE: 'https://SEU-BACKEND.onrender.com'
 };

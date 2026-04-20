@@ -1,9 +1,11 @@
 /**
- * api.js — Cliente HTTP para o backend
+ * api.js — Cliente HTTP seguro, sem loop de redirecionamento
  */
 const API = (() => {
   const base  = () => CONFIG.API_BASE + '/api';
-  const token = () => localStorage.getItem('token');
+  const token = () => localStorage.getItem('orcToken');
+
+  let _redirecting = false; // previne loop duplo
 
   async function req(method, path, body, isFormData = false) {
     const headers = {};
@@ -17,37 +19,45 @@ const API = (() => {
     try {
       res = await fetch(base() + path, opts);
     } catch (e) {
-      throw new Error('Não foi possível conectar ao servidor. Verifique sua conexão ou se o backend está online.');
+      throw new Error('Sem conexão com o servidor. Verifique se o backend está online.');
     }
 
     if (res.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('currentUser');
-      if (!location.pathname.endsWith('index.html') && location.pathname !== '/') {
-        location.href = 'index.html';
+      // Limpa sessão e redireciona UMA ÚNICA VEZ
+      if (!_redirecting) {
+        _redirecting = true;
+        localStorage.removeItem('orcToken');
+        localStorage.removeItem('orcUser');
+        // Só redireciona se não estiver já na página de login
+        if (!location.pathname.endsWith('index.html') && location.pathname !== '/') {
+          location.replace('index.html');
+        }
       }
-      return;
+      throw new Error('Sessão expirada. Faça login novamente.');
     }
+
+    _redirecting = false;
 
     const text = await res.text();
     let data;
     try { data = text ? JSON.parse(text) : {}; } catch { data = { error: text }; }
-
     if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
     return data;
   }
 
   return {
-    get:    (path)       => req('GET', path),
-    post:   (path, body) => req('POST', path, body),
-    put:    (path, body) => req('PUT', path, body),
+    get:    (path)       => req('GET',    path),
+    post:   (path, body) => req('POST',   path, body),
+    put:    (path, body) => req('PUT',    path, body),
     delete: (path)       => req('DELETE', path),
-    upload: (path, fd)   => req('POST', path, fd, true),
+    upload: (path, fd)   => req('POST',   path, fd, true),
 
-    nfUrl: (orcId) => `${base()}/orcamentos/${orcId}/nf?token=${encodeURIComponent(token())}`,
-
-    openNF: (orcId) => {
-      window.open(API.nfUrl(orcId), '_blank');
+    openNF: async (orcId) => {
+      const url = `${base()}/orcamentos/${orcId}/nf`;
+      const res = await fetch(url, { headers: { Authorization: 'Bearer ' + token() } });
+      if (!res.ok) { alert('Não foi possível abrir a NF.'); return; }
+      const blob = await res.blob();
+      window.open(URL.createObjectURL(blob), '_blank');
     }
   };
 })();
