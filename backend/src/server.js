@@ -113,11 +113,11 @@ if (missing.length > 0) {
     await init();
     await seed(Users, Seq);
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log('');
       console.log('╔═══════════════════════════════════════════════╗');
-      console.log(`║  🚀 Servidor rodando na porta ${String(PORT).padEnd(17)}║`);
-      console.log(`║  🌐 Origens: ${(allowedOrigins[0] || 'nenhuma').substring(0,33).padEnd(33)}║`);
+   console.log(`🚀 Servidor rodando na porta ${PORT}`);
+      console.log(`🌐 Origens permitidas: ${allowedOrigins.join(', ')}`)
       console.log('╚═══════════════════════════════════════════════╝');
     });
   } catch (err) {
@@ -137,9 +137,3 @@ if (missing.length > 0) {
     process.exit(1);
   }
 })();
-
-// No final do seu src/server.js
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`🌐 Origens permitidas: ${allowedOrigins.join(', ')}`);
-});
