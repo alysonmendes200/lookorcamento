@@ -1,5 +1,5 @@
 /**
- * api.js — Camada de comunicação com o backend   //window.location.href = 'index.html';
+ * api.js — Camada de comunicação com o backend
  */
 const API = (() => {
   function base() { return CONFIG.API_BASE + '/api'; }
@@ -23,7 +23,7 @@ const API = (() => {
     if (res.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('currentUser');
-    
+      window.location.href = 'index.html';
       return;
     }
 

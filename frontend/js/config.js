@@ -8,5 +8,5 @@
  * Em produção:            'https://seu-backend.onrender.com'
  */
 const CONFIG = {
-  API_BASE: 'https://looksistemadeorcamento.onrender.com'
+  API_BASE: 'http://localhost:3001'
 };
