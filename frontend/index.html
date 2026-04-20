@@ -67,10 +67,13 @@ body {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
   }
-  // Se já tem sessão válida nesta versão, vai direto
-  if (localStorage.getItem('orcToken') && localStorage.getItem('orcUser')) {
-    location.replace('app.html');
-  }
+  // Se já tem sessão válida (com id), vai direto — valida o id para evitar loop
+  try {
+    const _u = JSON.parse(localStorage.getItem('orcUser') || '{}');
+    if (localStorage.getItem('orcToken') && _u && _u.id) {
+      location.replace('app.html');
+    }
+  } catch { /* sessão corrompida, fica no login */ }
 
   async function login() {
     const username = document.getElementById('l-user').value.trim();

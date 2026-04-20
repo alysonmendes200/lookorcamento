@@ -22,13 +22,20 @@ const API = (() => {
       throw new Error('Sem conexão com o servidor. Verifique se o backend está online.');
     }
 
+    const text = await res.text();
+    let data;
+    try { data = text ? JSON.parse(text) : {}; } catch { data = { error: text }; }
+
     if (res.status === 401) {
-      // Limpa sessão e redireciona UMA ÚNICA VEZ
+      // Login com credenciais erradas: mostra o erro real do servidor
+      if (path === '/auth/login') {
+        throw new Error(data.error || 'Usuário ou senha incorretos.');
+      }
+      // Qualquer outra rota: sessão expirada — limpa e redireciona UMA VEZ
       if (!_redirecting) {
         _redirecting = true;
         localStorage.removeItem('orcToken');
         localStorage.removeItem('orcUser');
-        // Só redireciona se não estiver já na página de login
         if (!location.pathname.endsWith('index.html') && location.pathname !== '/') {
           location.replace('index.html');
         }
@@ -36,11 +43,6 @@ const API = (() => {
       throw new Error('Sessão expirada. Faça login novamente.');
     }
 
-  
-
-    const text = await res.text();
-    let data;
-    try { data = text ? JSON.parse(text) : {}; } catch { data = { error: text }; }
     if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
     return data;
   }
