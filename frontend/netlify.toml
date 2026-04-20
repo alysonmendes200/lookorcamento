@@ -1,17 +1,15 @@
-[[redirects]]
-  from = "/"
-  to = "/index.html"
-  status = 200
+# Configuração do Netlify
+# Garante que todas as rotas funcionem corretamente
 
 [[redirects]]
-  from = "/app"
-  to = "/app.html"
+  from = "/"
+  to   = "/index.html"
   status = 200
 
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options         = "DENY"
+    X-XSS-Protection        = "1; mode=block"
+    X-Content-Type-Options  = "nosniff"
+    Referrer-Policy         = "strict-origin-when-cross-origin"

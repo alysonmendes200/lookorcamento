@@ -3,51 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Orçamentos — Login</title>
+<title>Login — Sistema de Orçamentos</title>
 <link rel="stylesheet" href="style.css">
-<style>
-  body { display: flex; align-items: center; justify-content: center; min-height: 100vh;
-    background: radial-gradient(ellipse at 25% 35%, rgba(232,160,32,0.08) 0%, transparent 55%),
-                radial-gradient(ellipse at 75% 75%, rgba(64,160,200,0.06) 0%, transparent 50%), var(--bg); }
-
-  .login-wrap { width: 380px; max-width: 95vw; }
-
-  .login-box {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 18px; padding: 44px 36px;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.45);
-  }
-  .brand { text-align: center; margin-bottom: 36px; }
-  .brand-icon { font-size: 40px; margin-bottom: 10px; }
-  .brand-name { font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: 0.04em; }
-  .brand-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 11px; color: var(--muted); font-weight: 600;
-    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
-  .field input {
-    width: 100%; padding: 11px 14px;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 8px; color: var(--text); font-family: var(--font);
-    font-size: 14px; outline: none; transition: border-color 0.15s;
-  }
-  .field input:focus { border-color: var(--accent); }
-
-  .login-btn {
-    width: 100%; padding: 12px; margin-top: 8px;
-    background: var(--accent); border: none; border-radius: 8px;
-    color: #000; font-family: var(--font); font-size: 14px; font-weight: 700;
-    cursor: pointer; transition: background 0.15s; letter-spacing: 0.03em;
-  }
-  .login-btn:hover { background: var(--accent2); }
-  .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .login-err { color: var(--danger); font-size: 12px; text-align: center; margin-top: 10px; min-height: 18px; }
-
-  .login-footer { text-align: center; margin-top: 20px; font-size: 11px; color: var(--muted); }
-</style>
 </head>
 <body>
+
 <div class="login-wrap">
   <div class="login-box">
     <div class="brand">
@@ -57,7 +17,7 @@
     </div>
     <div class="field">
       <label>Usuário</label>
-      <input type="text" id="l-user" placeholder="seu.usuario" autocomplete="username"
+      <input type="text" id="l-user" placeholder="Digite seu usuário" autocomplete="username"
         onkeydown="if(event.key==='Enter')login()">
     </div>
     <div class="field">
@@ -68,18 +28,14 @@
     <button class="login-btn" id="login-btn" onclick="login()">Entrar</button>
     <div class="login-err" id="login-err"></div>
   </div>
-  <div class="login-footer">© Sistema de Orçamentos</div>
 </div>
 
-<script src="config.js"></script>
-<script src="api.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
 <script>
-  // Redireciona se já logado
-  if (localStorage.getItem('token')) {
-    try {
-      const u = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      if (u.id) window.location.href = 'app.html';
-    } catch {}
+  // Se já tem sessão, vai direto para o app
+  if (localStorage.getItem('token') && localStorage.getItem('currentUser')) {
+    location.href = 'app.html';
   }
 
   async function login() {
@@ -88,18 +44,22 @@
     const btn = document.getElementById('login-btn');
     const err = document.getElementById('login-err');
     err.textContent = '';
-    if (!username || !password) { err.textContent = 'Preencha usuário e senha.'; return; }
+
+    if (!username || !password) {
+      err.textContent = 'Preencha usuário e senha.';
+      return;
+    }
 
     btn.disabled = true;
-    btn.textContent = 'Entrando...';
+    btn.textContent = 'Entrando…';
+
     try {
       const data = await API.post('/auth/login', { username, password });
       localStorage.setItem('token', data.token);
       localStorage.setItem('currentUser', JSON.stringify(data.user));
-      window.location.href = 'app.html';
-    } catch(e) {
+      location.href = 'app.html';
+    } catch (e) {
       err.textContent = e.message || 'Erro ao conectar ao servidor.';
-    } finally {
       btn.disabled = false;
       btn.textContent = 'Entrar';
     }
