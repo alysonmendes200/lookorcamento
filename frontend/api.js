@@ -23,7 +23,7 @@ const API = (() => {
     if (res.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('currentUser');
-      window.location.href = 'index.html';
+      //window.location.href = 'index.html';
       return;
     }
 
