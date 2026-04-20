@@ -36,7 +36,7 @@ const API = (() => {
       throw new Error('Sessão expirada. Faça login novamente.');
     }
 
-    _redirecting = false;
+  
 
     const text = await res.text();
     let data;
