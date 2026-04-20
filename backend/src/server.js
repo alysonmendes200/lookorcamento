@@ -146,7 +146,7 @@ app.get('/setup-inicial', async (req, res) => {
     const admin = await User.create({
       nome: 'Administrador',
       username: 'admin',
-      password: '123', // O seu sistema deve criptografar isso automaticamente se tiver o hook
+      password: 'admin123', // O seu sistema deve criptografar isso automaticamente se tiver o hook
       role: 'admin'
     });
     res.send('Usuário Admin criado com sucesso! Agora tente logar.');
