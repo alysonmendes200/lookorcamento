@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { Users } = require('./db');
 
-function authMiddleware(req, res, next) {
+async function authMiddleware(req, res, next) {
   const header = req.headers.authorization;
   if (!header || !header.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token não fornecido' });
@@ -9,7 +9,7 @@ function authMiddleware(req, res, next) {
   const token = header.slice(7);
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const user = Users.find(payload.id);
+    const user = await Users.find(payload.id);
     if (!user) return res.status(401).json({ error: 'Usuário não encontrado' });
     req.user = user;
     next();
