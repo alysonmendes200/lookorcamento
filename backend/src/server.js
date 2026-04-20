@@ -137,3 +137,9 @@ if (missing.length > 0) {
     process.exit(1);
   }
 })();
+
+// No final do seu src/server.js
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
+  console.log(`🌐 Origens permitidas: ${allowedOrigins.join(', ')}`);
+});
