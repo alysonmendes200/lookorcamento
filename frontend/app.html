@@ -274,22 +274,24 @@
       </div>
       <div class="card">
         <div class="card-title">Novo Usuário</div>
-        <div class="form-row">
-          <div class="fg"><label>Nome completo</label><input id="nu-nome" placeholder="Nome completo"></div>
-          <div class="fg"><label>Login (usuário)</label><input id="nu-user" placeholder="usuario" autocomplete="off"></div>
-          <div class="fg"><label>Senha</label><input id="nu-pass" type="password" autocomplete="new-password" placeholder="Mín. 6 caracteres"></div>
-          <div class="fg">
-            <label>Perfil</label>
-            <select id="nu-role">
-              <option value="user">Operador</option>
-              <option value="admin">Administrador</option>
-            </select>
+        <form onsubmit="event.preventDefault();criarUser()" autocomplete="off">
+          <div class="form-row">
+            <div class="fg"><label>Nome completo</label><input id="nu-nome" placeholder="Nome completo" autocomplete="name"></div>
+            <div class="fg"><label>Login (usuário)</label><input id="nu-user" placeholder="usuario" autocomplete="username"></div>
+            <div class="fg"><label>Senha</label><input id="nu-pass" type="password" autocomplete="new-password" placeholder="Mín. 6 caracteres"></div>
+            <div class="fg">
+              <label>Perfil</label>
+              <select id="nu-role">
+                <option value="user">Operador</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <button class="btn btn-primary" onclick="criarUser()">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Criar Usuário
-        </button>
+          <button type="submit" class="btn btn-primary">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Criar Usuário
+          </button>
+        </form>
       </div>
       <div class="card">
         <div class="card-title">Usuários cadastrados</div>
@@ -361,15 +363,17 @@
       </div>
       <div class="card" style="max-width:500px">
         <div class="card-title">Informações da Conta</div>
-        <div class="form-row">
-          <div class="fg"><label>Nome completo</label><input id="p-nome" placeholder="Seu nome"></div>
-          <div class="fg"><label>Usuário (login)</label><input id="p-user" placeholder="seu.usuario"></div>
-        </div>
-        <div class="form-row">
-          <div class="fg"><label>Nova Senha</label><input id="p-pass1" type="password" placeholder="Deixe em branco para não alterar"></div>
-          <div class="fg"><label>Confirmar Nova Senha</label><input id="p-pass2" type="password" placeholder="Repita a nova senha"></div>
-        </div>
-        <button class="btn btn-primary" onclick="salvarPerfil()">Salvar Alterações</button>
+        <form onsubmit="event.preventDefault();salvarPerfil()">
+          <div class="form-row">
+            <div class="fg"><label>Nome completo</label><input id="p-nome" placeholder="Seu nome" autocomplete="name"></div>
+            <div class="fg"><label>Usuário (login)</label><input id="p-user" placeholder="seu.usuario" autocomplete="username"></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Nova Senha</label><input id="p-pass1" type="password" autocomplete="new-password" placeholder="Deixe em branco para não alterar"></div>
+            <div class="fg"><label>Confirmar Nova Senha</label><input id="p-pass2" type="password" autocomplete="new-password" placeholder="Repita a nova senha"></div>
+          </div>
+          <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        </form>
       </div>
     </div>
 
