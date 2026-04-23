@@ -74,6 +74,43 @@ async function init() {
 
   console.log('✅ Tabelas do banco inicializadas');
 }
+// Tabela de Clientes
+await client.query(`
+  CREATE TABLE IF NOT EXISTS clientes (
+    id           TEXT PRIMARY KEY,
+    nome         TEXT NOT NULL,
+    comercio     TEXT DEFAULT '',
+    telefone     TEXT DEFAULT '',
+    email        TEXT DEFAULT '',
+    cpfcnpj      TEXT DEFAULT '',
+    endereco     TEXT DEFAULT '',
+    obs          TEXT DEFAULT '',
+    criado_por   TEXT DEFAULT '',
+    criado_por_nome TEXT DEFAULT '',
+    criado_em    TEXT DEFAULT '',
+    atualizado_em TEXT DEFAULT ''
+  )
+`);
+
+// Tabela de Pedidos
+await client.query(`
+  CREATE TABLE IF NOT EXISTS pedidos (
+    id            TEXT PRIMARY KEY,
+    cliente_id    TEXT DEFAULT '',
+    cliente_nome  TEXT NOT NULL,
+    items         JSONB DEFAULT '[]',
+    total         NUMERIC DEFAULT 0,
+    prazo_entrega TEXT DEFAULT '',
+    obs           TEXT DEFAULT '',
+    orcamento_id  TEXT DEFAULT '',
+    orcamento_num INTEGER DEFAULT NULL,
+    status        TEXT DEFAULT 'pendente',
+    owner         TEXT DEFAULT '',
+    owner_nome    TEXT DEFAULT '',
+    criado_em     TEXT DEFAULT '',
+    atualizado_em TEXT DEFAULT ''
+  )
+`);
 
 // ══════════════════════════════════════════════
 // USERS
@@ -231,5 +268,85 @@ const Seq = {
     // Caso contrário (deletou um do meio), não mexe
   }
 };
+const Clientes = {
+  all: () => client.query('SELECT * FROM clientes ORDER BY criado_em DESC')
+    .then(r => r.rows.map(toCliente)),
 
-module.exports = { pool, query, init, Users, Orcamentos, Seq };
+  getById: (id) => client.query('SELECT * FROM clientes WHERE id=$1',[id])
+    .then(r => r.rows[0] ? toCliente(r.rows[0]) : null),
+
+  create: (data) => client.query(
+    `INSERT INTO clientes (id,nome,comercio,telefone,email,cpfcnpj,endereco,obs,criado_por,criado_por_nome,criado_em)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+    [data.id,data.nome,data.comercio,data.telefone,data.email,data.cpfCnpj,data.endereco,data.obs,data.criadoPor,data.criadoPorNome,data.criadoEm]
+  ).then(r => toCliente(r.rows[0])),
+
+  update: (id, data) => client.query(
+    `UPDATE clientes SET nome=$2,comercio=$3,telefone=$4,email=$5,cpfcnpj=$6,endereco=$7,obs=$8,atualizado_em=$9
+     WHERE id=$1 RETURNING *`,
+    [id,data.nome,data.comercio,data.telefone,data.email,data.cpfCnpj,data.endereco,data.obs,data.atualizadoEm]
+  ).then(r => toCliente(r.rows[0])),
+
+  delete: (id) => client.query('DELETE FROM clientes WHERE id=$1',[id])
+};
+
+function toCliente(r) {
+  return {
+    id: r.id, nome: r.nome, comercio: r.comercio,
+    telefone: r.telefone, email: r.email, cpfCnpj: r.cpfcnpj,
+    endereco: r.endereco, obs: r.obs,
+    criadoPor: r.criado_por, criadoPorNome: r.criado_por_nome,
+    criadoEm: r.criado_em, atualizadoEm: r.atualizado_em
+  };
+}
+
+const Pedidos = {
+  all: (owner) => {
+    const q = owner
+      ? client.query('SELECT * FROM pedidos WHERE owner=$1 ORDER BY criado_em DESC',[owner])
+      : client.query('SELECT * FROM pedidos ORDER BY criado_em DESC');
+    return q.then(r => r.rows.map(toPedido));
+  },
+
+  getById: (id) => client.query('SELECT * FROM pedidos WHERE id=$1',[id])
+    .then(r => r.rows[0] ? toPedido(r.rows[0]) : null),
+
+  create: (data) => client.query(
+    `INSERT INTO pedidos (id,cliente_id,cliente_nome,items,total,prazo_entrega,obs,orcamento_id,orcamento_num,status,owner,owner_nome,criado_em)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+    [data.id,data.clienteId,data.clienteNome,JSON.stringify(data.items),data.total,
+     data.prazoEntrega,data.obs,data.orcamentoId,data.orcamentoNum,data.status,
+     data.owner,data.ownerNome,data.criadoEm]
+  ).then(r => toPedido(r.rows[0])),
+
+  update: (id, data) => {
+    const fields = Object.keys(data).map((k,i) => {
+      const col = {status:'status',prazoEntrega:'prazo_entrega',obs:'obs',
+                   items:'items',total:'total',clienteNome:'cliente_nome',
+                   atualizadoEm:'atualizado_em'}[k];
+      return col ? `${col}=$${i+2}` : null;
+    }).filter(Boolean);
+    const vals = Object.entries(data).map(([k,v]) =>
+      k==='items' ? JSON.stringify(v) : v);
+    return client.query(
+      `UPDATE pedidos SET ${fields.join(',')} WHERE id=$1 RETURNING *`,
+      [id,...vals]
+    ).then(r => toPedido(r.rows[0]));
+  },
+
+  delete: (id) => client.query('DELETE FROM pedidos WHERE id=$1',[id])
+};
+
+function toPedido(r) {
+  return {
+    id: r.id, clienteId: r.cliente_id, clienteNome: r.cliente_nome,
+    items: r.items||[], total: parseFloat(r.total)||0,
+    prazoEntrega: r.prazo_entrega, obs: r.obs,
+    orcamentoId: r.orcamento_id, orcamentoNum: r.orcamento_num,
+    status: r.status, owner: r.owner, ownerNome: r.owner_nome,
+    criadoEm: r.criado_em, atualizadoEm: r.atualizado_em
+  };
+}
+
+
+module.exports = { pool, query, init, Users, Orcamentos, Clientes, Pedidos, Seq };
