@@ -5,6 +5,8 @@ const cors       = require('cors');
 const rateLimit  = require('express-rate-limit');
 const bcrypt     = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const clientesRoutes = require('./routes/clientesRoutes');
+const pedidosRoutes  = require('./routes/pedidosRoutes');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -50,6 +52,8 @@ const orcamentosRoutes = require('./routes/orcamentosRoutes');
 app.use('/api/auth/login', loginLimiter);
 app.use('/api/auth',       authRoutes);
 app.use('/api/orcamentos', orcamentosRoutes);
+app.use('/api/clientes', clientesRoutes);
+app.use('/api/pedidos',  pedidosRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, ts: new Date().toISOString() });
