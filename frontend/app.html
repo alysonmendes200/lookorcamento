@@ -241,7 +241,7 @@
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
         Selecionar do Catálogo
       </button>
-      <div class="items-head"><div>Descrição</div><div>Qtd</div><div>V. Unit. (R$)</div><div>Total</div><div></div></div>
+      <div class="items-head"><div>Descrição</div><div>Qtd</div><div>V. Unit. (R$)</div><div>Total</div><div style="text-align:center">Ações</div></div>
       <div id="items-container"></div>
       <button class="add-item-btn" onclick="addItem()">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
@@ -408,16 +408,42 @@
     </div>
     <div class="rel-tabs">
       <button class="rel-tab active" onclick="relTab('resumo',this)">📊 Resumo</button>
+      <button class="rel-tab" onclick="relTab('dre',this)">💰 Financeiro / DRE</button>
+      <button class="rel-tab" onclick="relTab('caixa-rel',this)">💵 Caixa</button>
       <button class="rel-tab" onclick="relTab('mensal',this)">📅 Por Mês</button>
       <button class="rel-tab" onclick="relTab('operador',this)">👤 Por Operador</button>
       <button class="rel-tab" onclick="relTab('nf',this)">🧾 Com NF</button>
       <button class="rel-tab" onclick="relTab('lista',this)">📋 Lista</button>
     </div>
-    <div class="rel-section active" id="rel-resumo"><div class="stats-row" id="rel-stats-cards"></div><div class="card" id="rel-chart-card" style="display:none"><div class="card-title">Evolução Mensal</div><div class="bar-chart" id="rel-chart"></div></div></div>
-    <div class="rel-section" id="rel-mensal"><div class="card"><div class="card-title">Por Mês</div><div id="rel-mensal-content"></div></div></div>
+    <div class="rel-section active" id="rel-resumo">
+      <div class="stats-row" id="rel-stats-cards"></div>
+      <div id="rel-caixa-stats-mini" style="margin-bottom:14px"></div>
+      <div class="card" id="rel-chart-card" style="display:none"><div class="card-title">Evolução Mensal</div><div class="bar-chart" id="rel-chart"></div></div>
+    </div>
+    <div class="rel-section" id="rel-dre">
+      <div class="card">
+        <div class="card-title">💰 Demonstrativo de Resultado (DRE)</div>
+        <div class="dre-stats" id="rel-dre-stats"></div>
+        <div id="rel-dre-content"></div>
+      </div>
+    </div>
+    <div class="rel-section" id="rel-caixa-rel">
+      <div class="card">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>💵 Transações do Caixa</span>
+          <div style="display:flex;gap:6px">
+            <select id="rel-caixa-tipo" onchange="renderRelCaixa()" style="font-size:12px;padding:4px 8px">
+              <option value="">Todas</option><option value="entrada">Entradas</option><option value="saida">Saídas</option>
+            </select>
+          </div>
+        </div>
+        <div id="rel-caixa-content"></div>
+      </div>
+    </div>
+    <div class="rel-section" id="rel-mensal"><div class="card"><div class="card-title">Por Mês — Orçamentos</div><div id="rel-mensal-content"></div></div></div>
     <div class="rel-section" id="rel-operador"><div class="card"><div class="card-title">Por Operador</div><div id="rel-op-content"></div></div></div>
     <div class="rel-section" id="rel-nf"><div class="card"><div class="card-title">Com NF Emitida</div><div id="rel-nf-content"></div></div></div>
-    <div class="rel-section" id="rel-lista"><div class="card"><div class="card-title">Lista Completa</div><div id="rel-lista-content"></div></div></div>
+    <div class="rel-section" id="rel-lista"><div class="card"><div class="card-title">Lista Completa de Orçamentos</div><div id="rel-lista-content"></div></div></div>
   </div>
 
   <!-- USUÁRIOS -->
@@ -725,7 +751,7 @@
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
       Selecionar do Catálogo
     </button>
-    <div class="items-head"><div>Descrição</div><div>Qtd</div><div>V. Unit. (R$)</div><div>Total</div><div></div></div>
+    <div class="items-head"><div>Descrição</div><div>Qtd</div><div>V. Unit. (R$)</div><div>Total</div><div style="text-align:center">Ações</div></div>
     <div id="ped-items-container"></div>
     <button class="add-item-btn" onclick="addPedItem()">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
@@ -788,6 +814,7 @@ let orcList      = [];
 let nextNum      = 1;
 let currentNFOrcId = null;
 let relData      = null;
+let relCaixaData = [];
 let ultimaDefNum = JSON.parse(localStorage.getItem('ultimaDefNum')||'null');
 let clienteList  = [];
 let pedidoList   = [];
@@ -830,6 +857,7 @@ function salvarKanbanConfig(){
   });
   localStorage.setItem('kanbanLabels',JSON.stringify(saved));
   carregarKanbanConfig();
+  sincronizarStatusLabels();
   toast('Etiquetas do Kanban salvas!','success');
   renderPedidos();
 }
@@ -837,8 +865,17 @@ function resetarKanbanConfig(){
   localStorage.removeItem('kanbanLabels');
   PEDIDO_LABELS=Object.assign({},PEDIDO_LABELS_DEFAULT);
   renderKanbanCfgFields();
+  sincronizarStatusLabels();
   toast('Etiquetas restauradas ao padrão.','success');
   renderPedidos();
+}
+function sincronizarStatusLabels(){
+  // Atualiza o select de filtro de status dos pedidos com os labels configurados
+  const sel=document.getElementById('ped-status-flt');if(!sel)return;
+  const val=sel.value;
+  sel.innerHTML=`<option value="">Todos</option>`+
+    PEDIDO_STATUS_ORDER.map(k=>`<option value="${k}">${PEDIDO_LABELS[k].label}</option>`).join('');
+  sel.value=val;
 }
 
 let caixaList = [];
@@ -855,6 +892,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('p-nome').value = currentUser.nome;
   document.getElementById('p-user').value = currentUser.username;
   carregarKanbanConfig();
+  sincronizarStatusLabels();
   await carregarNextNum();
   novoForm();
   // Pré-carrega produtos e clientes em background
@@ -894,16 +932,51 @@ function stopSync(){autoSync=false;}
 function addItem(desc='',qty='',unit=''){
   itemCount++;
   const id='r'+itemCount;
-  const div=document.createElement('div');
-  div.className='item-row';div.id=id;
-  div.innerHTML=`
-    <input type="text" placeholder="Descrição" value="${esc(desc)}" oninput="calcRow('${id}')">
-    <input type="number" placeholder="1" min="0" value="${qty}" oninput="calcRow('${id}')">
-    <input type="number" placeholder="0,00" min="0" step="0.01" value="${unit}" oninput="calcRow('${id}')">
-    <div class="item-total" id="t-${id}">R$ 0,00</div>
-    <button type="button" class="rm-btn" onclick="document.getElementById('${id}').remove();calcGrand()" title="Remover">×</button>`;
-  document.getElementById('items-container').appendChild(div);
+  const wrap=document.createElement('div');
+  wrap.id='w-'+id;
+  wrap.innerHTML=`
+    <div class="item-row" id="${id}">
+      <input type="text" placeholder="Descrição do item" value="${esc(desc)}" oninput="calcRow('${id}')">
+      <input type="number" placeholder="Qtd" min="0" value="${qty}" id="q-${id}" oninput="calcRow('${id}')">
+      <input type="number" placeholder="Preço unit." min="0" step="0.01" value="${unit}" oninput="calcRow('${id}')">
+      <div class="item-total" id="t-${id}">R$ 0,00</div>
+      <div class="item-btns">
+        <button type="button" class="m2-btn" id="m2btn-${id}" onclick="toggleM2Row('${id}','orc')" title="Calcular m²">📐</button>
+        <button type="button" class="rm-btn" onclick="document.getElementById('w-${id}').remove();calcGrand()" title="Remover">×</button>
+      </div>
+    </div>
+    <div class="item-m2-row" id="m2-${id}">
+      <span style="font-size:11px;font-weight:700;color:var(--azul);white-space:nowrap">📐 m²</span>
+      <input type="number" placeholder="Larg.(m)" min="0" step="0.001" id="m2l-${id}" oninput="applyM2Row('${id}','orc')">
+      <span class="m2-sep">×</span>
+      <input type="number" placeholder="Alt.(m)" min="0" step="0.001" id="m2a-${id}" oninput="applyM2Row('${id}','orc')">
+      <span class="m2-sep">=</span>
+      <span id="m2r-${id}" class="m2-result">—</span>
+      <span style="font-size:11px;color:var(--muted)">(preenche qtd automaticamente)</span>
+    </div>`;
+  document.getElementById('items-container').appendChild(wrap);
   if(desc&&qty&&unit)calcRow(id);
+}
+function toggleM2Row(id,tipo){
+  const row=document.getElementById('m2-'+id);
+  const btn=document.getElementById('m2btn-'+id);
+  const open=row.classList.toggle('open');
+  btn.classList.toggle('active',open);
+  if(!open){
+    document.getElementById('m2l-'+id).value='';
+    document.getElementById('m2a-'+id).value='';
+    document.getElementById('m2r-'+id).textContent='—';
+  }
+}
+function applyM2Row(id,tipo){
+  const larg=parseFloat(document.getElementById('m2l-'+id).value)||0;
+  const alt =parseFloat(document.getElementById('m2a-'+id).value)||0;
+  const m2=parseFloat((larg*alt).toFixed(4));
+  document.getElementById('m2r-'+id).textContent=m2?m2+' m²':'—';
+  if(m2){
+    document.getElementById('q-'+id).value=m2;
+    if(tipo==='ped')calcPedRow(id);else calcRow(id);
+  }
 }
 function calcRow(id){
   const row=document.getElementById(id);if(!row)return;
@@ -1147,10 +1220,17 @@ async function removerNF(){
 async function carregarRelatorio(){
   const mes=document.getElementById('rel-mes').value,ano=document.getElementById('rel-ano').value;
   const di=document.getElementById('rel-di').value,df=document.getElementById('rel-df').value;
-  const params=new URLSearchParams();
-  if(mes)params.set('mes',mes);if(ano)params.set('ano',ano);if(di)params.set('di',di);if(df)params.set('df',df);
-  try{relData=await API.get('/orcamentos/relatorios?'+params.toString());renderRelatorios();}
-  catch(e){toast(e.message,'error');}
+  const orcParams=new URLSearchParams();
+  if(mes)orcParams.set('mes',mes);if(ano)orcParams.set('ano',ano);if(di)orcParams.set('di',di);if(df)orcParams.set('df',df);
+  const cxParams=new URLSearchParams();
+  if(di)cxParams.set('di',di);if(df)cxParams.set('df',df);
+  try{
+    [relData,relCaixaData]=await Promise.all([
+      API.get('/orcamentos/relatorios?'+orcParams.toString()),
+      API.get('/caixa'+(cxParams.toString()?'?'+cxParams.toString():''))
+    ]);
+    renderRelatorios();
+  }catch(e){toast(e.message,'error');}
 }
 function relTab(tab,btn){
   document.querySelectorAll('.rel-section').forEach(el=>el.classList.remove('active'));
@@ -1160,12 +1240,26 @@ function relTab(tab,btn){
 function renderRelatorios(){
   if(!relData)return;
   const{resumo,porMes,porOperador,comNF,lista}=relData;
+  const cx=relCaixaData||[];
+  const cxEntradas=cx.filter(t=>t.tipo==='entrada').reduce((s,t)=>s+t.valor,0);
+  const cxSaidas  =cx.filter(t=>t.tipo==='saida'  ).reduce((s,t)=>s+t.valor,0);
+  const cxSaldo   =cxEntradas-cxSaidas;
+
+  // ── Resumo
   document.getElementById('rel-stats-cards').innerHTML=`
     <div class="stat-card"><div class="stat-label">Orçamentos</div><div class="stat-val">${resumo.totalOrcamentos}</div></div>
-    <div class="stat-card"><div class="stat-label">Valor Total</div><div class="stat-val sm">${fBRL(resumo.valorTotal)}</div></div>
-    <div class="stat-card"><div class="stat-label">Recebido</div><div class="stat-val sm green">${fBRL(resumo.valorRecebido)}</div></div>
+    <div class="stat-card"><div class="stat-label">Faturamento</div><div class="stat-val sm">${fBRL(resumo.valorTotal)}</div></div>
+    <div class="stat-card"><div class="stat-label">Recebido (Orç.)</div><div class="stat-val sm green">${fBRL(resumo.valorRecebido)}</div></div>
     <div class="stat-card"><div class="stat-label">A Receber</div><div class="stat-val sm red">${fBRL(resumo.valorFaltaReceber)}</div></div>
     <div class="stat-card"><div class="stat-label">NF Emitidas</div><div class="stat-val">${resumo.comNF}</div></div>`;
+  document.getElementById('rel-caixa-stats-mini').innerHTML=cx.length?`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+      <div class="dre-stat azul"><div class="dre-stat-label">Transações Caixa</div><div class="dre-stat-val">${cx.length}</div></div>
+      <div class="dre-stat pos"><div class="dre-stat-label">Entradas Caixa</div><div class="dre-stat-val" style="color:#198754">${fBRL(cxEntradas)}</div></div>
+      <div class="dre-stat neg"><div class="dre-stat-label">Saídas Caixa</div><div class="dre-stat-val" style="color:#dc3545">${fBRL(cxSaidas)}</div></div>
+      <div class="dre-stat ${cxSaldo>=0?'pos':'neg'}"><div class="dre-stat-label">Saldo Caixa</div><div class="dre-stat-val" style="color:${cxSaldo>=0?'#198754':'#dc3545'}">${fBRL(cxSaldo)}</div></div>
+    </div>`:'';
+
   const cc=document.getElementById('rel-chart-card');
   if(porMes&&porMes.length){
     cc.style.display='';
@@ -1175,18 +1269,116 @@ function renderRelatorios(){
       <div class="bar" style="height:${Math.round((m.total/max)*120)}px"></div>
       <div class="bar-label">${m.key}</div></div>`).join('');
   }else cc.style.display='none';
+
+  // ── DRE
+  const lucro=resumo.valorRecebido+cxEntradas-cxSaidas;
+  const margem=resumo.valorTotal>0?((lucro/resumo.valorTotal)*100).toFixed(1):0;
+  document.getElementById('rel-dre-stats').innerHTML=`
+    <div class="dre-stat azul"><div class="dre-stat-label">Faturamento Bruto</div><div class="dre-stat-val" style="color:var(--azul)">${fBRL(resumo.valorTotal)}</div></div>
+    <div class="dre-stat pos"><div class="dre-stat-label">Total Recebido</div><div class="dre-stat-val" style="color:#198754">${fBRL(resumo.valorRecebido+cxEntradas)}</div></div>
+    <div class="dre-stat neg"><div class="dre-stat-label">Total Despesas</div><div class="dre-stat-val" style="color:#dc3545">${fBRL(cxSaidas)}</div></div>
+    <div class="dre-stat ${lucro>=0?'pos':'neg'}"><div class="dre-stat-label">Resultado Líquido</div><div class="dre-stat-val" style="color:${lucro>=0?'#198754':'#dc3545'}">${fBRL(lucro)}</div></div>`;
+  document.getElementById('rel-dre-content').innerHTML=`
+    <table class="dre-table">
+      <tr class="dre-group"><td colspan="2">📋 ORÇAMENTOS / FATURAMENTO</td></tr>
+      <tr><td>Faturamento Bruto (orçamentos emitidos)</td><td class="dre-neu">${fBRL(resumo.valorTotal)}</td></tr>
+      <tr><td>(-) Valores a Receber (pendentes)</td><td class="dre-neg">- ${fBRL(resumo.valorFaltaReceber)}</td></tr>
+      <tr><td>Recebido de Orçamentos</td><td class="dre-pos">${fBRL(resumo.valorRecebido)}</td></tr>
+      <tr><td style="padding-left:20px;color:var(--muted);font-size:12px">NF Emitidas: ${resumo.comNF} orçamentos</td><td></td></tr>
+      <tr class="dre-group"><td colspan="2">💵 CAIXA</td></tr>
+      <tr><td>(+) Entradas do Caixa</td><td class="dre-pos">+ ${fBRL(cxEntradas)}</td></tr>
+      <tr><td>(-) Saídas do Caixa</td><td class="dre-neg">- ${fBRL(cxSaidas)}</td></tr>
+      <tr><td>Saldo do Caixa</td><td class="${cxSaldo>=0?'dre-pos':'dre-neg'}">${fBRL(cxSaldo)}</td></tr>
+      <tr class="dre-group"><td colspan="2">📊 RESULTADO</td></tr>
+      <tr class="dre-total"><td>RESULTADO LÍQUIDO DO PERÍODO</td><td style="font-family:var(--mono);text-align:right;font-size:15px">${fBRL(lucro)}</td></tr>
+      <tr><td style="font-size:12px;color:var(--muted)">Margem sobre faturamento</td><td style="text-align:right;font-size:12px;font-weight:700;color:${lucro>=0?'#198754':'#dc3545'}">${margem}%</td></tr>
+    </table>`;
+
+  // ── Caixa detalhado
+  renderRelCaixa();
+
+  // ── Por Mês
   document.getElementById('rel-mensal-content').innerHTML=porMes&&porMes.length
-    ?`<table class="tbl"><thead><tr><th>Mês</th><th>Qtd</th><th>Total</th><th>Recebido</th></tr></thead><tbody>${porMes.map(m=>`<tr><td>${m.key}</td><td>${m.qtd}</td><td>${fBRL(m.total)}</td><td>${fBRL(m.totalPago)}</td></tr>`).join('')}</tbody></table>`
-    :'<div class="empty">Sem dados</div>';
+    ?`<table class="tbl"><thead><tr><th>Mês</th><th>Qtd Orç.</th><th>Faturamento</th><th>Recebido</th><th>A Receber</th></tr></thead><tbody>
+      ${porMes.map(m=>`<tr>
+        <td><strong>${m.key}</strong></td>
+        <td>${m.qtd}</td>
+        <td style="font-family:var(--mono)">${fBRL(m.total)}</td>
+        <td style="font-family:var(--mono);color:#198754">${fBRL(m.totalPago)}</td>
+        <td style="font-family:var(--mono);color:#dc3545">${fBRL(m.total-m.totalPago)}</td>
+      </tr>`).join('')}
+      <tr style="font-weight:700;background:var(--azul-bg)">
+        <td>TOTAL</td><td>${porMes.reduce((s,m)=>s+m.qtd,0)}</td>
+        <td style="font-family:var(--mono)">${fBRL(porMes.reduce((s,m)=>s+m.total,0))}</td>
+        <td style="font-family:var(--mono);color:#198754">${fBRL(porMes.reduce((s,m)=>s+m.totalPago,0))}</td>
+        <td style="font-family:var(--mono);color:#dc3545">${fBRL(porMes.reduce((s,m)=>s+(m.total-m.totalPago),0))}</td>
+      </tr>
+    </tbody></table>`
+    :'<div class="empty">Sem dados no período</div>';
+
   document.getElementById('rel-op-content').innerHTML=porOperador&&porOperador.length
-    ?`<table class="tbl"><thead><tr><th>Operador</th><th>Qtd</th><th>Total</th></tr></thead><tbody>${porOperador.map(o=>`<tr><td>${esc(o.nome)}</td><td>${o.qtd}</td><td>${fBRL(o.total)}</td></tr>`).join('')}</tbody></table>`
+    ?`<table class="tbl"><thead><tr><th>Operador</th><th>Qtd</th><th>Total</th><th>Recebido</th></tr></thead><tbody>
+      ${porOperador.map(o=>`<tr>
+        <td>${esc(o.nome)}</td><td>${o.qtd}</td>
+        <td style="font-family:var(--mono)">${fBRL(o.total)}</td>
+        <td style="font-family:var(--mono);color:#198754">${fBRL(o.totalPago||0)}</td>
+      </tr>`).join('')}
+    </tbody></table>`
     :'<div class="empty">Sem dados</div>';
+
   document.getElementById('rel-nf-content').innerHTML=comNF&&comNF.length
-    ?`<table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Total</th></tr></thead><tbody>${comNF.map(o=>`<tr><td><span class="badge badge-orc">${String(o.num).padStart(3,'0')}</span></td><td>${esc(o.date||'')}</td><td>${esc(o.nome)}</td><td>${fBRL(o.total)}</td></tr>`).join('')}</tbody></table>`
-    :'<div class="empty">Nenhuma NF</div>';
+    ?`<table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Total</th><th>Status</th></tr></thead><tbody>
+      ${comNF.map(o=>`<tr>
+        <td><span class="badge badge-orc">${String(o.num).padStart(3,'0')}</span></td>
+        <td style="font-size:11px;color:var(--muted)">${esc(o.date||'')}</td>
+        <td>${esc(o.nome)}</td>
+        <td style="font-family:var(--mono)">${fBRL(o.total)}</td>
+        <td><span class="badge ${o.pago?'badge-pago':'badge-nao-pago'}">${o.pago?'✅ Pago':'⏳ Pendente'}</span></td>
+      </tr>`).join('')}
+    </tbody></table>`
+    :'<div class="empty">Nenhuma NF no período</div>';
+
   document.getElementById('rel-lista-content').innerHTML=lista&&lista.length
-    ?`<table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Total</th><th>Status</th></tr></thead><tbody>${lista.map(o=>`<tr><td><span class="badge badge-orc">${String(o.num).padStart(3,'0')}</span></td><td style="font-size:11px;color:var(--muted)">${esc(o.date||'')}</td><td>${esc(o.nome)}</td><td style="font-family:var(--mono)">${fBRL(o.total)}</td><td><span class="badge ${o.pago?'badge-pago':'badge-nao-pago'}">${o.pago?'Pago':'Pendente'}</span></td></tr>`).join('')}</tbody></table>`
-    :'<div class="empty">Sem dados</div>';
+    ?`<table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Comércio</th><th>Total</th><th>Recebido</th><th>Status</th></tr></thead><tbody>
+      ${lista.map(o=>`<tr>
+        <td><span class="badge badge-orc">${String(o.num).padStart(3,'0')}</span></td>
+        <td style="font-size:11px;color:var(--muted);white-space:nowrap">${esc(o.date||'')}</td>
+        <td>${esc(o.nome)}</td>
+        <td style="font-size:11px;color:var(--muted)">${esc(o.comercio||'')}</td>
+        <td style="font-family:var(--mono)">${fBRL(o.total)}</td>
+        <td style="font-family:var(--mono);color:${o.pago?'#198754':'#dc3545'}">${fBRL(o.valorRecebido||0)}</td>
+        <td><span class="badge ${o.pago?'badge-pago':'badge-nao-pago'}">${o.pago?'✅ Pago':'⏳ Pendente'}</span></td>
+      </tr>`).join('')}
+    </tbody></table>`
+    :'<div class="empty">Sem dados no período</div>';
+}
+function renderRelCaixa(){
+  const cx=relCaixaData||[];
+  const tipo=document.getElementById('rel-caixa-tipo')?.value||'';
+  const list=tipo?cx.filter(t=>t.tipo===tipo):cx;
+  const entradas=list.filter(t=>t.tipo==='entrada').reduce((s,t)=>s+t.valor,0);
+  const saidas  =list.filter(t=>t.tipo==='saida'  ).reduce((s,t)=>s+t.valor,0);
+  const saldo=entradas-saidas;
+  const cont=document.getElementById('rel-caixa-content');if(!cont)return;
+  cont.innerHTML=`
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:10px;background:var(--bg);border-radius:8px">
+      <div><span style="font-size:11px;color:var(--muted)">Entradas</span><div style="font-weight:700;color:#198754;font-family:var(--mono)">${fBRL(entradas)}</div></div>
+      <div><span style="font-size:11px;color:var(--muted)">Saídas</span><div style="font-weight:700;color:#dc3545;font-family:var(--mono)">${fBRL(saidas)}</div></div>
+      <div><span style="font-size:11px;color:var(--muted)">Saldo</span><div style="font-weight:700;color:${saldo>=0?'#198754':'#dc3545'};font-family:var(--mono)">${fBRL(saldo)}</div></div>
+      <div><span style="font-size:11px;color:var(--muted)">Transações</span><div style="font-weight:700">${list.length}</div></div>
+    </div>
+    ${list.length?`<div style="overflow-x:auto"><table class="tbl"><thead><tr>
+      <th>Data</th><th>Descrição</th><th>Tipo</th><th>Categoria</th><th>Orç.</th><th>Valor</th>
+    </tr></thead><tbody>
+      ${list.map(t=>`<tr>
+        <td style="font-size:12px;white-space:nowrap;color:var(--muted)">${fmtData(t.data)}</td>
+        <td><div style="font-weight:600">${esc(t.descricao)}</div>${t.obs?`<div style="font-size:10px;color:var(--muted)">${esc(t.obs)}</div>`:''}</td>
+        <td><span class="badge-${t.tipo}">${t.tipo==='entrada'?'💚 Entrada':'🔴 Saída'}</span></td>
+        <td style="font-size:12px;color:var(--muted)">${esc(t.categoria||'—')}</td>
+        <td>${t.orcamentoNum?`<span class="badge badge-orc">${String(t.orcamentoNum).padStart(3,'0')}</span>`:'—'}</td>
+        <td class="${t.tipo==='entrada'?'caixa-entrada':'caixa-saida'}" style="font-family:var(--mono);font-size:12px;white-space:nowrap">${t.tipo==='saida'?'- ':'+ '}${fBRL(t.valor)}</td>
+      </tr>`).join('')}
+    </tbody></table></div>`:'<div class="empty">Nenhuma transação no período.</div>'}`;
 }
 
 // ════ USUÁRIOS ════════════════════════════════════════
@@ -1732,14 +1924,29 @@ function editarPedido(id){
 function addPedItem(desc='',qty='',unit=''){
   pedItemCount++;
   const id='pr'+pedItemCount;
-  const div=document.createElement('div');div.className='item-row';div.id=id;
-  div.innerHTML=`
-    <input type="text" placeholder="Descrição" value="${esc(desc)}" oninput="calcPedRow('${id}')">
-    <input type="number" placeholder="1" min="0" value="${qty}" oninput="calcPedRow('${id}')">
-    <input type="number" placeholder="0,00" min="0" step="0.01" value="${unit}" oninput="calcPedRow('${id}')">
-    <div class="item-total" id="pt-${id}">R$ 0,00</div>
-    <button type="button" class="rm-btn" onclick="document.getElementById('${id}').remove();calcPedGrand()" title="Remover">×</button>`;
-  document.getElementById('ped-items-container').appendChild(div);
+  const wrap=document.createElement('div');
+  wrap.id='w-'+id;
+  wrap.innerHTML=`
+    <div class="item-row" id="${id}">
+      <input type="text" placeholder="Descrição do item" value="${esc(desc)}" oninput="calcPedRow('${id}')">
+      <input type="number" placeholder="Qtd" min="0" value="${qty}" id="q-${id}" oninput="calcPedRow('${id}')">
+      <input type="number" placeholder="Preço unit." min="0" step="0.01" value="${unit}" oninput="calcPedRow('${id}')">
+      <div class="item-total" id="pt-${id}">R$ 0,00</div>
+      <div class="item-btns">
+        <button type="button" class="m2-btn" id="m2btn-${id}" onclick="toggleM2Row('${id}','ped')" title="Calcular m²">📐</button>
+        <button type="button" class="rm-btn" onclick="document.getElementById('w-${id}').remove();calcPedGrand()" title="Remover">×</button>
+      </div>
+    </div>
+    <div class="item-m2-row" id="m2-${id}">
+      <span style="font-size:11px;font-weight:700;color:var(--azul);white-space:nowrap">📐 m²</span>
+      <input type="number" placeholder="Larg.(m)" min="0" step="0.001" id="m2l-${id}" oninput="applyM2Row('${id}','ped')">
+      <span class="m2-sep">×</span>
+      <input type="number" placeholder="Alt.(m)" min="0" step="0.001" id="m2a-${id}" oninput="applyM2Row('${id}','ped')">
+      <span class="m2-sep">=</span>
+      <span id="m2r-${id}" class="m2-result">—</span>
+      <span style="font-size:11px;color:var(--muted)">(preenche qtd automaticamente)</span>
+    </div>`;
+  document.getElementById('ped-items-container').appendChild(wrap);
   if(desc&&qty&&unit)calcPedRow(id);
 }
 function calcPedRow(id){
