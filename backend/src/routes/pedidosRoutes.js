@@ -13,6 +13,54 @@ router.get('/', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+/* Relatório de pedidos (admin) — DEVE vir ANTES de /:id */
+router.get('/relatorios', adminOnly, async (req, res, next) => {
+  try {
+    const { Pedidos } = require('../db');
+    const q = req.query;
+    const dataInicio = q.dataInicio || q.di;
+    const dataFim    = q.dataFim    || q.df;
+    const { mes, ano } = q;
+    const list = await Pedidos.report({ dataInicio, dataFim, mes, ano });
+
+    const valorTotal   = list.reduce((s, p) => s + p.total, 0);
+    const pagos        = list.filter(p => p.pago);
+    const naoRecebidos = list.filter(p => !p.pago && p.status !== 'cancelado');
+
+    const porStatus = {};
+    list.forEach(p => {
+      if (!porStatus[p.status]) porStatus[p.status] = { status: p.status, qtd: 0, total: 0, totalPago: 0 };
+      porStatus[p.status].qtd++;
+      porStatus[p.status].total += p.total;
+      if (p.pago) porStatus[p.status].totalPago += p.valorRecebido || p.total;
+    });
+
+    const porMes = {};
+    list.forEach(p => {
+      if (!p.criadoEm) return;
+      const key = p.criadoEm.substring(0, 7);
+      if (!porMes[key]) porMes[key] = { key, qtd: 0, total: 0, pagos: 0, totalPago: 0 };
+      porMes[key].qtd++;
+      porMes[key].total += p.total;
+      if (p.pago) { porMes[key].pagos++; porMes[key].totalPago += p.valorRecebido || p.total; }
+    });
+
+    res.json({
+      resumo: {
+        totalPedidos: list.length,
+        valorTotal,
+        totalPagos: pagos.length,
+        valorRecebido: pagos.reduce((s, p) => s + (p.valorRecebido || p.total), 0),
+        totalPendentes: naoRecebidos.length,
+        valorPendente: naoRecebidos.reduce((s, p) => s + p.total, 0)
+      },
+      porStatus: Object.values(porStatus),
+      porMes: Object.values(porMes).sort((a, b) => a.key.localeCompare(b.key)),
+      lista: list
+    });
+  } catch(e) { next(e); }
+});
+
 /* Busca orçamento pelo número para vincular ao pedido — DEVE vir ANTES de /:id */
 router.get('/por-orcamento/:num', async (req, res, next) => {
   try {
@@ -35,8 +83,8 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { Pedidos } = require('../db');
-    const { clienteId, clienteNome, items, total, prazoEntrega, obs,
-            orcamentoId, orcamentoNum, status } = req.body;
+    const { clienteId, clienteNome, items, total, totalBruto, prazoEntrega, obs,
+            orcamentoId, orcamentoNum, status, desconto, descontoTipo, pago, valorRecebido } = req.body;
     if (!clienteNome?.trim()) return res.status(400).json({ error: 'Nome do cliente é obrigatório' });
     const novo = await Pedidos.create({
       id: uuidv4(),
@@ -44,11 +92,16 @@ router.post('/', async (req, res, next) => {
       clienteNome:  clienteNome.trim(),
       items:        items        || [],
       total:        total        || 0,
+      totalBruto:   totalBruto   || total || 0,
+      desconto:     desconto     || 0,
+      descontoTipo: descontoTipo || 'pct',
       prazoEntrega: prazoEntrega || '',
       obs:          obs          || '',
       orcamentoId:  orcamentoId  || '',
       orcamentoNum: orcamentoNum || null,
       status:       status       || 'pendente',
+      pago:         pago         || false,
+      valorRecebido:valorRecebido|| 0,
       owner:        req.user.username,
       ownerNome:    req.user.nome,
       criadoEm:     new Date().toISOString()
@@ -60,14 +113,20 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { Pedidos } = require('../db');
-    const { status, prazoEntrega, obs, items, total, clienteNome } = req.body;
+    const { status, prazoEntrega, obs, items, total, totalBruto, clienteNome,
+            desconto, descontoTipo, pago, valorRecebido } = req.body;
     const updated = await Pedidos.update(req.params.id, {
-      ...(status       !== undefined && { status }),
-      ...(prazoEntrega !== undefined && { prazoEntrega }),
-      ...(obs          !== undefined && { obs }),
-      ...(items        !== undefined && { items }),
-      ...(total        !== undefined && { total }),
-      ...(clienteNome  !== undefined && { clienteNome }),
+      ...(status        !== undefined && { status }),
+      ...(prazoEntrega  !== undefined && { prazoEntrega }),
+      ...(obs           !== undefined && { obs }),
+      ...(items         !== undefined && { items }),
+      ...(total         !== undefined && { total }),
+      ...(totalBruto    !== undefined && { totalBruto }),
+      ...(clienteNome   !== undefined && { clienteNome }),
+      ...(desconto      !== undefined && { desconto }),
+      ...(descontoTipo  !== undefined && { descontoTipo }),
+      ...(pago          !== undefined && { pago }),
+      ...(valorRecebido !== undefined && { valorRecebido }),
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);
