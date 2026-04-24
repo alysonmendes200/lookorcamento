@@ -5,88 +5,97 @@ const { auth, adminOnly } = require('../middleware/auth');
 
 router.use(auth);
 
-// ─── LISTAR PEDIDOS ───────────────────────────────────────
+// GET /api/pedidos
 router.get('/', async (req, res) => {
   try {
     const { Pedidos } = require('../db');
-    const pedidos = await Pedidos.all(req.user.role === 'admin' ? null : req.user.username);
-    res.json(pedidos);
+    const owner = req.user.role === 'admin' ? null : req.user.username;
+    res.json(await Pedidos.all(owner));
   } catch (err) {
+    console.error('Erro ao listar pedidos:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ─── BUSCAR PEDIDO POR ID ─────────────────────────────────
+// GET /api/pedidos/por-orcamento/:num  — busca orçamento pelo número para vincular
+router.get('/por-orcamento/:num', async (req, res) => {
+  try {
+    const { Orcamentos } = require('../db');
+    const orc = await Orcamentos.findByNum(parseInt(req.params.num));
+    if (!orc) return res.status(404).json({ error: 'Orçamento não encontrado' });
+    res.json(orc);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// GET /api/pedidos/:id
 router.get('/:id', async (req, res) => {
   try {
     const { Pedidos } = require('../db');
-    const pedido = await Pedidos.getById(req.params.id);
-    if (!pedido) return res.status(404).json({ error: 'Pedido não encontrado' });
-    res.json(pedido);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    const p = await Pedidos.find(req.params.id);
+    if (!p) return res.status(404).json({ error: 'Pedido não encontrado' });
+    res.json(p);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ─── CRIAR PEDIDO ─────────────────────────────────────────
+// POST /api/pedidos
 router.post('/', async (req, res) => {
   try {
     const { Pedidos } = require('../db');
-    const { clienteId, clienteNome, items, total, prazoEntrega, obs, orcamentoId, orcamentoNum } = req.body;
-    if (!clienteNome) return res.status(400).json({ error: 'Cliente é obrigatório' });
-    if (!items || !items.length) return res.status(400).json({ error: 'Adicione pelo menos um item' });
+    const { clienteId, clienteNome, items, total, prazoEntrega, obs,
+            orcamentoId, orcamentoNum, status } = req.body;
+    if (!clienteNome || !clienteNome.trim())
+      return res.status(400).json({ error: 'Nome do cliente é obrigatório' });
 
-    const pedido = await Pedidos.create({
+    const novo = await Pedidos.create({
       id: uuidv4(),
-      clienteId: clienteId || null,
-      clienteNome,
-      items,
-      total: total || 0,
+      clienteId:    clienteId    || '',
+      clienteNome:  clienteNome.trim(),
+      items:        items        || [],
+      total:        total        || 0,
       prazoEntrega: prazoEntrega || '',
-      obs: obs || '',
-      orcamentoId: orcamentoId || null,
+      obs:          obs          || '',
+      orcamentoId:  orcamentoId  || '',
       orcamentoNum: orcamentoNum || null,
-      status: 'pendente',
-      owner: req.user.username,
-      ownerNome: req.user.nome,
-      criadoEm: new Date().toISOString()
+      status:       status       || 'pendente',
+      owner:        req.user.username,
+      ownerNome:    req.user.nome,
+      criadoEm:     new Date().toISOString()
     });
-    res.status(201).json(pedido);
+    res.status(201).json(novo);
   } catch (err) {
+    console.error('Erro ao criar pedido:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ─── ATUALIZAR STATUS DO PEDIDO ───────────────────────────
+// PUT /api/pedidos/:id
 router.put('/:id', async (req, res) => {
   try {
     const { Pedidos } = require('../db');
     const { status, prazoEntrega, obs, items, total, clienteNome } = req.body;
-
     const updated = await Pedidos.update(req.params.id, {
-      ...(status && { status }),
-      ...(prazoEntrega !== undefined && { prazoEntrega }),
-      ...(obs !== undefined && { obs }),
-      ...(items && { items }),
-      ...(total !== undefined && { total }),
-      ...(clienteNome && { clienteNome }),
+      ...(status        !== undefined && { status }),
+      ...(prazoEntrega  !== undefined && { prazoEntrega }),
+      ...(obs           !== undefined && { obs }),
+      ...(items         !== undefined && { items }),
+      ...(total         !== undefined && { total }),
+      ...(clienteNome   !== undefined && { clienteNome }),
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);
   } catch (err) {
+    console.error('Erro ao atualizar pedido:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ─── EXCLUIR PEDIDO ───────────────────────────────────────
+// DELETE /api/pedidos/:id
 router.delete('/:id', adminOnly, async (req, res) => {
   try {
     const { Pedidos } = require('../db');
     await Pedidos.delete(req.params.id);
     res.json({ ok: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 module.exports = router;
