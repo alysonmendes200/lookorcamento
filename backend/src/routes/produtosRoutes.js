@@ -5,22 +5,18 @@ const { authMiddleware, adminOnly } = require('../auth');
 
 router.use(authMiddleware);
 
-// GET /api/produtos
 router.get('/', async (req, res, next) => {
-  try {
-    const { Produtos } = require('../db');
-    res.json(await Produtos.all());
-  } catch (err) { next(err); }
+  try { const { Produtos } = require('../db'); res.json(await Produtos.all()); }
+  catch (e) { next(e); }
 });
 
-// POST /api/produtos
 router.post('/', async (req, res, next) => {
   try {
     const { Produtos } = require('../db');
     const { nome, descricao, unidade, preco, categoria, ativo } = req.body;
-    if (!nome || !nome.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
+    if (!nome?.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const novo = await Produtos.create({
-      id:        uuidv4(),
+      id: uuidv4(),
       nome:      nome.trim(),
       descricao: (descricao || '').trim(),
       unidade:   (unidade   || 'un').trim(),
@@ -31,15 +27,14 @@ router.post('/', async (req, res, next) => {
       criadoEm:  new Date().toISOString()
     });
     res.status(201).json(novo);
-  } catch (err) { next(err); }
+  } catch (e) { next(e); }
 });
 
-// PUT /api/produtos/:id
 router.put('/:id', async (req, res, next) => {
   try {
     const { Produtos } = require('../db');
     const { nome, descricao, unidade, preco, categoria, ativo } = req.body;
-    if (!nome || !nome.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
+    if (!nome?.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const updated = await Produtos.update(req.params.id, {
       nome:      nome.trim(),
       descricao: (descricao || '').trim(),
@@ -50,16 +45,12 @@ router.put('/:id', async (req, res, next) => {
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);
-  } catch (err) { next(err); }
+  } catch (e) { next(e); }
 });
 
-// DELETE /api/produtos/:id  (admin only)
 router.delete('/:id', adminOnly, async (req, res, next) => {
-  try {
-    const { Produtos } = require('../db');
-    await Produtos.delete(req.params.id);
-    res.json({ ok: true });
-  } catch (err) { next(err); }
+  try { const { Produtos } = require('../db'); await Produtos.delete(req.params.id); res.json({ ok: true }); }
+  catch (e) { next(e); }
 });
 
 module.exports = router;

@@ -1,34 +1,29 @@
 const express = require('express');
 const router  = express.Router();
 const { v4: uuidv4 } = require('uuid');
-const { authMiddleware, adminOnly } = require('../auth'); // ← CORRIGIDO
+const { authMiddleware, adminOnly } = require('../auth');
 
-router.use(authMiddleware); // ← CORRIGIDO
+router.use(authMiddleware);
 
-// GET /api/clientes
 router.get('/', async (req, res, next) => {
-  try {
-    const { Clientes } = require('../db');
-    res.json(await Clientes.all());
-  } catch (err) { next(err); }
+  try { const { Clientes } = require('../db'); res.json(await Clientes.all()); }
+  catch (e) { next(e); }
 });
 
-// GET /api/clientes/:id
 router.get('/:id', async (req, res, next) => {
   try {
     const { Clientes } = require('../db');
     const c = await Clientes.find(req.params.id);
     if (!c) return res.status(404).json({ error: 'Cliente não encontrado' });
     res.json(c);
-  } catch (err) { next(err); }
+  } catch (e) { next(e); }
 });
 
-// POST /api/clientes
 router.post('/', async (req, res, next) => {
   try {
     const { Clientes } = require('../db');
     const { nome, comercio, telefone, email, endereco, cpfCnpj, obs } = req.body;
-    if (!nome || !nome.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
+    if (!nome?.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const novo = await Clientes.create({
       id: uuidv4(),
       nome:      nome.trim(),
@@ -43,15 +38,14 @@ router.post('/', async (req, res, next) => {
       criadoEm:      new Date().toISOString()
     });
     res.status(201).json(novo);
-  } catch (err) { next(err); }
+  } catch (e) { next(e); }
 });
 
-// PUT /api/clientes/:id
 router.put('/:id', async (req, res, next) => {
   try {
     const { Clientes } = require('../db');
     const { nome, comercio, telefone, email, endereco, cpfCnpj, obs } = req.body;
-    if (!nome || !nome.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
+    if (!nome?.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const updated = await Clientes.update(req.params.id, {
       nome:     nome.trim(),
       comercio: (comercio  || '').trim(),
@@ -63,16 +57,12 @@ router.put('/:id', async (req, res, next) => {
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);
-  } catch (err) { next(err); }
+  } catch (e) { next(e); }
 });
 
-// DELETE /api/clientes/:id  (admin only)
 router.delete('/:id', adminOnly, async (req, res, next) => {
-  try {
-    const { Clientes } = require('../db');
-    await Clientes.delete(req.params.id);
-    res.json({ ok: true });
-  } catch (err) { next(err); }
+  try { const { Clientes } = require('../db'); await Clientes.delete(req.params.id); res.json({ ok: true }); }
+  catch (e) { next(e); }
 });
 
 module.exports = router;
