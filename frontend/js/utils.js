@@ -51,16 +51,17 @@ function toast(msg, type='') {
   if (!el) {
     el = document.createElement('div');
     el.id = '_toast';
-    el.style.cssText = 'position:fixed;bottom:22px;right:22px;z-index:9999;max-width:320px;padding:12px 18px;border-radius:10px;font-size:13px;font-family:var(--font);box-shadow:0 8px 28px rgba(0,0,0,.4);transition:all .28s ease;transform:translateY(70px);opacity:0;pointer-events:none;background:var(--surface);border:1px solid var(--border);color:var(--text)';
     document.body.appendChild(el);
   }
+  // Sempre reaplica o CSS completo — garante que display:none do HTML não persista
+  el.style.cssText = 'position:fixed;bottom:22px;right:22px;z-index:9999;max-width:320px;padding:12px 18px;border-radius:10px;font-size:13px;font-family:var(--font,sans-serif);box-shadow:0 8px 28px rgba(0,0,0,.4);transition:opacity .28s ease,transform .28s ease;transform:translateY(0);opacity:1;pointer-events:none;';
   el.textContent = msg;
-  el.style.borderColor = type==='success'?'var(--accent)': type==='error'?'#e05050': type==='info'?'#4a9ad4':'var(--border)';
-  el.style.color       = type==='success'?'var(--accent)': type==='error'?'#e05050': type==='info'?'#4a9ad4':'var(--text)';
-  el.style.transform = 'translateY(0)';
-  el.style.opacity   = '1';
+  el.style.background  = type==='success'?'#d1fae5': type==='error'?'#fee2e2': type==='info'?'#dbeafe':'#fff';
+  el.style.border      = type==='success'?'1.5px solid #198754': type==='error'?'1.5px solid #dc3545': type==='info'?'1.5px solid #4a9ad4':'1.5px solid #c8d8f0';
+  el.style.color       = type==='success'?'#155724': type==='error'?'#842029': type==='info'?'#1e40af':'#1a1a2e';
+  el.style.fontWeight  = type==='error'?'600':'400';
   clearTimeout(el._t);
-  el._t = setTimeout(() => { el.style.transform='translateY(70px)'; el.style.opacity='0'; }, 3500);
+  el._t = setTimeout(() => { el.style.opacity='0'; el.style.transform='translateY(70px)'; }, 3500);
 }
 
 // ─── Sessão ──────────────────────────────────────────────
