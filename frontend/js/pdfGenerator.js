@@ -51,11 +51,6 @@ const PdfGenerator = (() => {
       doc.rect(0, 0, PAGE_W, 28, 'F');
     }
 
-    // Logo Look (sempre presente — embutida)
-    const logoH = 14;
-    const logoW = logoH * (222/130); // proporção original
-    doc.addImage('data:image/jpeg;base64,' + LOGO_B64, 'PNG', MX, 4, logoW, logoH);
-
     // Texto ORÇAMENTO e número no cabeçalho
     doc.setFont('helvetica','bold');
     doc.setFontSize(14);
