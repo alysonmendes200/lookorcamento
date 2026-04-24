@@ -46,6 +46,7 @@ const orcamentosRoutes = require('./routes/orcamentosRoutes');
 const clientesRoutes  = require('./routes/clientesRoutes');
 const pedidosRoutes   = require('./routes/pedidosRoutes');
 const produtosRoutes  = require('./routes/produtosRoutes');
+const caixaRoutes     = require('./routes/caixaRoutes');
 
 app.use('/api/auth/login', loginLimiter);
 app.use('/api/auth',       authRoutes);
@@ -53,6 +54,7 @@ app.use('/api/orcamentos', orcamentosRoutes);
 app.use('/api/clientes',   clientesRoutes);
 app.use('/api/pedidos',    pedidosRoutes);
 app.use('/api/produtos',   produtosRoutes);
+app.use('/api/caixa',      caixaRoutes);
 
 app.get('/api/health', (req, res) => res.json({ ok: true, ts: new Date().toISOString() }));
 app.get('/', (req, res) => res.json({ name: 'API Look Orçamentos', status: 'online' }));

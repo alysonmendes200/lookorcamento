@@ -125,6 +125,21 @@ async function init() {
     )
   `);
 
+  await query(`
+    CREATE TABLE IF NOT EXISTS caixa_transacoes (
+      id            TEXT PRIMARY KEY,
+      data          TEXT NOT NULL,
+      descricao     TEXT NOT NULL,
+      tipo          TEXT NOT NULL CHECK (tipo IN ('entrada','saida')),
+      valor         NUMERIC(12,2) NOT NULL DEFAULT 0,
+      categoria     TEXT DEFAULT '',
+      orcamento_num INTEGER DEFAULT NULL,
+      obs           TEXT DEFAULT '',
+      criado_por    TEXT DEFAULT '',
+      criado_em     TEXT DEFAULT ''
+    )
+  `);
+
   console.log('✅ Tabelas do banco inicializadas');
 }
 
@@ -420,4 +435,49 @@ function fromDbProduto(r) {
   };
 }
 
-module.exports = { pool, query, init, Users, Orcamentos, Clientes, Pedidos, Produtos, Seq };
+// ══════════════════════════════════════════════
+// CAIXA
+// ══════════════════════════════════════════════
+const Caixa = {
+  all: async ({ dataInicio, dataFim } = {}) => {
+    let sql = 'SELECT * FROM caixa_transacoes WHERE 1=1';
+    const params = [];
+    if (dataInicio) { params.push(dataInicio); sql += ` AND data >= $${params.length}`; }
+    if (dataFim)    { params.push(dataFim);    sql += ` AND data <= $${params.length}`; }
+    sql += ' ORDER BY data DESC, criado_em DESC';
+    const { rows } = await query(sql, params);
+    return rows.map(fromDbCaixa);
+  },
+  create: async (data) => {
+    const { rows } = await query(`
+      INSERT INTO caixa_transacoes
+        (id, data, descricao, tipo, valor, categoria, orcamento_num, obs, criado_por, criado_em)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *
+    `, [data.id, data.data, data.descricao, data.tipo, data.valor,
+        data.categoria || '', data.orcamentoNum || null, data.obs || '',
+        data.criadoPor, data.criadoEm]);
+    return fromDbCaixa(rows[0]);
+  },
+  update: async (id, data) => {
+    const { rows } = await query(`
+      UPDATE caixa_transacoes
+         SET data=$2, descricao=$3, tipo=$4, valor=$5,
+             categoria=$6, orcamento_num=$7, obs=$8
+       WHERE id=$1 RETURNING *
+    `, [id, data.data, data.descricao, data.tipo, data.valor,
+        data.categoria || '', data.orcamentoNum || null, data.obs || '']);
+    return fromDbCaixa(rows[0]);
+  },
+  delete: async (id) => { await query('DELETE FROM caixa_transacoes WHERE id = $1', [id]); }
+};
+
+function fromDbCaixa(r) {
+  return {
+    id: r.id, data: r.data, descricao: r.descricao, tipo: r.tipo,
+    valor: parseFloat(r.valor) || 0, categoria: r.categoria || '',
+    orcamentoNum: r.orcamento_num, obs: r.obs || '',
+    criadoPor: r.criado_por, criadoEm: r.criado_em
+  };
+}
+
+module.exports = { pool, query, init, Users, Orcamentos, Clientes, Pedidos, Produtos, Seq, Caixa };
