@@ -83,7 +83,11 @@ router.put('/nextnum', authMiddleware, adminOnly, async (req, res, next) => {
 // ══════════════════════════════════════════════
 router.get('/relatorios', authMiddleware, adminOnly, async (req, res, next) => {
   try {
-    const { dataInicio, dataFim, mes, ano } = req.query;
+    // Aceita tanto dataInicio/dataFim quanto di/df
+    const q = req.query;
+    const dataInicio = q.dataInicio || q.di;
+    const dataFim    = q.dataFim    || q.df;
+    const { mes, ano } = q;
     const list = await Orcamentos.report({ dataInicio, dataFim, mes, ano });
 
     const total = list.reduce((s, o) => s + o.total, 0);
@@ -107,9 +111,10 @@ router.get('/relatorios', authMiddleware, adminOnly, async (req, res, next) => {
     const porOperador = {};
     list.forEach(o => {
       const k = o.ownerNome || o.owner || 'N/A';
-      if (!porOperador[k]) porOperador[k] = { nome: k, qtd: 0, total: 0 };
+      if (!porOperador[k]) porOperador[k] = { nome: k, qtd: 0, total: 0, totalPago: 0 };
       porOperador[k].qtd++;
       porOperador[k].total += o.total;
+      if (o.pago) porOperador[k].totalPago += o.valorRecebido || o.total;
     });
 
     res.json({
