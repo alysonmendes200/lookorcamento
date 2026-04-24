@@ -20,11 +20,10 @@ async function query(text, params = []) {
 }
 
 // ══════════════════════════════════════════════
-// INIT — cria/atualiza todas as tabelas
+// INIT — cria/atualiza TODAS as tabelas
 // ══════════════════════════════════════════════
 async function init() {
 
-  // ── users ─────────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS users (
       id            TEXT PRIMARY KEY,
@@ -36,46 +35,45 @@ async function init() {
     )
   `);
 
-  // ── orcamentos ────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS orcamentos (
-      id                TEXT PRIMARY KEY,
-      num               INTEGER NOT NULL,
-      date_display      TEXT,
-      created_at        TIMESTAMP DEFAULT NOW(),
-      nome              TEXT NOT NULL,
-      comercio          TEXT,
-      prazo             TEXT,
-      validade          TEXT,
-      pagamento         TEXT,
-      obs               TEXT DEFAULT '',
-      items             JSONB NOT NULL DEFAULT '[]',
-      total             NUMERIC(12,2) NOT NULL DEFAULT 0,
-      owner             TEXT NOT NULL,
-      owner_nome        TEXT,
-      nf_status         TEXT DEFAULT 'nao_emitida',
-      nf_file           TEXT,
-      nf_original_name  TEXT,
-      nf_uploaded_at    TEXT,
-      pago              BOOLEAN DEFAULT FALSE,
-      valor_recebido    NUMERIC(12,2) DEFAULT 0,
-      edited_at         TEXT,
-      edited_by         TEXT
+      id               TEXT PRIMARY KEY,
+      num              INTEGER NOT NULL,
+      date_display     TEXT,
+      created_at       TIMESTAMP DEFAULT NOW(),
+      nome             TEXT NOT NULL,
+      comercio         TEXT,
+      prazo            TEXT,
+      validade         TEXT,
+      pagamento        TEXT,
+      obs              TEXT DEFAULT '',
+      items            JSONB NOT NULL DEFAULT '[]',
+      total            NUMERIC(12,2) NOT NULL DEFAULT 0,
+      owner            TEXT NOT NULL,
+      owner_nome       TEXT,
+      nf_status        TEXT DEFAULT 'nao_emitida',
+      nf_file          TEXT,
+      nf_original_name TEXT,
+      nf_uploaded_at   TEXT,
+      pago             BOOLEAN DEFAULT FALSE,
+      valor_recebido   NUMERIC(12,2) DEFAULT 0,
+      edited_at        TEXT,
+      edited_by        TEXT
     )
   `);
-  // Upgrade seguro: adiciona coluna obs se não existir
+
+  /* Upgrade seguro: adiciona obs se coluna não existir ainda */
   await query(`ALTER TABLE orcamentos ADD COLUMN IF NOT EXISTS obs TEXT DEFAULT ''`);
 
-  // ── sequence ──────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS sequence (
       key   TEXT PRIMARY KEY,
       value INTEGER NOT NULL
     )
   `);
+
   await query(`INSERT INTO sequence (key, value) VALUES ('orc_num', 324) ON CONFLICT DO NOTHING`);
 
-  // ── clientes ──────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS clientes (
       id              TEXT PRIMARY KEY,
@@ -93,7 +91,6 @@ async function init() {
     )
   `);
 
-  // ── pedidos ───────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS pedidos (
       id            TEXT PRIMARY KEY,
@@ -113,7 +110,6 @@ async function init() {
     )
   `);
 
-  // ── produtos ──────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS produtos (
       id            TEXT PRIMARY KEY,
@@ -157,7 +153,7 @@ const Users = {
   },
   update: async (id, patch) => {
     const fields = []; const values = []; let idx = 1;
-    const map = { nome:'nome', username:'username', passwordHash:'password_hash', role:'role' };
+    const map = { nome: 'nome', username: 'username', passwordHash: 'password_hash', role: 'role' };
     for (const [k, col] of Object.entries(map)) {
       if (patch[k] !== undefined) { fields.push(`${col} = $${idx++}`); values.push(patch[k]); }
     }
@@ -169,7 +165,7 @@ const Users = {
 };
 
 function fromDbUser(r) {
-  return { id:r.id, nome:r.nome, username:r.username, passwordHash:r.password_hash, role:r.role, createdAt:r.created_at };
+  return { id: r.id, nome: r.nome, username: r.username, passwordHash: r.password_hash, role: r.role, createdAt: r.created_at };
 }
 
 // ══════════════════════════════════════════════
@@ -208,11 +204,11 @@ const Orcamentos = {
   },
   update: async (id, patch) => {
     const map = {
-      nome:'nome', comercio:'comercio', prazo:'prazo', validade:'validade',
-      pagamento:'pagamento', obs:'obs', items:'items', total:'total',
-      nfStatus:'nf_status', nfFile:'nf_file', nfOriginalName:'nf_original_name',
-      nfUploadedAt:'nf_uploaded_at', pago:'pago', valorRecebido:'valor_recebido',
-      editedAt:'edited_at', editedBy:'edited_by'
+      nome: 'nome', comercio: 'comercio', prazo: 'prazo', validade: 'validade',
+      pagamento: 'pagamento', obs: 'obs', items: 'items', total: 'total',
+      nfStatus: 'nf_status', nfFile: 'nf_file', nfOriginalName: 'nf_original_name',
+      nfUploadedAt: 'nf_uploaded_at', pago: 'pago', valorRecebido: 'valor_recebido',
+      editedAt: 'edited_at', editedBy: 'edited_by'
     };
     const fields = []; const values = []; let idx = 1;
     for (const [k, col] of Object.entries(map)) {
@@ -229,10 +225,10 @@ const Orcamentos = {
   report: async ({ dataInicio, dataFim, mes, ano }) => {
     let sql = 'SELECT * FROM orcamentos WHERE 1=1';
     const params = [];
-    if (dataInicio) { params.push(dataInicio);            sql += ` AND created_at >= $${params.length}`; }
-    if (dataFim)    { params.push(dataFim+'T23:59:59');   sql += ` AND created_at <= $${params.length}`; }
-    if (ano)        { params.push(parseInt(ano));          sql += ` AND EXTRACT(YEAR  FROM created_at) = $${params.length}`; }
-    if (mes)        { params.push(parseInt(mes));          sql += ` AND EXTRACT(MONTH FROM created_at) = $${params.length}`; }
+    if (dataInicio) { params.push(dataInicio);           sql += ` AND created_at >= $${params.length}`; }
+    if (dataFim)    { params.push(dataFim + 'T23:59:59');sql += ` AND created_at <= $${params.length}`; }
+    if (ano)        { params.push(parseInt(ano));         sql += ` AND EXTRACT(YEAR  FROM created_at) = $${params.length}`; }
+    if (mes)        { params.push(parseInt(mes));         sql += ` AND EXTRACT(MONTH FROM created_at) = $${params.length}`; }
     sql += ' ORDER BY num DESC';
     const { rows } = await query(sql, params);
     return rows.map(fromDbOrc);
@@ -241,16 +237,16 @@ const Orcamentos = {
 
 function fromDbOrc(r) {
   return {
-    id:r.id, num:r.num, date:r.date_display, createdAt:r.created_at,
-    nome:r.nome, comercio:r.comercio, prazo:r.prazo, validade:r.validade,
-    pagamento:r.pagamento, obs:r.obs || '',
+    id: r.id, num: r.num, date: r.date_display, createdAt: r.created_at,
+    nome: r.nome, comercio: r.comercio, prazo: r.prazo,
+    validade: r.validade, pagamento: r.pagamento, obs: r.obs || '',
     items: typeof r.items === 'string' ? JSON.parse(r.items) : (r.items || []),
     total: parseFloat(r.total),
-    owner:r.owner, ownerNome:r.owner_nome,
-    nfStatus:r.nf_status, nfFile:r.nf_file,
-    nfOriginalName:r.nf_original_name, nfUploadedAt:r.nf_uploaded_at,
-    pago:r.pago, valorRecebido:parseFloat(r.valor_recebido || 0),
-    editedAt:r.edited_at, editedBy:r.edited_by
+    owner: r.owner, ownerNome: r.owner_nome,
+    nfStatus: r.nf_status, nfFile: r.nf_file,
+    nfOriginalName: r.nf_original_name, nfUploadedAt: r.nf_uploaded_at,
+    pago: r.pago, valorRecebido: parseFloat(r.valor_recebido || 0),
+    editedAt: r.edited_at, editedBy: r.edited_by
   };
 }
 
@@ -312,10 +308,10 @@ const Clientes = {
 
 function fromDbCliente(r) {
   return {
-    id:r.id, nome:r.nome, comercio:r.comercio, telefone:r.telefone,
-    email:r.email, cpfCnpj:r.cpfcnpj, endereco:r.endereco, obs:r.obs,
-    criadoPor:r.criado_por, criadoPorNome:r.criado_por_nome,
-    criadoEm:r.criado_em, atualizadoEm:r.atualizado_em
+    id: r.id, nome: r.nome, comercio: r.comercio, telefone: r.telefone,
+    email: r.email, cpfCnpj: r.cpfcnpj, endereco: r.endereco, obs: r.obs,
+    criadoPor: r.criado_por, criadoPorNome: r.criado_por_nome,
+    criadoEm: r.criado_em, atualizadoEm: r.atualizado_em
   };
 }
 
@@ -350,9 +346,9 @@ const Pedidos = {
   },
   update: async (id, data) => {
     const map = {
-      status:'status', prazoEntrega:'prazo_entrega', obs:'obs',
-      items:'items', total:'total', clienteNome:'cliente_nome',
-      atualizadoEm:'atualizado_em'
+      status: 'status', prazoEntrega: 'prazo_entrega', obs: 'obs',
+      items: 'items', total: 'total', clienteNome: 'cliente_nome',
+      atualizadoEm: 'atualizado_em'
     };
     const fields = []; const values = [id]; let idx = 2;
     for (const [k, col] of Object.entries(map)) {
@@ -361,7 +357,7 @@ const Pedidos = {
         values.push(k === 'items' ? JSON.stringify(data[k]) : data[k]);
       }
     }
-    if (!fields.length) return fromDbPedido({ id });
+    if (!fields.length) return { id };
     const { rows } = await query(
       `UPDATE pedidos SET ${fields.join(', ')} WHERE id = $1 RETURNING *`, values
     );
@@ -372,13 +368,13 @@ const Pedidos = {
 
 function fromDbPedido(r) {
   return {
-    id:r.id, clienteId:r.cliente_id, clienteNome:r.cliente_nome,
+    id: r.id, clienteId: r.cliente_id, clienteNome: r.cliente_nome,
     items: typeof r.items === 'string' ? JSON.parse(r.items) : (r.items || []),
     total: parseFloat(r.total) || 0,
-    prazoEntrega:r.prazo_entrega, obs:r.obs,
-    orcamentoId:r.orcamento_id, orcamentoNum:r.orcamento_num,
-    status:r.status, owner:r.owner, ownerNome:r.owner_nome,
-    criadoEm:r.criado_em, atualizadoEm:r.atualizado_em
+    prazoEntrega: r.prazo_entrega, obs: r.obs,
+    orcamentoId: r.orcamento_id, orcamentoNum: r.orcamento_num,
+    status: r.status, owner: r.owner, ownerNome: r.owner_nome,
+    criadoEm: r.criado_em, atualizadoEm: r.atualizado_em
   };
 }
 
@@ -400,8 +396,7 @@ const Produtos = {
         (id, nome, descricao, unidade, preco, categoria, ativo, criado_por, criado_em)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *
     `, [data.id, data.nome, data.descricao, data.unidade,
-        data.preco, data.categoria, data.ativo,
-        data.criadoPor, data.criadoEm]);
+        data.preco, data.categoria, data.ativo, data.criadoPor, data.criadoEm]);
     return fromDbProduto(rows[0]);
   },
   update: async (id, data) => {
@@ -419,9 +414,9 @@ const Produtos = {
 
 function fromDbProduto(r) {
   return {
-    id:r.id, nome:r.nome, descricao:r.descricao, unidade:r.unidade,
-    preco:parseFloat(r.preco) || 0, categoria:r.categoria, ativo:r.ativo,
-    criadoPor:r.criado_por, criadoEm:r.criado_em, atualizadoEm:r.atualizado_em
+    id: r.id, nome: r.nome, descricao: r.descricao, unidade: r.unidade,
+    preco: parseFloat(r.preco) || 0, categoria: r.categoria, ativo: r.ativo,
+    criadoPor: r.criado_por, criadoEm: r.criado_em, atualizadoEm: r.atualizado_em
   };
 }
 

@@ -24,10 +24,10 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(rateLimit({ windowMs: 15*60*1000, max: 300, standardHeaders: true, legacyHeaders: false }));
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 300, standardHeaders: true, legacyHeaders: false }));
 
 const loginLimiter = rateLimit({
-  windowMs: 15*60*1000, max: 10,
+  windowMs: 15 * 60 * 1000, max: 10,
   message: { error: 'Muitas tentativas. Tente em 15 minutos.' },
   standardHeaders: true, legacyHeaders: false
 });
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ─── ROTAS ────────────────────────────────────────────────
+// ─── ROTAS ────────────────────────────────────
 const authRoutes      = require('./routes/authRoutes');
 const orcamentosRoutes = require('./routes/orcamentosRoutes');
 const clientesRoutes  = require('./routes/clientesRoutes');
@@ -55,7 +55,7 @@ app.use('/api/pedidos',    pedidosRoutes);
 app.use('/api/produtos',   produtosRoutes);
 
 app.get('/api/health', (req, res) => res.json({ ok: true, ts: new Date().toISOString() }));
-app.get('/', (req, res) => res.json({ name: 'API de Orçamentos', status: 'online' }));
+app.get('/', (req, res) => res.json({ name: 'API Look Orçamentos', status: 'online' }));
 
 app.use((req, res) => res.status(404).json({ error: 'Rota não encontrada' }));
 app.use((err, req, res, next) => {
@@ -64,7 +64,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message || 'Erro interno' });
 });
 
-// ─── SEED ────────────────────────────────────────────────
+// ─── SEED ─────────────────────────────────────
 async function seed(Users, Seq) {
   const users = await Users.all();
   if (users.length === 0) {
@@ -76,17 +76,14 @@ async function seed(Users, Seq) {
   if (!next || next < 1) await Seq.setNext(324);
 }
 
-// ─── START ───────────────────────────────────────────────
+// ─── START ────────────────────────────────────
 const PORT = process.env.PORT || 3001;
 const missing = [];
 if (!process.env.JWT_SECRET)   missing.push('JWT_SECRET');
 if (!process.env.DATABASE_URL) missing.push('DATABASE_URL');
 
 if (missing.length > 0) {
-  console.error('\n╔═══════════════════════════════════════════════╗');
-  console.error('║  ❌  VARIÁVEIS DE AMBIENTE NÃO CONFIGURADAS   ║');
-  missing.forEach(v => console.error(`║  → ${v.padEnd(43)}║`));
-  console.error('╚═══════════════════════════════════════════════╝\n');
+  console.error('\n❌ VARIÁVEIS FALTANDO:', missing.join(', '));
   process.exit(1);
 }
 
@@ -97,12 +94,11 @@ if (missing.length > 0) {
     await init();
     await seed(Users, Seq);
     app.listen(PORT, '0.0.0.0', () => {
-      console.log(`\n🚀 Servidor rodando na porta ${PORT}`);
-      console.log(`🌐 Origens permitidas: ${allowedOrigins.join(', ')}\n`);
+      console.log(`\n🚀 Servidor na porta ${PORT}`);
+      console.log(`🌐 Origens: ${allowedOrigins.join(', ') || '(todas)'}\n`);
     });
   } catch (err) {
-    console.error('\n❌ FALHA AO INICIAR:', err.message);
-    console.error(err);
+    console.error('\n❌ FALHA AO INICIAR:', err.message, '\n');
     process.exit(1);
   }
 })();
