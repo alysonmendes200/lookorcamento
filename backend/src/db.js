@@ -1,5 +1,5 @@
 /**
- * db.js — Camada de acesso ao PostgreSQL (CORRIGIDO)
+ * db.js — Camada de acesso ao PostgreSQL
  */
 const { Pool } = require('pg');
 
@@ -20,9 +20,11 @@ async function query(text, params = []) {
 }
 
 // ══════════════════════════════════════════════
-// INIT — Cria TODAS as tabelas automaticamente
+// INIT — cria/atualiza todas as tabelas
 // ══════════════════════════════════════════════
 async function init() {
+
+  // ── users ─────────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS users (
       id            TEXT PRIMARY KEY,
@@ -34,6 +36,7 @@ async function init() {
     )
   `);
 
+  // ── orcamentos ────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS orcamentos (
       id                TEXT PRIMARY KEY,
@@ -46,8 +49,8 @@ async function init() {
       validade          TEXT,
       pagamento         TEXT,
       obs               TEXT DEFAULT '',
-      items             JSONB NOT NULL,
-      total             NUMERIC(12,2) NOT NULL,
+      items             JSONB NOT NULL DEFAULT '[]',
+      total             NUMERIC(12,2) NOT NULL DEFAULT 0,
       owner             TEXT NOT NULL,
       owner_nome        TEXT,
       nf_status         TEXT DEFAULT 'nao_emitida',
@@ -60,24 +63,19 @@ async function init() {
       edited_by         TEXT
     )
   `);
+  // Upgrade seguro: adiciona coluna obs se não existir
+  await query(`ALTER TABLE orcamentos ADD COLUMN IF NOT EXISTS obs TEXT DEFAULT ''`);
 
-  // Adiciona coluna obs em orcamentos se ainda não existir (upgrade seguro)
-  await query(`
-    ALTER TABLE orcamentos ADD COLUMN IF NOT EXISTS obs TEXT DEFAULT ''
-  `);
-
+  // ── sequence ──────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS sequence (
       key   TEXT PRIMARY KEY,
       value INTEGER NOT NULL
     )
   `);
+  await query(`INSERT INTO sequence (key, value) VALUES ('orc_num', 324) ON CONFLICT DO NOTHING`);
 
-  await query(`
-    INSERT INTO sequence (key, value) VALUES ('orc_num', 324) ON CONFLICT DO NOTHING
-  `);
-
-  // ── Clientes ──────────────────────────────────
+  // ── clientes ──────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS clientes (
       id              TEXT PRIMARY KEY,
@@ -95,7 +93,7 @@ async function init() {
     )
   `);
 
-  // ── Pedidos ───────────────────────────────────
+  // ── pedidos ───────────────────────────────────
   await query(`
     CREATE TABLE IF NOT EXISTS pedidos (
       id            TEXT PRIMARY KEY,
@@ -110,6 +108,22 @@ async function init() {
       status        TEXT DEFAULT 'pendente',
       owner         TEXT DEFAULT '',
       owner_nome    TEXT DEFAULT '',
+      criado_em     TEXT DEFAULT '',
+      atualizado_em TEXT DEFAULT ''
+    )
+  `);
+
+  // ── produtos ──────────────────────────────────
+  await query(`
+    CREATE TABLE IF NOT EXISTS produtos (
+      id            TEXT PRIMARY KEY,
+      nome          TEXT NOT NULL,
+      descricao     TEXT DEFAULT '',
+      unidade       TEXT DEFAULT 'un',
+      preco         NUMERIC(12,2) DEFAULT 0,
+      categoria     TEXT DEFAULT '',
+      ativo         BOOLEAN DEFAULT TRUE,
+      criado_por    TEXT DEFAULT '',
       criado_em     TEXT DEFAULT '',
       atualizado_em TEXT DEFAULT ''
     )
@@ -151,9 +165,7 @@ const Users = {
     values.push(id);
     await query(`UPDATE users SET ${fields.join(', ')} WHERE id = $${idx}`, values);
   },
-  delete: async (id) => {
-    await query('DELETE FROM users WHERE id = $1', [id]);
-  }
+  delete: async (id) => { await query('DELETE FROM users WHERE id = $1', [id]); }
 };
 
 function fromDbUser(r) {
@@ -213,16 +225,14 @@ const Orcamentos = {
     values.push(id);
     await query(`UPDATE orcamentos SET ${fields.join(', ')} WHERE id = $${idx}`, values);
   },
-  delete: async (id) => {
-    await query('DELETE FROM orcamentos WHERE id = $1', [id]);
-  },
+  delete: async (id) => { await query('DELETE FROM orcamentos WHERE id = $1', [id]); },
   report: async ({ dataInicio, dataFim, mes, ano }) => {
     let sql = 'SELECT * FROM orcamentos WHERE 1=1';
     const params = [];
-    if (dataInicio) { params.push(dataInicio);              sql += ` AND created_at >= $${params.length}`; }
-    if (dataFim)    { params.push(dataFim + 'T23:59:59');   sql += ` AND created_at <= $${params.length}`; }
-    if (ano)        { params.push(parseInt(ano));            sql += ` AND EXTRACT(YEAR  FROM created_at) = $${params.length}`; }
-    if (mes)        { params.push(parseInt(mes));            sql += ` AND EXTRACT(MONTH FROM created_at) = $${params.length}`; }
+    if (dataInicio) { params.push(dataInicio);            sql += ` AND created_at >= $${params.length}`; }
+    if (dataFim)    { params.push(dataFim+'T23:59:59');   sql += ` AND created_at <= $${params.length}`; }
+    if (ano)        { params.push(parseInt(ano));          sql += ` AND EXTRACT(YEAR  FROM created_at) = $${params.length}`; }
+    if (mes)        { params.push(parseInt(mes));          sql += ` AND EXTRACT(MONTH FROM created_at) = $${params.length}`; }
     sql += ' ORDER BY num DESC';
     const { rows } = await query(sql, params);
     return rows.map(fromDbOrc);
@@ -234,11 +244,12 @@ function fromDbOrc(r) {
     id:r.id, num:r.num, date:r.date_display, createdAt:r.created_at,
     nome:r.nome, comercio:r.comercio, prazo:r.prazo, validade:r.validade,
     pagamento:r.pagamento, obs:r.obs || '',
-    items: typeof r.items === 'string' ? JSON.parse(r.items) : r.items,
+    items: typeof r.items === 'string' ? JSON.parse(r.items) : (r.items || []),
     total: parseFloat(r.total),
     owner:r.owner, ownerNome:r.owner_nome,
-    nfStatus:r.nf_status, nfFile:r.nf_file, nfOriginalName:r.nf_original_name, nfUploadedAt:r.nf_uploaded_at,
-    pago:r.pago, valorRecebido: parseFloat(r.valor_recebido || 0),
+    nfStatus:r.nf_status, nfFile:r.nf_file,
+    nfOriginalName:r.nf_original_name, nfUploadedAt:r.nf_uploaded_at,
+    pago:r.pago, valorRecebido:parseFloat(r.valor_recebido || 0),
     editedAt:r.edited_at, editedBy:r.edited_by
   };
 }
@@ -277,25 +288,26 @@ const Clientes = {
   },
   create: async (data) => {
     const { rows } = await query(`
-      INSERT INTO clientes (id,nome,comercio,telefone,email,cpfcnpj,endereco,obs,criado_por,criado_por_nome,criado_em)
+      INSERT INTO clientes
+        (id, nome, comercio, telefone, email, cpfcnpj, endereco, obs,
+         criado_por, criado_por_nome, criado_em)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *
     `, [data.id, data.nome, data.comercio, data.telefone, data.email,
-        data.cpfCnpj, data.endereco, data.obs, data.criadoPor, data.criadoPorNome, data.criadoEm]);
+        data.cpfCnpj, data.endereco, data.obs,
+        data.criadoPor, data.criadoPorNome, data.criadoEm]);
     return fromDbCliente(rows[0]);
   },
   update: async (id, data) => {
     const { rows } = await query(`
       UPDATE clientes
-      SET nome=$2, comercio=$3, telefone=$4, email=$5, cpfcnpj=$6,
-          endereco=$7, obs=$8, atualizado_em=$9
-      WHERE id=$1 RETURNING *
+         SET nome=$2, comercio=$3, telefone=$4, email=$5,
+             cpfcnpj=$6, endereco=$7, obs=$8, atualizado_em=$9
+       WHERE id=$1 RETURNING *
     `, [id, data.nome, data.comercio, data.telefone, data.email,
         data.cpfCnpj, data.endereco, data.obs, data.atualizadoEm]);
     return fromDbCliente(rows[0]);
   },
-  delete: async (id) => {
-    await query('DELETE FROM clientes WHERE id = $1', [id]);
-  }
+  delete: async (id) => { await query('DELETE FROM clientes WHERE id = $1', [id]); }
 };
 
 function fromDbCliente(r) {
@@ -355,9 +367,7 @@ const Pedidos = {
     );
     return fromDbPedido(rows[0]);
   },
-  delete: async (id) => {
-    await query('DELETE FROM pedidos WHERE id = $1', [id]);
-  }
+  delete: async (id) => { await query('DELETE FROM pedidos WHERE id = $1', [id]); }
 };
 
 function fromDbPedido(r) {
@@ -372,4 +382,47 @@ function fromDbPedido(r) {
   };
 }
 
-module.exports = { pool, query, init, Users, Orcamentos, Clientes, Pedidos, Seq };
+// ══════════════════════════════════════════════
+// PRODUTOS
+// ══════════════════════════════════════════════
+const Produtos = {
+  all: async () => {
+    const { rows } = await query('SELECT * FROM produtos ORDER BY categoria, nome');
+    return rows.map(fromDbProduto);
+  },
+  find: async (id) => {
+    const { rows } = await query('SELECT * FROM produtos WHERE id = $1', [id]);
+    return rows[0] ? fromDbProduto(rows[0]) : null;
+  },
+  create: async (data) => {
+    const { rows } = await query(`
+      INSERT INTO produtos
+        (id, nome, descricao, unidade, preco, categoria, ativo, criado_por, criado_em)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *
+    `, [data.id, data.nome, data.descricao, data.unidade,
+        data.preco, data.categoria, data.ativo,
+        data.criadoPor, data.criadoEm]);
+    return fromDbProduto(rows[0]);
+  },
+  update: async (id, data) => {
+    const { rows } = await query(`
+      UPDATE produtos
+         SET nome=$2, descricao=$3, unidade=$4, preco=$5,
+             categoria=$6, ativo=$7, atualizado_em=$8
+       WHERE id=$1 RETURNING *
+    `, [id, data.nome, data.descricao, data.unidade,
+        data.preco, data.categoria, data.ativo, data.atualizadoEm]);
+    return fromDbProduto(rows[0]);
+  },
+  delete: async (id) => { await query('DELETE FROM produtos WHERE id = $1', [id]); }
+};
+
+function fromDbProduto(r) {
+  return {
+    id:r.id, nome:r.nome, descricao:r.descricao, unidade:r.unidade,
+    preco:parseFloat(r.preco) || 0, categoria:r.categoria, ativo:r.ativo,
+    criadoPor:r.criado_por, criadoEm:r.criado_em, atualizadoEm:r.atualizado_em
+  };
+}
+
+module.exports = { pool, query, init, Users, Orcamentos, Clientes, Pedidos, Produtos, Seq };
