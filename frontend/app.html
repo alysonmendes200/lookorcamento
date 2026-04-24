@@ -380,11 +380,21 @@
     </div>
     <div class="dash-grid">
       <div class="dash-card azul"><div class="dash-card-icon">📋</div><div class="dash-card-label">Total Orçamentos</div><div class="dash-card-val" id="dash-tot-orc">—</div></div>
-      <div class="dash-card verde"><div class="dash-card-icon">💰</div><div class="dash-card-label">Recebido</div><div class="dash-card-val sm" id="dash-recebido">—</div></div>
-      <div class="dash-card laranja"><div class="dash-card-icon">⏳</div><div class="dash-card-label">A Receber</div><div class="dash-card-val sm" id="dash-areceber">—</div></div>
+      <div class="dash-card verde"><div class="dash-card-icon">💰</div><div class="dash-card-label">Recebido (Orç.)</div><div class="dash-card-val sm" id="dash-recebido">—</div></div>
+      <div class="dash-card laranja"><div class="dash-card-icon">⏳</div><div class="dash-card-label">A Receber (Orç.)</div><div class="dash-card-val sm" id="dash-areceber">—</div></div>
       <div class="dash-card azul"><div class="dash-card-icon">👥</div><div class="dash-card-label">Clientes</div><div class="dash-card-val" id="dash-clientes">—</div></div>
       <div class="dash-card verde"><div class="dash-card-icon">📦</div><div class="dash-card-label">Pedidos Abertos</div><div class="dash-card-val" id="dash-pedidos-abertos">—</div></div>
-      <div class="dash-card laranja"><div class="dash-card-icon">📦</div><div class="dash-card-label">Produtos Ativos</div><div class="dash-card-val" id="dash-produtos">—</div></div>
+      <div class="dash-card laranja"><div class="dash-card-icon">🛒</div><div class="dash-card-label">Pedidos Pagos</div><div class="dash-card-val sm" id="dash-pedidos-pagos">—</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">💼 Visão Financeira Consolidada</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:8px">
+        <div class="dre-stat azul"><div class="dre-stat-label">Faturamento Total</div><div class="dre-stat-val" id="dash-fat-total" style="color:var(--azul)">—</div></div>
+        <div class="dre-stat pos"><div class="dre-stat-label">Total Recebido</div><div class="dre-stat-val" id="dash-total-recebido" style="color:#198754">—</div></div>
+        <div class="dre-stat neg"><div class="dre-stat-label">Saídas Caixa</div><div class="dre-stat-val" id="dash-saidas-cx" style="color:#dc3545">—</div></div>
+        <div class="dre-stat azul"><div class="dre-stat-label">Saldo Caixa</div><div class="dre-stat-val" id="dash-saldo-cx">—</div></div>
+        <div class="dre-stat pos"><div class="dre-stat-label">Resultado Líquido</div><div class="dre-stat-val" id="dash-resultado">—</div></div>
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
       <div class="card"><div class="card-title">📅 Orçamentos por Mês</div><div class="dash-chart" id="dash-chart-mensal"></div></div>
@@ -410,6 +420,7 @@
       <button class="rel-tab active" onclick="relTab('resumo',this)">📊 Resumo</button>
       <button class="rel-tab" onclick="relTab('dre',this)">💰 Financeiro / DRE</button>
       <button class="rel-tab" onclick="relTab('caixa-rel',this)">💵 Caixa</button>
+      <button class="rel-tab" onclick="relTab('pedidos-rel',this)">📦 Pedidos</button>
       <button class="rel-tab" onclick="relTab('mensal',this)">📅 Por Mês</button>
       <button class="rel-tab" onclick="relTab('operador',this)">👤 Por Operador</button>
       <button class="rel-tab" onclick="relTab('nf',this)">🧾 Com NF</button>
@@ -438,6 +449,22 @@
           </div>
         </div>
         <div id="rel-caixa-content"></div>
+      </div>
+    </div>
+    <div class="rel-section" id="rel-pedidos-rel">
+      <div class="card">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>📦 Relatório de Pedidos</span>
+          <select id="rel-ped-status-flt" onchange="renderRelPedidos()" style="font-size:12px;padding:4px 8px">
+            <option value="">Todos os status</option>
+            <option value="pendente">Pendente</option>
+            <option value="producao">Em Produção</option>
+            <option value="pronto">Pronto</option>
+            <option value="entregue">Entregue</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+        <div id="rel-pedidos-content"></div>
       </div>
     </div>
     <div class="rel-section" id="rel-mensal"><div class="card"><div class="card-title">Por Mês — Orçamentos</div><div id="rel-mensal-content"></div></div></div>
@@ -757,9 +784,41 @@
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
       Adicionar item manualmente
     </button>
-    <div class="total-bar" style="margin-top:8px">
-      <span class="total-label">TOTAL:</span>
-      <span class="total-val" id="ped-grand-total">R$ 0,00</span>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:8px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+        <span class="total-label" style="flex:1;min-width:120px">Subtotal:</span>
+        <span style="font-family:var(--mono);font-weight:600" id="ped-subtotal">R$ 0,00</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+        <span style="font-size:12px;color:var(--muted);flex:1;min-width:120px">Desconto:</span>
+        <select id="ped-desc-tipo" onchange="calcPedGrand()" style="font-size:12px;padding:4px 6px;width:90px">
+          <option value="pct">%</option>
+          <option value="fix">R$ fixo</option>
+        </select>
+        <input type="number" id="ped-desc-val" min="0" step="0.01" placeholder="0" style="width:90px;font-size:12px" oninput="calcPedGrand()">
+        <span style="font-size:12px;color:#dc3545;font-family:var(--mono)" id="ped-desc-display">— R$ 0,00</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;border-top:1px solid var(--border);padding-top:6px">
+        <span class="total-label" style="flex:1;min-width:120px">TOTAL:</span>
+        <span class="total-val" id="ped-grand-total">R$ 0,00</span>
+      </div>
+    </div>
+
+    <div style="background:var(--azul-bg);border:1px solid var(--azul);border-radius:8px;padding:10px 12px;margin-top:10px">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;cursor:pointer">
+        <input type="checkbox" id="ped-pago" onchange="togglePedPago()">
+        Pedido Pago / Recebido
+      </label>
+      <div id="ped-pago-extra" style="display:none;margin-top:8px">
+        <div class="form-row">
+          <div class="fg"><label>Valor Recebido (R$)</label><input type="number" id="ped-valor-recebido" min="0" step="0.01" placeholder="0,00"></div>
+          <div class="fg"><label>Registrar no Caixa</label>
+            <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;cursor:pointer">
+              <input type="checkbox" id="ped-reg-caixa" checked> Criar entrada no Caixa automaticamente
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="fg" style="margin:14px 0 4px"><label>Observações</label>
@@ -815,6 +874,7 @@ let nextNum      = 1;
 let currentNFOrcId = null;
 let relData      = null;
 let relCaixaData = [];
+let relPedData   = null;
 let ultimaDefNum = JSON.parse(localStorage.getItem('ultimaDefNum')||'null');
 let clienteList  = [];
 let pedidoList   = [];
@@ -1225,9 +1285,10 @@ async function carregarRelatorio(){
   const cxParams=new URLSearchParams();
   if(di)cxParams.set('di',di);if(df)cxParams.set('df',df);
   try{
-    [relData,relCaixaData]=await Promise.all([
+    [relData,relCaixaData,relPedData]=await Promise.all([
       API.get('/orcamentos/relatorios?'+orcParams.toString()),
-      API.get('/caixa'+(cxParams.toString()?'?'+cxParams.toString():''))
+      API.get('/caixa'+(cxParams.toString()?'?'+cxParams.toString():'')),
+      API.get('/pedidos/relatorios?'+orcParams.toString()).catch(()=>null)
     ]);
     renderRelatorios();
   }catch(e){toast(e.message,'error');}
@@ -1244,13 +1305,16 @@ function renderRelatorios(){
   const cxEntradas=cx.filter(t=>t.tipo==='entrada').reduce((s,t)=>s+t.valor,0);
   const cxSaidas  =cx.filter(t=>t.tipo==='saida'  ).reduce((s,t)=>s+t.valor,0);
   const cxSaldo   =cxEntradas-cxSaidas;
+  const ped=relPedData||{resumo:{totalPedidos:0,valorTotal:0,valorRecebido:0,valorPendente:0,totalPagos:0,totalPendentes:0},porStatus:[],porMes:[],lista:[]};
+  const pedResumo=ped.resumo||{};
 
   // ── Resumo
   document.getElementById('rel-stats-cards').innerHTML=`
     <div class="stat-card"><div class="stat-label">Orçamentos</div><div class="stat-val">${resumo.totalOrcamentos}</div></div>
-    <div class="stat-card"><div class="stat-label">Faturamento</div><div class="stat-val sm">${fBRL(resumo.valorTotal)}</div></div>
+    <div class="stat-card"><div class="stat-label">Fat. Orçamentos</div><div class="stat-val sm">${fBRL(resumo.valorTotal)}</div></div>
     <div class="stat-card"><div class="stat-label">Recebido (Orç.)</div><div class="stat-val sm green">${fBRL(resumo.valorRecebido)}</div></div>
-    <div class="stat-card"><div class="stat-label">A Receber</div><div class="stat-val sm red">${fBRL(resumo.valorFaltaReceber)}</div></div>
+    <div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-val">${pedResumo.totalPedidos||0}</div></div>
+    <div class="stat-card"><div class="stat-label">Recebido (Ped.)</div><div class="stat-val sm green">${fBRL(pedResumo.valorRecebido||0)}</div></div>
     <div class="stat-card"><div class="stat-label">NF Emitidas</div><div class="stat-val">${resumo.comNF}</div></div>`;
   document.getElementById('rel-caixa-stats-mini').innerHTML=cx.length?`
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
@@ -1270,32 +1334,42 @@ function renderRelatorios(){
       <div class="bar-label">${m.key}</div></div>`).join('');
   }else cc.style.display='none';
 
-  // ── DRE
-  const lucro=resumo.valorRecebido+cxEntradas-cxSaidas;
-  const margem=resumo.valorTotal>0?((lucro/resumo.valorTotal)*100).toFixed(1):0;
+  // ── DRE (inclui orçamentos + pedidos + caixa)
+  const fatTotal=resumo.valorTotal+(pedResumo.valorTotal||0);
+  const recTotal=resumo.valorRecebido+(pedResumo.valorRecebido||0)+cxEntradas;
+  const lucro=resumo.valorRecebido+(pedResumo.valorRecebido||0)+cxEntradas-cxSaidas;
+  const margem=fatTotal>0?((lucro/fatTotal)*100).toFixed(1):0;
   document.getElementById('rel-dre-stats').innerHTML=`
-    <div class="dre-stat azul"><div class="dre-stat-label">Faturamento Bruto</div><div class="dre-stat-val" style="color:var(--azul)">${fBRL(resumo.valorTotal)}</div></div>
-    <div class="dre-stat pos"><div class="dre-stat-label">Total Recebido</div><div class="dre-stat-val" style="color:#198754">${fBRL(resumo.valorRecebido+cxEntradas)}</div></div>
+    <div class="dre-stat azul"><div class="dre-stat-label">Faturamento Total</div><div class="dre-stat-val" style="color:var(--azul)">${fBRL(fatTotal)}</div></div>
+    <div class="dre-stat pos"><div class="dre-stat-label">Total Recebido</div><div class="dre-stat-val" style="color:#198754">${fBRL(recTotal)}</div></div>
     <div class="dre-stat neg"><div class="dre-stat-label">Total Despesas</div><div class="dre-stat-val" style="color:#dc3545">${fBRL(cxSaidas)}</div></div>
     <div class="dre-stat ${lucro>=0?'pos':'neg'}"><div class="dre-stat-label">Resultado Líquido</div><div class="dre-stat-val" style="color:${lucro>=0?'#198754':'#dc3545'}">${fBRL(lucro)}</div></div>`;
   document.getElementById('rel-dre-content').innerHTML=`
     <table class="dre-table">
-      <tr class="dre-group"><td colspan="2">📋 ORÇAMENTOS / FATURAMENTO</td></tr>
+      <tr class="dre-group"><td colspan="2">📋 ORÇAMENTOS</td></tr>
       <tr><td>Faturamento Bruto (orçamentos emitidos)</td><td class="dre-neu">${fBRL(resumo.valorTotal)}</td></tr>
-      <tr><td>(-) Valores a Receber (pendentes)</td><td class="dre-neg">- ${fBRL(resumo.valorFaltaReceber)}</td></tr>
+      <tr><td>(-) A Receber (pendentes)</td><td class="dre-neg">- ${fBRL(resumo.valorFaltaReceber)}</td></tr>
       <tr><td>Recebido de Orçamentos</td><td class="dre-pos">${fBRL(resumo.valorRecebido)}</td></tr>
       <tr><td style="padding-left:20px;color:var(--muted);font-size:12px">NF Emitidas: ${resumo.comNF} orçamentos</td><td></td></tr>
+      <tr class="dre-group"><td colspan="2">📦 PEDIDOS</td></tr>
+      <tr><td>Total de Pedidos (${pedResumo.totalPedidos||0})</td><td class="dre-neu">${fBRL(pedResumo.valorTotal||0)}</td></tr>
+      <tr><td>(-) Pedidos Pendentes (${pedResumo.totalPendentes||0})</td><td class="dre-neg">- ${fBRL(pedResumo.valorPendente||0)}</td></tr>
+      <tr><td>Recebido de Pedidos (${pedResumo.totalPagos||0} pagos)</td><td class="dre-pos">${fBRL(pedResumo.valorRecebido||0)}</td></tr>
       <tr class="dre-group"><td colspan="2">💵 CAIXA</td></tr>
       <tr><td>(+) Entradas do Caixa</td><td class="dre-pos">+ ${fBRL(cxEntradas)}</td></tr>
       <tr><td>(-) Saídas do Caixa</td><td class="dre-neg">- ${fBRL(cxSaidas)}</td></tr>
       <tr><td>Saldo do Caixa</td><td class="${cxSaldo>=0?'dre-pos':'dre-neg'}">${fBRL(cxSaldo)}</td></tr>
-      <tr class="dre-group"><td colspan="2">📊 RESULTADO</td></tr>
+      <tr class="dre-group"><td colspan="2">📊 RESULTADO CONSOLIDADO</td></tr>
+      <tr><td>Faturamento Total (Orç. + Ped.)</td><td class="dre-neu">${fBRL(fatTotal)}</td></tr>
       <tr class="dre-total"><td>RESULTADO LÍQUIDO DO PERÍODO</td><td style="font-family:var(--mono);text-align:right;font-size:15px">${fBRL(lucro)}</td></tr>
-      <tr><td style="font-size:12px;color:var(--muted)">Margem sobre faturamento</td><td style="text-align:right;font-size:12px;font-weight:700;color:${lucro>=0?'#198754':'#dc3545'}">${margem}%</td></tr>
+      <tr><td style="font-size:12px;color:var(--muted)">Margem sobre faturamento total</td><td style="text-align:right;font-size:12px;font-weight:700;color:${lucro>=0?'#198754':'#dc3545'}">${margem}%</td></tr>
     </table>`;
 
   // ── Caixa detalhado
   renderRelCaixa();
+
+  // ── Pedidos
+  renderRelPedidos();
 
   // ── Por Mês
   document.getElementById('rel-mensal-content').innerHTML=porMes&&porMes.length
@@ -1379,6 +1453,43 @@ function renderRelCaixa(){
         <td class="${t.tipo==='entrada'?'caixa-entrada':'caixa-saida'}" style="font-family:var(--mono);font-size:12px;white-space:nowrap">${t.tipo==='saida'?'- ':'+ '}${fBRL(t.valor)}</td>
       </tr>`).join('')}
     </tbody></table></div>`:'<div class="empty">Nenhuma transação no período.</div>'}`;
+}
+
+function renderRelPedidos(){
+  const pd=relPedData;
+  const cont=document.getElementById('rel-pedidos-content');if(!cont)return;
+  if(!pd){cont.innerHTML='<div class="empty">Sem dados de pedidos.</div>';return;}
+  const flt=document.getElementById('rel-ped-status-flt')?.value||'';
+  const lista=flt?(pd.lista||[]).filter(p=>p.status===flt):(pd.lista||[]);
+  const r=pd.resumo||{};
+  const LABELS={pendente:'Pendente',producao:'Em Produção',pronto:'Pronto',entregue:'Entregue',cancelado:'Cancelado'};
+  cont.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px">
+      <div class="dre-stat azul"><div class="dre-stat-label">Total Pedidos</div><div class="dre-stat-val">${r.totalPedidos||0}</div></div>
+      <div class="dre-stat azul"><div class="dre-stat-label">Valor Total</div><div class="dre-stat-val" style="font-family:var(--mono)">${fBRL(r.valorTotal||0)}</div></div>
+      <div class="dre-stat pos"><div class="dre-stat-label">Recebido (${r.totalPagos||0} pagos)</div><div class="dre-stat-val" style="color:#198754">${fBRL(r.valorRecebido||0)}</div></div>
+      <div class="dre-stat neg"><div class="dre-stat-label">Pendente (${r.totalPendentes||0})</div><div class="dre-stat-val" style="color:#dc3545">${fBRL(r.valorPendente||0)}</div></div>
+    </div>
+    ${(pd.porStatus||[]).length?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      ${pd.porStatus.map(s=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;min-width:100px">
+        <div style="font-size:11px;color:var(--muted)">${LABELS[s.status]||s.status}</div>
+        <div style="font-weight:700">${s.qtd} ped.</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--azul)">${fBRL(s.total)}</div>
+      </div>`).join('')}
+    </div>`:''}
+    ${lista.length?`<div style="overflow-x:auto"><table class="tbl"><thead><tr>
+      <th>Data</th><th>Cliente</th><th>Status</th><th>Total</th><th>Pgto.</th><th>Recebido</th><th>Orç.</th>
+    </tr></thead><tbody>
+      ${lista.map(p=>`<tr>
+        <td style="font-size:11px;color:var(--muted);white-space:nowrap">${p.criadoEm?new Date(p.criadoEm).toLocaleDateString('pt-BR'):''}</td>
+        <td><div style="font-weight:600">${esc(p.clienteNome)}</div></td>
+        <td><span class="badge badge-status-${p.status||'pendente'}">${LABELS[p.status]||p.status}</span></td>
+        <td style="font-family:var(--mono)">${fBRL(p.total)}</td>
+        <td><span class="badge ${p.pago?'badge-pago':'badge-nao-pago'}">${p.pago?'✅ Pago':'⏳ Pend.'}</span></td>
+        <td style="font-family:var(--mono);color:${p.pago?'#198754':'#dc3545'}">${fBRL(p.valorRecebido||0)}</td>
+        <td>${p.orcamentoNum?`<span class="badge badge-orc">${String(p.orcamentoNum).padStart(3,'0')}</span>`:'—'}</td>
+      </tr>`).join('')}
+    </tbody></table></div>`:'<div class="empty">Sem pedidos no período.</div>'}`;
 }
 
 // ════ USUÁRIOS ════════════════════════════════════════
@@ -1843,7 +1954,7 @@ function renderListaPedidos(list){
   const cont=document.getElementById('ped-lista-content');
   if(!list.length){cont.innerHTML='<div class="empty">'+(pedidoList.length?'Nenhum encontrado.':'Clique em "Novo Pedido".')+'</div>';return;}
   cont.innerHTML=`<div style="overflow-x:auto"><table class="tbl"><thead><tr>
-    <th>Cliente</th><th>Status</th><th>Prazo</th><th>Total</th><th>Orç.</th><th>Ações</th>
+    <th>Cliente</th><th>Status</th><th>Prazo</th><th>Total</th><th>Pgto.</th><th>Orç.</th><th>Ações</th>
   </tr></thead><tbody>${list.map(p=>{
     const lbl=PEDIDO_LABELS[p.status]||PEDIDO_LABELS.pendente;
     return `<tr>
@@ -1851,6 +1962,7 @@ function renderListaPedidos(list){
       <td><span class="badge ${lbl.cls}">${lbl.label}</span></td>
       <td style="font-size:12px;color:var(--muted)">${esc(p.prazoEntrega||'—')}</td>
       <td style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:600">${fBRL(p.total||0)}</td>
+      <td><span class="badge ${p.pago?'badge-pago':'badge-nao-pago'}">${p.pago?'✅ Pago':'⏳ Pend.'}</span></td>
       <td>${p.orcamentoNum?`<span class="badge badge-orc">${String(p.orcamentoNum).padStart(3,'0')}</span>`:'—'}</td>
       <td><div class="tbl-actions">
         <button class="ta" onclick="verPedido('${p.id}')">👁️</button>
@@ -1867,6 +1979,7 @@ function verPedido(id){
   document.getElementById('mpd-sub').textContent=(p.criadoEm?new Date(p.criadoEm).toLocaleDateString('pt-BR'):'')+' | '+(p.ownerNome||p.owner||'—');
   document.getElementById('mpd-badges').innerHTML=`
     <span class="badge ${lbl.cls}">${lbl.label}</span>
+    <span class="badge ${p.pago?'badge-pago':'badge-nao-pago'}">${p.pago?'✅ Pago':'⏳ Pendente'}</span>
     ${p.prazoEntrega?`<span class="badge badge-orc">📅 ${esc(p.prazoEntrega)}</span>`:''}
     ${p.orcamentoNum?`<span class="badge badge-orc">🔗 Orç. N° ${String(p.orcamentoNum).padStart(3,'0')}</span>`:''}`;
   document.getElementById('mpd-items').innerHTML=(p.items||[]).map(i=>`
@@ -1875,8 +1988,9 @@ function verPedido(id){
       <span style="color:var(--muted);font-size:11px">${i.qty}× ${fBRL(i.unit)}</span>
       <span style="font-family:var(--mono);color:var(--azul)">${fBRL(i.total)}</span>
     </div>`).join('')||'<div class="empty" style="font-size:12px">Sem itens</div>';
-  document.getElementById('mpd-total').textContent=fBRL(p.total||0);
-  document.getElementById('mpd-obs').textContent=p.obs?'📝 '+p.obs:'';
+  const descExibe=p.desconto>0?`<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:#dc3545"><span>Desconto</span><span>— ${fBRL(p.desconto)}</span></div>`:'';
+  document.getElementById('mpd-total').innerHTML=`${descExibe}<span>${fBRL(p.total||0)}</span>`;
+  document.getElementById('mpd-obs').innerHTML=(p.obs?'📝 '+esc(p.obs)+'<br>':'')+(p.pago&&p.valorRecebido?`<span style="color:#198754">💰 Recebido: ${fBRL(p.valorRecebido)}</span>`:'')||'';
   document.getElementById('mpd-btn-editar').onclick=()=>{closeModal('modal-ped-detalhe');editarPedido(p.id);};
   openModal('modal-ped-detalhe');
 }
@@ -1891,7 +2005,15 @@ function abrirModalNovoPedido(){
   document.getElementById('ped-edit-id').value='';
   document.getElementById('modal-ped-title').textContent='Novo Pedido';
   document.getElementById('ped-btn-txt').textContent='Salvar Pedido';
+  document.getElementById('ped-subtotal').textContent='R$ 0,00';
   document.getElementById('ped-grand-total').textContent='R$ 0,00';
+  document.getElementById('ped-desc-tipo').value='pct';
+  document.getElementById('ped-desc-val').value='';
+  document.getElementById('ped-desc-display').textContent='— R$ 0,00';
+  document.getElementById('ped-pago').checked=false;
+  document.getElementById('ped-pago-extra').style.display='none';
+  document.getElementById('ped-valor-recebido').value='';
+  document.getElementById('ped-reg-caixa').checked=true;
   addPedItem();
   if(!clienteList.length)API.get('/clientes').then(l=>{clienteList=l;preencherDatalistClientes();}).catch(()=>{});
   openModal('modal-pedido');
@@ -1914,6 +2036,13 @@ function editarPedido(id){
     document.getElementById('ped-orc-preview-nome').textContent='Orç. N° '+String(p.orcamentoNum).padStart(3,'0')+' — '+p.clienteNome;
     document.getElementById('ped-orc-preview-info').textContent='';
   }else document.getElementById('ped-orc-preview').style.display='none';
+  document.getElementById('ped-desc-tipo').value=p.descontoTipo||'pct';
+  const rawDesc=p.descontoTipo==='pct'&&p.totalBruto>0&&p.desconto>0?(p.desconto/p.totalBruto*100).toFixed(2):p.desconto||0;
+  document.getElementById('ped-desc-val').value=p.desconto>0?rawDesc:'';
+  document.getElementById('ped-pago').checked=!!p.pago;
+  document.getElementById('ped-pago-extra').style.display=p.pago?'':'none';
+  document.getElementById('ped-valor-recebido').value=p.valorRecebido||'';
+  document.getElementById('ped-reg-caixa').checked=false;
   (p.items||[]).forEach(i=>addPedItem(i.desc,i.qty,i.unit));
   if(!(p.items||[]).length)addPedItem();
   calcPedGrand();
@@ -1956,8 +2085,22 @@ function calcPedRow(id){
   calcPedGrand();
 }
 function calcPedGrand(){
-  let s=0;document.querySelectorAll('#ped-items-container .item-total').forEach(el=>s+=pBRL(el.textContent));
-  document.getElementById('ped-grand-total').textContent=fBRL(s);
+  let sub=0;document.querySelectorAll('#ped-items-container .item-total').forEach(el=>sub+=pBRL(el.textContent));
+  document.getElementById('ped-subtotal').textContent=fBRL(sub);
+  const tipo=document.getElementById('ped-desc-tipo').value;
+  const dv=parseFloat(document.getElementById('ped-desc-val').value)||0;
+  let desconto=0;
+  if(dv>0){desconto=tipo==='pct'?Math.min(sub*dv/100,sub):Math.min(dv,sub);}
+  document.getElementById('ped-desc-display').textContent=desconto>0?'— '+fBRL(desconto):'— R$ 0,00';
+  const total=Math.max(sub-desconto,0);
+  document.getElementById('ped-grand-total').textContent=fBRL(total);
+}
+function togglePedPago(){
+  const p=document.getElementById('ped-pago').checked;
+  document.getElementById('ped-pago-extra').style.display=p?'':'none';
+  if(p&&!document.getElementById('ped-valor-recebido').value){
+    document.getElementById('ped-valor-recebido').value=pBRL(document.getElementById('ped-grand-total').textContent).toFixed(2);
+  }
 }
 function getPedItems(){
   return [...document.querySelectorAll('#ped-items-container .item-row')].map(row=>{
@@ -1974,11 +2117,26 @@ async function salvarPedido(){
   let orcId='';
   if(orcNum&&orcList.length){const o=orcList.find(x=>x.num===orcNum);if(o)orcId=o.id;}
   const cli=clienteList.find(c=>c.nome.toLowerCase()===clienteNome.toLowerCase());
+  const subtotal=items.reduce((s,i)=>s+i.total,0);
+  const descTipo=document.getElementById('ped-desc-tipo').value;
+  const descVal=parseFloat(document.getElementById('ped-desc-val').value)||0;
+  let desconto=0;
+  if(descVal>0){desconto=descTipo==='pct'?Math.min(subtotal*descVal/100,subtotal):Math.min(descVal,subtotal);}
+  const total=Math.max(subtotal-desconto,0);
+  const pago=document.getElementById('ped-pago').checked;
+  const valorRecebido=pago?(parseFloat(document.getElementById('ped-valor-recebido').value)||total):0;
+  const regCaixa=pago&&document.getElementById('ped-reg-caixa').checked;
+
   const payload={
     clienteId:   cli?cli.id:'',
     clienteNome,
     items,
-    total:       items.reduce((s,i)=>s+i.total,0),
+    total,
+    totalBruto:  subtotal,
+    desconto,
+    descontoTipo:descTipo,
+    pago,
+    valorRecebido,
     prazoEntrega:document.getElementById('ped-prazo').value.trim(),
     obs:         document.getElementById('ped-obs').value.trim(),
     status:      document.getElementById('ped-status').value,
@@ -1989,15 +2147,34 @@ async function salvarPedido(){
   const btn=document.getElementById('btn-salvar-ped');
   btn.disabled=true;document.getElementById('ped-btn-txt').textContent='Salvando…';
   try{
+    let savedPed;
     if(editId){
       const updated=await API.put('/pedidos/'+editId,payload);
       const idx=pedidoList.findIndex(p=>p.id===editId);
       if(idx>=0)pedidoList[idx]={...pedidoList[idx],...updated};
+      savedPed=updated;
       toast('Pedido atualizado!','success');
     }else{
       const novo=await API.post('/pedidos',payload);
       pedidoList.unshift(novo);
+      savedPed=novo;
       toast('Pedido criado!','success');
+    }
+    // Auto-registro no caixa
+    if(pago&&regCaixa&&valorRecebido>0){
+      try{
+        const cxPayload={
+          data:new Date().toISOString().split('T')[0],
+          descricao:'Pedido — '+clienteNome,
+          tipo:'entrada',
+          valor:valorRecebido,
+          categoria:'Pedidos',
+          obs:orcNum?'Orç. N° '+String(orcNum).padStart(3,'0'):''
+        };
+        const nova=await API.post('/caixa',cxPayload);
+        caixaList.unshift(nova);
+        toast('Entrada registrada no Caixa!','success');
+      }catch(ce){toast('Pedido salvo, mas erro no Caixa: '+ce.message,'error');}
     }
     closeModal('modal-pedido');renderPedidos();
   }catch(e){toast(e.message,'error');}
@@ -2012,20 +2189,41 @@ async function excluirPedido(id){
 // ════ DASHBOARD ═══════════════════════════════════════
 async function carregarDashboard(){
   try{
-    const[orcs,pedidos,clientes,produtos]=await Promise.all([
+    const[orcs,pedidos,clientes,produtos,caixa]=await Promise.all([
       API.get('/orcamentos').catch(()=>[]),
       API.get('/pedidos').catch(()=>[]),
       API.get('/clientes').catch(()=>[]),
-      API.get('/produtos').catch(()=>[])
+      API.get('/produtos').catch(()=>[]),
+      API.get('/caixa').catch(()=>[])
     ]);
-    const totalRec=orcs.filter(o=>o.pago).reduce((s,o)=>s+(o.valorRecebido||o.total),0);
-    const totalARec=orcs.filter(o=>!o.pago).reduce((s,o)=>s+o.total,0);
+    const orcRecebido=orcs.filter(o=>o.pago).reduce((s,o)=>s+(o.valorRecebido||o.total),0);
+    const orcARec=orcs.filter(o=>!o.pago).reduce((s,o)=>s+o.total,0);
+    const pedPagos=pedidos.filter(p=>p.pago);
+    const pedRecebido=pedPagos.reduce((s,p)=>s+(p.valorRecebido||p.total),0);
+    const cxEntradas=caixa.filter(t=>t.tipo==='entrada').reduce((s,t)=>s+t.valor,0);
+    const cxSaidas  =caixa.filter(t=>t.tipo==='saida'  ).reduce((s,t)=>s+t.valor,0);
+    const cxSaldo=cxEntradas-cxSaidas;
+    const fatTotal=orcs.reduce((s,o)=>s+o.total,0)+pedidos.reduce((s,p)=>s+p.total,0);
+    const recTotal=orcRecebido+pedRecebido+cxEntradas;
+    const resultado=orcRecebido+pedRecebido+cxEntradas-cxSaidas;
+
     document.getElementById('dash-tot-orc').textContent=orcs.length;
-    document.getElementById('dash-recebido').textContent=fBRL(totalRec);
-    document.getElementById('dash-areceber').textContent=fBRL(totalARec);
+    document.getElementById('dash-recebido').textContent=fBRL(orcRecebido);
+    document.getElementById('dash-areceber').textContent=fBRL(orcARec);
     document.getElementById('dash-clientes').textContent=clientes.length;
     document.getElementById('dash-pedidos-abertos').textContent=pedidos.filter(p=>!['entregue','cancelado'].includes(p.status)).length;
-    document.getElementById('dash-produtos').textContent=produtos.filter(p=>p.ativo).length;
+    document.getElementById('dash-pedidos-pagos').textContent=fBRL(pedRecebido);
+
+    // Financeiro consolidado
+    document.getElementById('dash-fat-total').textContent=fBRL(fatTotal);
+    document.getElementById('dash-total-recebido').textContent=fBRL(recTotal);
+    document.getElementById('dash-saidas-cx').textContent=fBRL(cxSaidas);
+    const saldoEl=document.getElementById('dash-saldo-cx');
+    saldoEl.textContent=fBRL(cxSaldo);
+    saldoEl.style.color=cxSaldo>=0?'#198754':'#dc3545';
+    const resEl=document.getElementById('dash-resultado');
+    resEl.textContent=fBRL(resultado);
+    resEl.style.color=resultado>=0?'#198754':'#dc3545';
 
     const anoAtual=new Date().getFullYear();
     const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
