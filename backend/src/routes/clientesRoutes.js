@@ -1,40 +1,37 @@
 const express = require('express');
 const router  = express.Router();
 const { v4: uuidv4 } = require('uuid');
-const { auth, adminOnly } = require('../middleware/auth');
+const { authMiddleware, adminOnly } = require('../auth'); // ← CORRIGIDO
 
-router.use(auth);
+router.use(authMiddleware); // ← CORRIGIDO
 
 // GET /api/clientes
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const { Clientes } = require('../db');
     res.json(await Clientes.all());
-  } catch (err) {
-    console.error('Erro ao listar clientes:', err);
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { next(err); }
 });
 
 // GET /api/clientes/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const { Clientes } = require('../db');
     const c = await Clientes.find(req.params.id);
     if (!c) return res.status(404).json({ error: 'Cliente não encontrado' });
     res.json(c);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { next(err); }
 });
 
 // POST /api/clientes
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   try {
     const { Clientes } = require('../db');
     const { nome, comercio, telefone, email, endereco, cpfCnpj, obs } = req.body;
     if (!nome || !nome.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const novo = await Clientes.create({
       id: uuidv4(),
-      nome: nome.trim(),
+      nome:      nome.trim(),
       comercio:  (comercio  || '').trim(),
       telefone:  (telefone  || '').trim(),
       email:     (email     || '').trim(),
@@ -46,14 +43,11 @@ router.post('/', async (req, res) => {
       criadoEm:      new Date().toISOString()
     });
     res.status(201).json(novo);
-  } catch (err) {
-    console.error('Erro ao criar cliente:', err);
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { next(err); }
 });
 
 // PUT /api/clientes/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
   try {
     const { Clientes } = require('../db');
     const { nome, comercio, telefone, email, endereco, cpfCnpj, obs } = req.body;
@@ -69,19 +63,16 @@ router.put('/:id', async (req, res) => {
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);
-  } catch (err) {
-    console.error('Erro ao atualizar cliente:', err);
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { next(err); }
 });
 
-// DELETE /api/clientes/:id
-router.delete('/:id', adminOnly, async (req, res) => {
+// DELETE /api/clientes/:id  (admin only)
+router.delete('/:id', adminOnly, async (req, res, next) => {
   try {
     const { Clientes } = require('../db');
     await Clientes.delete(req.params.id);
     res.json({ ok: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { next(err); }
 });
 
 module.exports = router;
