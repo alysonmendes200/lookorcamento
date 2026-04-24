@@ -6,54 +6,77 @@
 <title>Look — Sistema de Orçamentos</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.badge-status-pendente  { background:#fff3cd;color:#856404;border:1px solid #ffd971; }
-.badge-status-producao  { background:#cfe2ff;color:#084298;border:1px solid #9ec5fe; }
-.badge-status-pronto    { background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb; }
-.badge-status-entregue  { background:#d4edda;color:#155724;border:1px solid #c3e6cb; }
-.badge-status-cancelado { background:#f8d7da;color:#721c24;border:1px solid #f5c6cb; }
+/* ══ MÓDULOS EXTRAS ══════════════════════════════════════ */
+.badge-status-pendente  {background:#fff3cd;color:#856404;border:1px solid #ffd971;}
+.badge-status-producao  {background:#cfe2ff;color:#084298;border:1px solid #9ec5fe;}
+.badge-status-pronto    {background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb;}
+.badge-status-entregue  {background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
+.badge-status-cancelado {background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
 
-.kanban-board     { display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:12px; }
-.kanban-col       { background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:100px; }
-.kanban-col-title { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px; }
-.kanban-col-count { background:var(--border);color:var(--text);border-radius:20px;padding:1px 7px;font-size:10px; }
-.kanban-card      { background:var(--white);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:box-shadow .15s,transform .15s; }
-.kanban-card:hover{ box-shadow:0 4px 14px rgba(0,0,0,.09);transform:translateY(-2px); }
-.kanban-card-title{ font-weight:600;font-size:13px;color:var(--text); }
-.kanban-card-sub  { font-size:11px;color:var(--muted);margin-top:2px; }
-.kanban-card-val  { font-size:12px;color:var(--azul);font-weight:700;margin-top:6px;font-family:var(--mono); }
+.kanban-board    {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px;}
+.kanban-col      {background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:80px;}
+.kanban-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.kanban-col-count{background:var(--border);color:var(--text);border-radius:20px;padding:1px 7px;font-size:10px;}
+.kanban-card     {background:var(--white);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:box-shadow .15s,transform .15s;}
+.kanban-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.09);transform:translateY(-2px);}
+.kanban-card-title{font-weight:600;font-size:13px;color:var(--text);}
+.kanban-card-sub  {font-size:11px;color:var(--muted);margin-top:2px;}
+.kanban-card-val  {font-size:12px;color:var(--azul);font-weight:700;margin-top:6px;font-family:var(--mono);}
 
-.view-tabs  { display:flex;gap:8px;margin-bottom:16px; }
-.view-tab   { padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--white);font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s; }
-.view-tab.active{ background:var(--azul);color:#fff;border-color:var(--azul); }
+.view-tabs {display:flex;gap:8px;margin-bottom:16px;}
+.view-tab  {padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--white);font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;}
+.view-tab.active{background:var(--azul);color:#fff;border-color:var(--azul);}
 
-.dash-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:20px; }
-.dash-card { background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden; }
-.dash-card::before{ content:'';position:absolute;top:0;left:0;right:0;height:3px; }
-.dash-card.azul::before   { background:var(--azul); }
-.dash-card.verde::before  { background:var(--success); }
-.dash-card.laranja::before{ background:var(--warning); }
-.dash-card-icon  { font-size:22px;margin-bottom:8px; }
-.dash-card-label { font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600; }
-.dash-card-val   { font-size:22px;font-weight:700;color:var(--text);margin-top:2px; }
-.dash-card-val.sm{ font-size:16px; }
+.dash-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px;}
+.dash-card {background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;}
+.dash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.dash-card.azul::before   {background:var(--azul);}
+.dash-card.verde::before  {background:var(--success);}
+.dash-card.laranja::before{background:var(--warning);}
+.dash-card-icon  {font-size:22px;margin-bottom:8px;}
+.dash-card-label {font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
+.dash-card-val   {font-size:22px;font-weight:700;color:var(--text);margin-top:2px;}
+.dash-card-val.sm{font-size:16px;}
 
-.dash-chart     { display:flex;align-items:flex-end;gap:6px;height:130px;padding:8px 0 0; }
-.dash-bar-wrap  { flex:1;display:flex;flex-direction:column;align-items:center;gap:4px; }
-.dash-bar       { width:100%;border-radius:4px 4px 0 0;background:var(--azul);min-height:2px;transition:height .4s; }
-.dash-bar-label { font-size:9px;color:var(--muted);text-align:center; }
-.dash-bar-val   { font-size:9px;color:var(--azul);font-weight:700;text-align:center; }
+.dash-chart    {display:flex;align-items:flex-end;gap:6px;height:120px;padding:6px 0 0;}
+.dash-bar-wrap {flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.dash-bar      {width:100%;border-radius:4px 4px 0 0;background:var(--azul);min-height:2px;transition:height .4s;}
+.dash-bar-label{font-size:9px;color:var(--muted);text-align:center;}
+.dash-bar-val  {font-size:8px;color:var(--azul);font-weight:700;text-align:center;}
 
-.client-card    { display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border); }
-.client-card:last-child{ border-bottom:none; }
-.client-avatar  { width:38px;height:38px;border-radius:50%;background:var(--azul-bg);color:var(--azul);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0; }
-.client-info    { flex:1;min-width:0; }
-.client-name    { font-weight:600;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.client-sub     { font-size:11px;color:var(--muted); }
-.client-actions { display:flex;gap:6px; }
+.client-card   {display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.client-card:last-child{border-bottom:none;}
+.client-avatar {width:38px;height:38px;border-radius:50%;background:var(--azul-bg);color:var(--azul);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.client-info   {flex:1;min-width:0;}
+.client-name   {font-weight:600;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.client-sub    {font-size:11px;color:var(--muted);}
+.client-actions{display:flex;gap:6px;}
 
-/* Destaque do orçamento vinculado no modal pedido */
-.orc-preview { background:var(--azul-bg);border:1px solid var(--azul);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:12px;display:none; }
-.orc-preview b { color:var(--azul); }
+/* Catálogo de produtos no modal de pedido/orçamento */
+.prod-catalog-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;border:1px dashed var(--azul);background:var(--azul-bg);color:var(--azul);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:8px;}
+.prod-catalog-btn:hover{background:var(--azul);color:#fff;}
+.prod-search-box{position:relative;margin-bottom:10px;}
+.prod-search-box input{width:100%;box-sizing:border-box;padding:8px 12px 8px 32px;}
+.prod-search-box::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;max-height:320px;overflow-y:auto;}
+.prod-item{border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .15s;background:var(--white);}
+.prod-item:hover{border-color:var(--azul);background:var(--azul-bg);}
+.prod-item-nome{font-weight:600;font-size:13px;color:var(--text);}
+.prod-item-info{font-size:11px;color:var(--muted);margin-top:2px;}
+.prod-item-preco{font-size:12px;color:var(--azul);font-weight:700;margin-top:4px;font-family:var(--mono);}
+.prod-cat-badge{display:inline-block;padding:1px 7px;border-radius:10px;background:var(--border);color:var(--muted);font-size:10px;font-weight:600;margin-bottom:3px;}
+
+/* Tabela produtos */
+.prod-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.prod-row:last-child{border-bottom:none;}
+.prod-row-icon{width:36px;height:36px;border-radius:8px;background:var(--azul-bg);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.prod-row-info{flex:1;min-width:0;}
+.prod-row-nome{font-weight:600;font-size:13px;}
+.prod-row-sub{font-size:11px;color:var(--muted);}
+.prod-row-preco{font-family:var(--mono);font-size:13px;color:var(--azul);font-weight:700;white-space:nowrap;}
+.prod-row-actions{display:flex;gap:6px;flex-shrink:0;}
+.badge-ativo{background:#d4edda;color:#155724;border:1px solid #c3e6cb;font-size:10px;padding:1px 6px;border-radius:8px;}
+.badge-inativo{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;font-size:10px;padding:1px 6px;border-radius:8px;}
 </style>
 </head>
 <body>
@@ -91,6 +114,10 @@
   <button class="nav-btn" id="nav-clientes" onclick="goPage('clientes')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
     <span>Clientes</span>
+  </button>
+  <button class="nav-btn" id="nav-produtos" onclick="goPage('produtos')">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+    <span>Produtos</span>
   </button>
 
   <div class="nav-section admin-only">Administração</div>
@@ -141,7 +168,7 @@
     <div class="card">
       <div class="card-title">Dados do Cliente</div>
       <div class="form-row">
-        <div class="fg"><label>Nome do Cliente</label><input id="f-nome" type="text" placeholder="Ex: João Silva" oninput="syncCom(); buscarClientePorNome()"></div>
+        <div class="fg"><label>Nome do Cliente</label><input id="f-nome" type="text" placeholder="Ex: João Silva" oninput="syncCom()"></div>
         <div class="fg"><label>Comércio / Projeto</label><input id="f-com" type="text" placeholder="Ex: Padaria do João" oninput="stopSync()"></div>
       </div>
     </div>
@@ -168,11 +195,15 @@
 
     <div class="card">
       <div class="card-title">Itens do Orçamento</div>
+      <button class="prod-catalog-btn" onclick="abrirCatalogo('orc')">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Selecionar do Catálogo
+      </button>
       <div class="items-head"><div>Descrição</div><div>Qtd</div><div>V. Unit. (R$)</div><div>Total</div><div></div></div>
       <div id="items-container"></div>
       <button class="add-item-btn" onclick="addItem()">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        Adicionar item
+        Adicionar item manualmente
       </button>
       <div class="total-bar">
         <span class="total-label">VALOR TOTAL:</span>
@@ -180,10 +211,9 @@
       </div>
     </div>
 
-    <!-- ✅ NOVO: Campo Observações no Orçamento -->
     <div class="card">
       <div class="card-title">Observações</div>
-      <textarea id="f-obs" rows="3" placeholder="Informações adicionais, condições especiais, notas para o cliente…" style="width:100%;resize:vertical;min-height:70px;font-family:inherit;font-size:13px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--white);color:var(--text);box-sizing:border-box"></textarea>
+      <textarea id="f-obs" rows="3" placeholder="Informações adicionais, condições especiais…" style="width:100%;resize:vertical;min-height:70px;font-family:inherit;font-size:13px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--white);color:var(--text);box-sizing:border-box"></textarea>
     </div>
 
     <div class="btn-row">
@@ -215,11 +245,9 @@
       <div class="fg" style="min-width:200px;max-width:280px"><label>Buscar</label>
         <input id="flt-busca" type="text" placeholder="Nome ou comércio…" oninput="renderHist()"></div>
       <div class="fg"><label>Pagamento</label>
-        <select id="flt-pago" onchange="renderHist()">
-          <option value="">Todos</option><option value="pago">Recebidos</option><option value="nao">Pendentes</option></select></div>
+        <select id="flt-pago" onchange="renderHist()"><option value="">Todos</option><option value="pago">Recebidos</option><option value="nao">Pendentes</option></select></div>
       <div class="fg"><label>NF</label>
-        <select id="flt-nf" onchange="renderHist()">
-          <option value="">Todas</option><option value="sim">Emitida</option><option value="nao">Não emitida</option></select></div>
+        <select id="flt-nf" onchange="renderHist()"><option value="">Todas</option><option value="sim">Emitida</option><option value="nao">Não emitida</option></select></div>
       <button class="btn btn-ghost" style="margin-top:14px" onclick="limparFiltros()">Limpar</button>
     </div>
     <div class="card"><div id="hist-content"><div class="empty">Carregando…</div></div></div>
@@ -234,11 +262,10 @@
         Novo Pedido
       </button>
     </div>
-
     <div class="card" style="margin-bottom:14px">
       <div class="filter-bar" style="padding:0;border:none;background:none">
         <div class="fg" style="min-width:180px;max-width:260px"><label>Buscar cliente</label>
-          <input id="ped-busca" type="text" placeholder="Nome do cliente…" oninput="renderPedidos()"></div>
+          <input id="ped-busca" type="text" placeholder="Nome…" oninput="renderPedidos()"></div>
         <div class="fg"><label>Status</label>
           <select id="ped-status-flt" onchange="renderPedidos()">
             <option value="">Todos</option>
@@ -251,12 +278,10 @@
         <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('ped-busca').value='';document.getElementById('ped-status-flt').value='';renderPedidos()">Limpar</button>
       </div>
     </div>
-
     <div class="view-tabs">
       <button class="view-tab active" id="vtab-kanban" onclick="mudarViewPedido('kanban',this)">🗂️ Kanban</button>
       <button class="view-tab" id="vtab-lista" onclick="mudarViewPedido('lista',this)">📋 Lista</button>
     </div>
-
     <div id="ped-kanban-view"><div class="kanban-board" id="kanban-board"></div></div>
     <div id="ped-lista-view" style="display:none">
       <div class="card"><div id="ped-lista-content"><div class="empty">Carregando…</div></div></div>
@@ -281,6 +306,30 @@
     <div class="card"><div id="cli-list"><div class="empty">Carregando…</div></div></div>
   </div>
 
+  <!-- ══ PRODUTOS ══════════════════════════════════════ -->
+  <div class="page" id="page-produtos">
+    <div class="page-header">
+      <div><div class="page-title">Produtos</div><div class="page-sub">Catálogo de produtos e serviços</div></div>
+      <button class="btn btn-primary" onclick="abrirModalNovoProduto()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Novo Produto
+      </button>
+    </div>
+    <div class="filter-bar">
+      <div class="fg" style="min-width:200px;max-width:340px"><label>Buscar</label>
+        <input id="prod-busca" type="text" placeholder="Nome ou categoria…" oninput="renderProdutos()"></div>
+      <div class="fg"><label>Filtrar</label>
+        <select id="prod-flt-ativo" onchange="renderProdutos()">
+          <option value="">Todos</option>
+          <option value="ativo">Ativos</option>
+          <option value="inativo">Inativos</option>
+        </select></div>
+      <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('prod-busca').value='';document.getElementById('prod-flt-ativo').value='';renderProdutos()">Limpar</button>
+    </div>
+    <div class="stats-row" id="prod-stats"></div>
+    <div class="card"><div id="prod-list"><div class="empty">Carregando…</div></div></div>
+  </div>
+
   <!-- ══ DASHBOARD ═════════════════════════════════════ -->
   <div class="page" id="page-dashboard">
     <div class="page-header">
@@ -292,11 +341,11 @@
       <div class="dash-card verde"><div class="dash-card-icon">💰</div><div class="dash-card-label">Recebido</div><div class="dash-card-val sm" id="dash-recebido">—</div></div>
       <div class="dash-card laranja"><div class="dash-card-icon">⏳</div><div class="dash-card-label">A Receber</div><div class="dash-card-val sm" id="dash-areceber">—</div></div>
       <div class="dash-card azul"><div class="dash-card-icon">👥</div><div class="dash-card-label">Clientes</div><div class="dash-card-val" id="dash-clientes">—</div></div>
-      <div class="dash-card verde"><div class="dash-card-icon">📦</div><div class="dash-card-label">Pedidos em Aberto</div><div class="dash-card-val" id="dash-pedidos-abertos">—</div></div>
-      <div class="dash-card laranja"><div class="dash-card-icon">🧾</div><div class="dash-card-label">NF Pendente</div><div class="dash-card-val" id="dash-nf-pendente">—</div></div>
+      <div class="dash-card verde"><div class="dash-card-icon">📦</div><div class="dash-card-label">Pedidos Abertos</div><div class="dash-card-val" id="dash-pedidos-abertos">—</div></div>
+      <div class="dash-card laranja"><div class="dash-card-icon">📦</div><div class="dash-card-label">Produtos Ativos</div><div class="dash-card-val" id="dash-produtos">—</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      <div class="card"><div class="card-title">📅 Orçamentos por Mês (ano atual)</div><div class="dash-chart" id="dash-chart-mensal"></div></div>
+      <div class="card"><div class="card-title">📅 Orçamentos por Mês</div><div class="dash-chart" id="dash-chart-mensal"></div></div>
       <div class="card"><div class="card-title">📦 Status dos Pedidos</div><div id="dash-pedidos-status" style="margin-top:8px"></div></div>
     </div>
     <div class="card"><div class="card-title">🏆 Top Clientes (por valor)</div><div id="dash-top-clientes" style="margin-top:8px"></div></div>
@@ -308,12 +357,7 @@
     <div class="card">
       <div class="card-title">Filtrar período</div>
       <div class="form-row">
-        <div class="fg"><label>Mês</label>
-          <select id="rel-mes"><option value="">Todos</option>
-            <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
-            <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
-            <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
-            <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
+        <div class="fg"><label>Mês</label><select id="rel-mes"><option value="">Todos</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
         <div class="fg"><label>Ano</label><input id="rel-ano" type="number" placeholder="2025" min="2020" max="2099"></div>
         <div class="fg"><label>De</label><input id="rel-di" type="date"></div>
         <div class="fg"><label>Até</label><input id="rel-df" type="date"></div>
@@ -327,10 +371,7 @@
       <button class="rel-tab" onclick="relTab('nf',this)">🧾 Com NF</button>
       <button class="rel-tab" onclick="relTab('lista',this)">📋 Lista</button>
     </div>
-    <div class="rel-section active" id="rel-resumo">
-      <div class="stats-row" id="rel-stats-cards"></div>
-      <div class="card" id="rel-chart-card" style="display:none"><div class="card-title">Evolução Mensal</div><div class="bar-chart" id="rel-chart"></div></div>
-    </div>
+    <div class="rel-section active" id="rel-resumo"><div class="stats-row" id="rel-stats-cards"></div><div class="card" id="rel-chart-card" style="display:none"><div class="card-title">Evolução Mensal</div><div class="bar-chart" id="rel-chart"></div></div></div>
     <div class="rel-section" id="rel-mensal"><div class="card"><div class="card-title">Por Mês</div><div id="rel-mensal-content"></div></div></div>
     <div class="rel-section" id="rel-operador"><div class="card"><div class="card-title">Por Operador</div><div id="rel-op-content"></div></div></div>
     <div class="rel-section" id="rel-nf"><div class="card"><div class="card-title">Com NF Emitida</div><div id="rel-nf-content"></div></div></div>
@@ -347,13 +388,9 @@
           <div class="fg"><label>Nome</label><input id="nu-nome" placeholder="Nome completo" autocomplete="name"></div>
           <div class="fg"><label>Login</label><input id="nu-user" placeholder="usuario" autocomplete="username"></div>
           <div class="fg"><label>Senha</label><input id="nu-pass" type="password" autocomplete="new-password" placeholder="Mín. 6 caracteres"></div>
-          <div class="fg"><label>Perfil</label>
-            <select id="nu-role"><option value="user">Operador</option><option value="admin">Administrador</option></select></div>
+          <div class="fg"><label>Perfil</label><select id="nu-role"><option value="user">Operador</option><option value="admin">Administrador</option></select></div>
         </div>
-        <button type="submit" class="btn btn-primary">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Criar Usuário
-        </button>
+        <button type="submit" class="btn btn-primary">Criar Usuário</button>
       </form>
     </div>
     <div class="card"><div class="card-title">Cadastrados</div><div id="users-list"><div class="empty">Carregando…</div></div></div>
@@ -365,7 +402,7 @@
     <div class="card">
       <div class="card-title">🔢 Numeração de Orçamentos</div>
       <div style="background:var(--azul-bg);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:13px">
-        Próximo N°: <strong id="cfg-num-atual">…</strong> &nbsp;|&nbsp; Histórico: <span id="cfg-num-historico" style="color:var(--muted)">—</span>
+        Próximo N°: <strong id="cfg-num-atual">…</strong> &nbsp;|&nbsp; <span id="cfg-num-historico" style="color:var(--muted)">—</span>
       </div>
       <div class="form-row">
         <div class="fg"><label>Definir próximo número</label><input id="cfg-novo-num" type="number" min="1" placeholder="Ex: 400"></div>
@@ -398,8 +435,7 @@
 
 <!-- MODAL: TEXTO NF -->
 <div class="modal-overlay" id="modal-nf-txt">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('modal-nf-txt')">✕</button>
+  <div class="modal"><button class="modal-close" onclick="closeModal('modal-nf-txt')">✕</button>
     <div class="modal-title">Texto para Nota Fiscal</div>
     <div class="modal-sub" id="nf-txt-sub"></div>
     <div class="nota-txt" id="nf-txt-content"></div>
@@ -409,12 +445,11 @@
 
 <!-- MODAL: UPLOAD NF -->
 <div class="modal-overlay" id="modal-nf-upload">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('modal-nf-upload')">✕</button>
+  <div class="modal"><button class="modal-close" onclick="closeModal('modal-nf-upload')">✕</button>
     <div class="modal-title">Nota Fiscal</div>
     <div class="modal-sub" id="nf-up-sub"></div>
     <div id="nf-status-atual" style="margin-bottom:16px"></div>
-    <div class="card-title">Anexar / Substituir arquivo</div>
+    <div class="card-title">Anexar / Substituir</div>
     <div class="nf-zone" id="nf-dropzone" onclick="document.getElementById('nf-file-input').click()">
       <div id="nf-drop-txt">📎 Clique para selecionar<br><small style="opacity:.6">PDF, PNG, JPG, XML — máx. 20MB</small></div>
     </div>
@@ -424,6 +459,48 @@
       <button class="btn btn-primary" id="btn-upload-nf" onclick="uploadNF()" disabled>📤 Enviar NF</button>
       <button class="btn btn-danger" id="btn-del-nf" onclick="removerNF()" style="display:none">🗑️ Remover</button>
       <button class="btn btn-nota" id="btn-ver-nf" style="display:none">👁️ Abrir NF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CATÁLOGO DE PRODUTOS ══════════════════ -->
+<div class="modal-overlay" id="modal-catalogo">
+  <div class="modal" style="max-width:680px">
+    <button class="modal-close" onclick="closeModal('modal-catalogo')">✕</button>
+    <div class="modal-title">📦 Selecionar Produto</div>
+    <div class="modal-sub">Clique no produto para adicionar à lista de itens</div>
+    <div class="prod-search-box" style="margin-top:12px">
+      <input id="cat-busca" type="text" placeholder="Buscar por nome ou categoria…" oninput="renderCatalogo()">
+    </div>
+    <div class="prod-grid" id="cat-grid"><div class="empty">Carregando…</div></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: NOVO/EDITAR PRODUTO ═══════════════════ -->
+<div class="modal-overlay" id="modal-produto">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="closeModal('modal-produto')">✕</button>
+    <div class="modal-title" id="modal-prod-title">Novo Produto</div>
+    <div class="form-row">
+      <div class="fg" style="flex:2"><label>Nome *</label><input id="prod-nome" placeholder="Ex: Luminária LED 40W"></div>
+      <div class="fg"><label>Categoria</label><input id="prod-categoria" placeholder="Ex: Iluminação" list="cat-list">
+        <datalist id="cat-list"></datalist></div>
+    </div>
+    <div class="fg" style="margin-bottom:12px"><label>Descrição</label>
+      <textarea id="prod-descricao" rows="2" placeholder="Detalhes do produto ou serviço…" style="width:100%;resize:vertical;min-height:52px;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;box-sizing:border-box"></textarea></div>
+    <div class="form-row">
+      <div class="fg"><label>Preço Unit. (R$)</label><input id="prod-preco" type="number" min="0" step="0.01" placeholder="0,00"></div>
+      <div class="fg"><label>Unidade</label><input id="prod-unidade" placeholder="un, m², m, kg, h…" value="un"></div>
+      <div class="fg"><label>Status</label>
+        <select id="prod-ativo"><option value="true">✅ Ativo</option><option value="false">❌ Inativo</option></select></div>
+    </div>
+    <input type="hidden" id="prod-edit-id">
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-salvar-prod" onclick="salvarProduto()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/></svg>
+        <span id="prod-btn-txt">Salvar Produto</span>
+      </button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-produto')">Cancelar</button>
     </div>
   </div>
 </div>
@@ -446,7 +523,7 @@
       <div class="fg"><label>Endereço</label><input id="cli-endereco" placeholder="Rua, Nº, Cidade"></div>
     </div>
     <div class="fg" style="margin-bottom:14px"><label>Observações</label>
-      <textarea id="cli-obs" rows="2" placeholder="Informações adicionais…" style="resize:vertical;min-height:52px;width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;box-sizing:border-box"></textarea></div>
+      <textarea id="cli-obs" rows="2" style="width:100%;resize:vertical;min-height:52px;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;box-sizing:border-box"></textarea></div>
     <input type="hidden" id="cli-edit-id">
     <div class="btn-row">
       <button class="btn btn-primary" id="btn-salvar-cli" onclick="salvarCliente()">
@@ -460,19 +537,17 @@
 
 <!-- ══ MODAL: NOVO/EDITAR PEDIDO ════════════════════ -->
 <div class="modal-overlay" id="modal-pedido">
-  <div class="modal" style="max-width:640px">
+  <div class="modal" style="max-width:660px">
     <button class="modal-close" onclick="closeModal('modal-pedido')">✕</button>
     <div class="modal-title" id="modal-ped-title">Novo Pedido</div>
 
-    <!-- Vincular orçamento PRIMEIRO para preencher tudo automaticamente -->
     <div style="background:var(--azul-bg);border:1px solid var(--azul);border-radius:8px;padding:12px 14px;margin-bottom:14px">
       <div style="font-size:12px;font-weight:600;color:var(--azul);margin-bottom:8px">🔗 Vincular a um Orçamento (opcional — preenche cliente e itens automaticamente)</div>
       <div style="display:flex;gap:8px;align-items:center">
-        <input id="ped-orc-num" type="number" placeholder="N° do orçamento (ex: 324)" style="flex:1;max-width:200px" oninput="buscarOrcamentoParaPedido()">
+        <input id="ped-orc-num" type="number" placeholder="N° do orçamento (ex: 324)" style="max-width:220px" oninput="buscarOrcamentoParaPedido()">
         <span id="ped-orc-status" style="font-size:12px;color:var(--muted)"></span>
       </div>
-      <!-- Preview do orçamento encontrado -->
-      <div id="ped-orc-preview" style="display:none;margin-top:10px;padding:8px;background:var(--white);border-radius:6px;font-size:12px">
+      <div id="ped-orc-preview" style="display:none;margin-top:8px;padding:8px;background:var(--white);border-radius:6px;font-size:12px">
         <strong id="ped-orc-preview-nome"></strong><br>
         <span id="ped-orc-preview-info" style="color:var(--muted)"></span>
       </div>
@@ -484,7 +559,7 @@
         <input id="ped-cliente-nome" list="ped-clientes-list" placeholder="Digite o nome do cliente…">
         <datalist id="ped-clientes-list"></datalist>
       </div>
-      <div class="fg"><label>Prazo de Entrega</label><input id="ped-prazo" placeholder="Ex: 5 dias úteis, 20/08"></div>
+      <div class="fg"><label>Prazo de Entrega</label><input id="ped-prazo" placeholder="Ex: 5 dias úteis"></div>
     </div>
     <div class="fg" style="margin-bottom:14px"><label>Status</label>
       <select id="ped-status">
@@ -497,20 +572,23 @@
     </div>
 
     <div class="card-title" style="margin:4px 0 6px">Itens do Pedido</div>
+    <button class="prod-catalog-btn" onclick="abrirCatalogo('ped')">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+      Selecionar do Catálogo
+    </button>
     <div class="items-head"><div>Descrição</div><div>Qtd</div><div>V. Unit. (R$)</div><div>Total</div><div></div></div>
     <div id="ped-items-container"></div>
     <button class="add-item-btn" onclick="addPedItem()">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-      Adicionar item
+      Adicionar item manualmente
     </button>
     <div class="total-bar" style="margin-top:8px">
       <span class="total-label">TOTAL:</span>
       <span class="total-val" id="ped-grand-total">R$ 0,00</span>
     </div>
 
-    <div class="fg" style="margin:14px 0 4px"><label>Observações do Pedido</label>
-      <textarea id="ped-obs" rows="2" placeholder="Detalhes, instruções de entrega…" style="resize:vertical;min-height:52px;width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;box-sizing:border-box"></textarea></div>
-
+    <div class="fg" style="margin:14px 0 4px"><label>Observações</label>
+      <textarea id="ped-obs" rows="2" style="width:100%;resize:vertical;min-height:52px;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;box-sizing:border-box"></textarea></div>
     <input type="hidden" id="ped-edit-id">
     <div class="btn-row" style="margin-top:14px">
       <button class="btn btn-primary" id="btn-salvar-ped" onclick="salvarPedido()">
@@ -564,15 +642,17 @@ let relData      = null;
 let ultimaDefNum = JSON.parse(localStorage.getItem('ultimaDefNum')||'null');
 let clienteList  = [];
 let pedidoList   = [];
+let produtoList  = [];
 let pedItemCount = 0;
 let viewPedido   = 'kanban';
+let catalogoAlvo = 'orc'; // 'orc' ou 'ped'
 
 const PEDIDO_LABELS = {
-  pendente:  { label:'⏳ Pendente',    cls:'badge-status-pendente'  },
-  producao:  { label:'🔧 Em Produção', cls:'badge-status-producao'  },
-  pronto:    { label:'✅ Pronto',      cls:'badge-status-pronto'    },
-  entregue:  { label:'📦 Entregue',    cls:'badge-status-entregue'  },
-  cancelado: { label:'❌ Cancelado',   cls:'badge-status-cancelado' }
+  pendente:  {label:'⏳ Pendente',    cls:'badge-status-pendente' },
+  producao:  {label:'🔧 Em Produção', cls:'badge-status-producao' },
+  pronto:    {label:'✅ Pronto',      cls:'badge-status-pronto'   },
+  entregue:  {label:'📦 Entregue',    cls:'badge-status-entregue' },
+  cancelado: {label:'❌ Cancelado',   cls:'badge-status-cancelado'}
 };
 
 // ════ INIT ════════════════════════════════════════════
@@ -581,100 +661,91 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!currentUser) return;
   document.getElementById('sb-av').textContent   = currentUser.nome.charAt(0).toUpperCase();
   document.getElementById('sb-name').textContent = currentUser.nome;
-  document.getElementById('sb-role').textContent = currentUser.role === 'admin' ? '⭐ Administrador' : 'Operador';
-  document.querySelectorAll('.admin-only').forEach(el => { el.style.display = isAdmin() ? '' : 'none'; });
+  document.getElementById('sb-role').textContent = currentUser.role==='admin'?'⭐ Administrador':'Operador';
+  document.querySelectorAll('.admin-only').forEach(el=>{ el.style.display=isAdmin()?'':'none'; });
   document.getElementById('p-nome').value = currentUser.nome;
   document.getElementById('p-user').value = currentUser.username;
   await carregarNextNum();
   novoForm();
+  // Pré-carrega produtos em background
+  API.get('/produtos').then(list=>{ produtoList=list; }).catch(()=>{});
 });
 
 // ════ NAVEGAÇÃO ═══════════════════════════════════════
 function goPage(p) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
-  const nb = document.getElementById('nav-'+p);
-  if (nb) nb.classList.add('active');
-  if (p === 'historico')               carregarHist();
-  if (p === 'usuarios' && isAdmin())   carregarUsers();
-  if (p === 'relatorios' && isAdmin()) carregarRelatorio();
-  if (p === 'config' && isAdmin())     carregarConfig();
-  if (p === 'clientes')                carregarClientes();
-  if (p === 'pedidos')                 carregarPedidos();
-  if (p === 'dashboard' && isAdmin())  carregarDashboard();
+  const nb=document.getElementById('nav-'+p); if(nb) nb.classList.add('active');
+  if(p==='historico')               carregarHist();
+  if(p==='usuarios'&&isAdmin())     carregarUsers();
+  if(p==='relatorios'&&isAdmin())   carregarRelatorio();
+  if(p==='config'&&isAdmin())       carregarConfig();
+  if(p==='clientes')                carregarClientes();
+  if(p==='pedidos')                 carregarPedidos();
+  if(p==='produtos')                carregarProdutos();
+  if(p==='dashboard'&&isAdmin())    carregarDashboard();
 }
-function logout() { localStorage.removeItem('orcToken'); localStorage.removeItem('orcUser'); location.replace('index.html'); }
+function logout(){localStorage.removeItem('orcToken');localStorage.removeItem('orcUser');location.replace('index.html');}
 
 // ════ NUMERAÇÃO ═══════════════════════════════════════
-async function carregarNextNum() {
-  try { const d = await API.get('/orcamentos/nextnum'); nextNum = d.nextNum; } catch { nextNum = 1; }
+async function carregarNextNum(){
+  try{const d=await API.get('/orcamentos/nextnum');nextNum=d.nextNum;}catch{nextNum=1;}
   atualizaNumDisplay();
 }
-function atualizaNumDisplay() { const el = document.getElementById('num-display'); if (el) el.textContent = String(nextNum).padStart(3,'0'); }
+function atualizaNumDisplay(){const el=document.getElementById('num-display');if(el)el.textContent=String(nextNum).padStart(3,'0');}
 
-// ════ FORMULÁRIO ORÇAMENTO ════════════════════════════
-function syncCom() { if (autoSync) document.getElementById('f-com').value = document.getElementById('f-nome').value; }
-function stopSync() { autoSync = false; }
+// ════ FORM ORÇAMENTO ══════════════════════════════════
+function syncCom(){if(autoSync)document.getElementById('f-com').value=document.getElementById('f-nome').value;}
+function stopSync(){autoSync=false;}
 
-// Auto-preenche comércio ao digitar nome do cliente
-function buscarClientePorNome() {
-  if (!autoSync) return;
-  const nome = document.getElementById('f-nome').value.trim().toLowerCase();
-  if (!nome || !clienteList.length) return;
-  const cli = clienteList.find(c => c.nome.toLowerCase() === nome);
-  if (cli && cli.comercio) document.getElementById('f-com').value = cli.comercio;
-}
-
-function addItem(desc='', qty='', unit='') {
+function addItem(desc='',qty='',unit=''){
   itemCount++;
-  const id = 'r'+itemCount;
-  const div = document.createElement('div');
-  div.className = 'item-row'; div.id = id;
-  div.innerHTML = `
-    <input type="text" placeholder="Descrição do produto/serviço" value="${esc(desc)}" oninput="calcRow('${id}')">
+  const id='r'+itemCount;
+  const div=document.createElement('div');
+  div.className='item-row';div.id=id;
+  div.innerHTML=`
+    <input type="text" placeholder="Descrição" value="${esc(desc)}" oninput="calcRow('${id}')">
     <input type="number" placeholder="1" min="0" value="${qty}" oninput="calcRow('${id}')">
     <input type="number" placeholder="0,00" min="0" step="0.01" value="${unit}" oninput="calcRow('${id}')">
     <div class="item-total" id="t-${id}">R$ 0,00</div>
     <button type="button" class="rm-btn" onclick="document.getElementById('${id}').remove();calcGrand()" title="Remover">×</button>`;
   document.getElementById('items-container').appendChild(div);
-  if (desc && qty && unit) calcRow(id);
+  if(desc&&qty&&unit)calcRow(id);
 }
-function calcRow(id) {
-  const row = document.getElementById(id); if (!row) return;
-  const ins = row.querySelectorAll('input');
-  document.getElementById('t-'+id).textContent = fBRL((parseFloat(ins[1].value)||0)*(parseFloat(ins[2].value)||0));
+function calcRow(id){
+  const row=document.getElementById(id);if(!row)return;
+  const ins=row.querySelectorAll('input');
+  document.getElementById('t-'+id).textContent=fBRL((parseFloat(ins[1].value)||0)*(parseFloat(ins[2].value)||0));
   calcGrand();
 }
-function calcGrand() {
-  let s=0; document.querySelectorAll('#items-container .item-total').forEach(el => s += pBRL(el.textContent));
-  document.getElementById('grand-total').textContent = fBRL(s);
+function calcGrand(){
+  let s=0;document.querySelectorAll('#items-container .item-total').forEach(el=>s+=pBRL(el.textContent));
+  document.getElementById('grand-total').textContent=fBRL(s);
 }
-function getItems() {
-  return [...document.querySelectorAll('#items-container .item-row')].map(row => {
-    const ins = row.querySelectorAll('input');
-    const desc=ins[0].value.trim(), qty=parseFloat(ins[1].value)||0, unit=parseFloat(ins[2].value)||0;
-    return { desc, qty, unit, total: qty*unit };
-  }).filter(i => i.desc && i.qty > 0);
+function getItems(){
+  return [...document.querySelectorAll('#items-container .item-row')].map(row=>{
+    const ins=row.querySelectorAll('input');
+    const desc=ins[0].value.trim(),qty=parseFloat(ins[1].value)||0,unit=parseFloat(ins[2].value)||0;
+    return{desc,qty,unit,total:qty*unit};
+  }).filter(i=>i.desc&&i.qty>0);
 }
-function novoForm() {
-  editingId=null; autoSync=true;
-  document.getElementById('f-nome').value='';
-  document.getElementById('f-com').value='';
+function novoForm(){
+  editingId=null;autoSync=true;
+  ['f-nome','f-com','f-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('f-prazo').value='Á combinar';
   document.getElementById('f-val').value='60 dias';
   document.getElementById('f-pag').value='Imediato';
-  document.getElementById('f-obs').value='';
-  document.getElementById('items-container').innerHTML=''; itemCount=0;
-  addItem(); addItem(); calcGrand();
+  document.getElementById('items-container').innerHTML='';itemCount=0;
+  addItem();addItem();calcGrand();
   document.getElementById('form-title').textContent='Novo Orçamento';
   document.getElementById('btn-salvar-txt').textContent='Salvar Orçamento';
   document.getElementById('edit-bar').classList.remove('show');
   document.getElementById('card-status').style.display='none';
   atualizaNumDisplay();
 }
-function editarOrc(orc) {
-  editingId=orc.id; autoSync=false;
+function editarOrc(orc){
+  editingId=orc.id;autoSync=false;
   document.getElementById('f-nome').value=orc.nome;
   document.getElementById('f-com').value=orc.comercio||'';
   document.getElementById('f-prazo').value=orc.prazo||'';
@@ -684,106 +755,90 @@ function editarOrc(orc) {
   document.getElementById('f-pago').value=String(orc.pago||false);
   document.getElementById('f-vreceb').value=orc.valorRecebido||'';
   document.getElementById('f-nfstatus').value=orc.nfStatus||'nao_emitida';
-  document.getElementById('items-container').innerHTML=''; itemCount=0;
-  (orc.items||[]).forEach(i => addItem(i.desc,i.qty,i.unit));
-  calcGrand();
+  document.getElementById('items-container').innerHTML='';itemCount=0;
+  (orc.items||[]).forEach(i=>addItem(i.desc,i.qty,i.unit));calcGrand();
   document.getElementById('form-title').textContent='Editar Orçamento';
   document.getElementById('btn-salvar-txt').textContent='Salvar Alterações';
   document.getElementById('edit-bar').classList.add('show');
   document.getElementById('edit-bar-num').textContent='N° '+String(orc.num).padStart(3,'0');
   document.getElementById('card-status').style.display='';
   document.getElementById('num-display').textContent=String(orc.num).padStart(3,'0');
-  goPage('novo'); window.scrollTo(0,0);
+  goPage('novo');window.scrollTo(0,0);
 }
-function cancelEdit() { novoForm(); carregarNextNum(); }
+function cancelEdit(){novoForm();carregarNextNum();}
 
 // ════ SALVAR ORÇAMENTO ════════════════════════════════
-async function salvar() {
-  const nome = document.getElementById('f-nome').value.trim();
-  if (!nome) { toast('Preencha o nome do cliente.','error'); return; }
-  const items = getItems();
-  if (!items.length) { toast('Adicione pelo menos um item.','error'); return; }
-  const payload = {
-    nome, comercio: document.getElementById('f-com').value.trim()||nome,
-    prazo: document.getElementById('f-prazo').value.trim(),
-    validade: document.getElementById('f-val').value.trim(),
-    pagamento: document.getElementById('f-pag').value.trim(),
-    obs: document.getElementById('f-obs').value.trim(),
+async function salvar(){
+  const nome=document.getElementById('f-nome').value.trim();
+  if(!nome){toast('Preencha o nome do cliente.','error');return;}
+  const items=getItems();
+  if(!items.length){toast('Adicione pelo menos um item.','error');return;}
+  const payload={
+    nome,comercio:document.getElementById('f-com').value.trim()||nome,
+    prazo:document.getElementById('f-prazo').value.trim(),
+    validade:document.getElementById('f-val').value.trim(),
+    pagamento:document.getElementById('f-pag').value.trim(),
+    obs:document.getElementById('f-obs').value.trim(),
     items
   };
-  const btn = document.getElementById('btn-salvar');
-  btn.disabled=true; document.getElementById('btn-salvar-txt').textContent='Salvando…';
-  try {
-    if (editingId) {
-      payload.pago = document.getElementById('f-pago').value === 'true';
-      payload.valorRecebido = parseFloat(document.getElementById('f-vreceb').value)||0;
-      payload.nfStatus = document.getElementById('f-nfstatus').value;
-      await API.put('/orcamentos/'+editingId, payload);
-      toast('Orçamento atualizado!','success'); cancelEdit();
-    } else {
-      const orc = await API.post('/orcamentos', payload);
-      nextNum = orc.num+1; atualizaNumDisplay();
+  const btn=document.getElementById('btn-salvar');
+  btn.disabled=true;document.getElementById('btn-salvar-txt').textContent='Salvando…';
+  try{
+    if(editingId){
+      payload.pago=document.getElementById('f-pago').value==='true';
+      payload.valorRecebido=parseFloat(document.getElementById('f-vreceb').value)||0;
+      payload.nfStatus=document.getElementById('f-nfstatus').value;
+      await API.put('/orcamentos/'+editingId,payload);
+      toast('Orçamento atualizado!','success');cancelEdit();
+    }else{
+      const orc=await API.post('/orcamentos',payload);
+      nextNum=orc.num+1;atualizaNumDisplay();
       toast('Orçamento N° '+String(orc.num).padStart(3,'0')+' salvo!','success');
     }
-  } catch(e) { toast(e.message,'error'); }
-  finally { btn.disabled=false; document.getElementById('btn-salvar-txt').textContent=editingId?'Salvar Alterações':'Salvar Orçamento'; }
+  }catch(e){toast(e.message,'error');}
+  finally{btn.disabled=false;document.getElementById('btn-salvar-txt').textContent=editingId?'Salvar Alterações':'Salvar Orçamento';}
 }
 
 // ════ PDF / DOCX ══════════════════════════════════════
-function getOrcAtual() {
-  const nome = document.getElementById('f-nome').value.trim();
-  if (!nome) { toast('Preencha o nome do cliente.','error'); return null; }
-  const items = getItems();
-  if (!items.length) { toast('Adicione pelo menos um item.','error'); return null; }
-  const orcEdit = editingId ? orcList.find(o=>o.id===editingId) : null;
-  return {
-    num: orcEdit ? orcEdit.num : nextNum,
-    date: new Date().toLocaleDateString('pt-BR'),
-    nome, comercio: document.getElementById('f-com').value.trim()||nome,
-    prazo: document.getElementById('f-prazo').value.trim(),
-    validade: document.getElementById('f-val').value.trim(),
-    pagamento: document.getElementById('f-pag').value.trim(),
-    obs: document.getElementById('f-obs').value.trim(),
-    items, total: items.reduce((s,i)=>s+i.total,0)
+function getOrcAtual(){
+  const nome=document.getElementById('f-nome').value.trim();
+  if(!nome){toast('Preencha o nome do cliente.','error');return null;}
+  const items=getItems();
+  if(!items.length){toast('Adicione pelo menos um item.','error');return null;}
+  const orcEdit=editingId?orcList.find(o=>o.id===editingId):null;
+  return{
+    num:orcEdit?orcEdit.num:nextNum,date:new Date().toLocaleDateString('pt-BR'),
+    nome,comercio:document.getElementById('f-com').value.trim()||nome,
+    prazo:document.getElementById('f-prazo').value.trim(),
+    validade:document.getElementById('f-val').value.trim(),
+    pagamento:document.getElementById('f-pag').value.trim(),
+    obs:document.getElementById('f-obs').value.trim(),
+    items,total:items.reduce((s,i)=>s+i.total,0)
   };
 }
-async function acaoPDF(orc) {
-  const o = orc || getOrcAtual(); if (!o) return;
-  toast('Gerando PDF…','info');
-  try { await PdfGenerator.gerarPDF(o); toast('PDF baixado!','success'); }
-  catch(e) { toast('Erro PDF: '+e.message,'error'); console.error(e); }
-}
-async function acaoDOCX(orc) {
-  const o = orc || getOrcAtual(); if (!o) return;
-  toast('Gerando DOCX…','info');
-  try { await PdfGenerator.gerarDOCX(o); toast('DOCX baixado!','success'); }
-  catch(e) { toast('Erro DOCX: '+e.message,'error'); console.error(e); }
-}
-
-// ════ TEXTO NF ════════════════════════════════════════
-function abrirNota(orc) {
-  const o = orc || getOrcAtual(); if (!o) return;
-  document.getElementById('nf-txt-content').textContent = gerarTextoNF(o);
-  document.getElementById('nf-txt-sub').textContent = 'N° '+String(o.num).padStart(3,'0')+' — '+o.nome;
-  const cb = document.getElementById('copy-btn');
-  cb.textContent='📋 Copiar texto'; cb.classList.remove('ok');
+async function acaoPDF(orc){const o=orc||getOrcAtual();if(!o)return;toast('Gerando PDF…','info');try{await PdfGenerator.gerarPDF(o);toast('PDF baixado!','success');}catch(e){toast('Erro PDF: '+e.message,'error');}}
+async function acaoDOCX(orc){const o=orc||getOrcAtual();if(!o)return;toast('Gerando DOCX…','info');try{await PdfGenerator.gerarDOCX(o);toast('DOCX baixado!','success');}catch(e){toast('Erro DOCX: '+e.message,'error');}}
+function abrirNota(orc){
+  const o=orc||getOrcAtual();if(!o)return;
+  document.getElementById('nf-txt-content').textContent=gerarTextoNF(o);
+  document.getElementById('nf-txt-sub').textContent='N° '+String(o.num).padStart(3,'0')+' — '+o.nome;
+  const cb=document.getElementById('copy-btn');cb.textContent='📋 Copiar texto';cb.classList.remove('ok');
   openModal('modal-nf-txt');
 }
-function copiarNFTxt() {
-  navigator.clipboard.writeText(document.getElementById('nf-txt-content').textContent).then(() => {
-    const b = document.getElementById('copy-btn');
-    b.textContent='✓ Copiado!'; b.classList.add('ok');
-    setTimeout(()=>{ b.textContent='📋 Copiar texto'; b.classList.remove('ok'); },2500);
+function copiarNFTxt(){
+  navigator.clipboard.writeText(document.getElementById('nf-txt-content').textContent).then(()=>{
+    const b=document.getElementById('copy-btn');b.textContent='✓ Copiado!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='📋 Copiar texto';b.classList.remove('ok');},2500);
   });
 }
 
 // ════ HISTÓRICO ═══════════════════════════════════════
-async function carregarHist() {
+async function carregarHist(){
   document.getElementById('hist-content').innerHTML='<div class="empty">Carregando…</div>';
-  try { orcList=await API.get('/orcamentos'); renderHistStats(); renderHist(); }
-  catch(e) { document.getElementById('hist-content').innerHTML=`<div class="empty">Erro: ${esc(e.message)}</div>`; }
+  try{orcList=await API.get('/orcamentos');renderHistStats();renderHist();}
+  catch(e){document.getElementById('hist-content').innerHTML=`<div class="empty">Erro: ${esc(e.message)}</div>`;}
 }
-function renderHistStats() {
+function renderHistStats(){
   const total=orcList.reduce((s,o)=>s+o.total,0);
   const rec=orcList.filter(o=>o.pago).reduce((s,o)=>s+(o.valorRecebido||o.total),0);
   const fal=orcList.filter(o=>!o.pago).reduce((s,o)=>s+o.total,0);
@@ -794,15 +849,15 @@ function renderHistStats() {
     <div class="stat-card"><div class="stat-label">A Receber</div><div class="stat-val sm red">${fBRL(fal)}</div></div>
     <div class="stat-card"><div class="stat-label">Próx. N°</div><div class="stat-val">${String(nextNum).padStart(3,'0')}</div></div>`;
 }
-function limparFiltros() { document.getElementById('flt-busca').value=''; document.getElementById('flt-pago').value=''; document.getElementById('flt-nf').value=''; renderHist(); }
-function renderHist() {
+function limparFiltros(){document.getElementById('flt-busca').value='';document.getElementById('flt-pago').value='';document.getElementById('flt-nf').value='';renderHist();}
+function renderHist(){
   const busca=(document.getElementById('flt-busca').value||'').toLowerCase();
   const fpago=document.getElementById('flt-pago').value;
   const fnf=document.getElementById('flt-nf').value;
   let list=orcList.filter(o=>{
-    if(busca && !o.nome.toLowerCase().includes(busca) && !(o.comercio||'').toLowerCase().includes(busca)) return false;
-    if(fpago==='pago'&&!o.pago) return false; if(fpago==='nao'&&o.pago) return false;
-    if(fnf==='sim'&&o.nfStatus!=='emitida') return false; if(fnf==='nao'&&o.nfStatus==='emitida') return false;
+    if(busca&&!o.nome.toLowerCase().includes(busca)&&!(o.comercio||'').toLowerCase().includes(busca))return false;
+    if(fpago==='pago'&&!o.pago)return false;if(fpago==='nao'&&o.pago)return false;
+    if(fnf==='sim'&&o.nfStatus!=='emitida')return false;if(fnf==='nao'&&o.nfStatus==='emitida')return false;
     return true;
   });
   const cont=document.getElementById('hist-content');
@@ -820,7 +875,7 @@ function renderHist() {
       <td style="color:var(--muted);font-size:11px;white-space:nowrap">${esc(orc.date||'—')}</td>
       <td><div style="font-weight:600">${esc(orc.nome)}</div>
           <div style="font-size:11px;color:var(--muted)">${esc(orc.comercio||'')}</div>
-          ${orc.obs?`<div style="font-size:10px;color:var(--muted);font-style:italic">📝 ${esc(orc.obs.substring(0,60))}${orc.obs.length>60?'…':''}</div>`:''}
+          ${orc.obs?`<div style="font-size:10px;color:var(--muted);font-style:italic">📝 ${esc(orc.obs.substring(0,50))}${orc.obs.length>50?'…':''}</div>`:''}
           ${orc.editedAt?`<div style="font-size:10px;color:var(--warning)">Editado: ${esc(orc.editedAt)}</div>`:''}</td>
       ${isAdmin()?`<td style="font-size:11px;color:var(--muted)">${esc(orc.ownerNome||orc.owner||'—')}</td>`:''}
       <td style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:600">${fBRL(orc.total)}</td>
@@ -837,141 +892,127 @@ function renderHist() {
       </div></td>`;
     tb.appendChild(tr);
   });
-  tb.onclick = e => {
-    const btn = e.target.closest('button'); if (!btn) return;
-    const idx = parseInt(btn.dataset.idx);
-    const orc = list[idx];
-    if (btn.classList.contains('edit'))   editarOrc(orc);
-    if (btn.classList.contains('pdf'))    acaoPDF(orc);
-    if (btn.classList.contains('docx'))   acaoDOCX(orc);
-    if (btn.classList.contains('nota'))   abrirNota(orc);
-    if (btn.classList.contains('pedido')) criarPedidoDeOrcamento(orc);
-    if (btn.classList.contains('nf'))     abrirUploadNF(orc);
-    if (btn.classList.contains('del'))    excluir(btn.dataset.id);
+  tb.onclick=e=>{
+    const btn=e.target.closest('button');if(!btn)return;
+    const idx=parseInt(btn.dataset.idx);const orc=list[idx];
+    if(btn.classList.contains('edit'))  editarOrc(orc);
+    if(btn.classList.contains('pdf'))   acaoPDF(orc);
+    if(btn.classList.contains('docx'))  acaoDOCX(orc);
+    if(btn.classList.contains('nota'))  abrirNota(orc);
+    if(btn.classList.contains('pedido'))criarPedidoDeOrcamento(orc);
+    if(btn.classList.contains('nf'))    abrirUploadNF(orc);
+    if(btn.classList.contains('del'))   excluir(btn.dataset.id);
   };
 }
-async function excluir(id) {
-  if(!confirm('Excluir este orçamento?')) return;
+async function excluir(id){
+  if(!confirm('Excluir este orçamento?'))return;
   try{await API.delete('/orcamentos/'+id);toast('Excluído.','success');carregarHist();}
   catch(e){toast(e.message,'error');}
 }
 
 // ════ NF UPLOAD ═══════════════════════════════════════
-function abrirUploadNF(orc) {
+function abrirUploadNF(orc){
   currentNFOrcId=orc.id;
   document.getElementById('nf-up-sub').textContent='N° '+String(orc.num).padStart(3,'0')+' — '+orc.nome;
-  const statusEl=document.getElementById('nf-status-atual');
-  statusEl.innerHTML=orc.nfUrl?`<span class="badge badge-nf-sim">✅ NF Anexada</span>`:'<span class="badge badge-nf-nao">❌ Sem NF</span>';
+  document.getElementById('nf-status-atual').innerHTML=orc.nfUrl?'<span class="badge badge-nf-sim">✅ NF Anexada</span>':'<span class="badge badge-nf-nao">❌ Sem NF</span>';
   document.getElementById('btn-upload-nf').disabled=true;
   document.getElementById('nf-preview-name').textContent='';
   document.getElementById('nf-drop-txt').innerHTML='📎 Clique para selecionar<br><small style="opacity:.6">PDF, PNG, JPG, XML — máx. 20MB</small>';
   document.getElementById('btn-del-nf').style.display=orc.nfUrl?'':'none';
   document.getElementById('btn-ver-nf').style.display=orc.nfUrl?'':'none';
-  if(orc.nfUrl){ document.getElementById('btn-ver-nf').onclick=()=>window.open(orc.nfUrl,'_blank'); }
+  if(orc.nfUrl)document.getElementById('btn-ver-nf').onclick=()=>window.open(orc.nfUrl,'_blank');
   document.getElementById('nf-file-input').value='';
   openModal('modal-nf-upload');
 }
-function previewNFFile() {
-  const f=document.getElementById('nf-file-input').files[0]; if(!f) return;
+function previewNFFile(){
+  const f=document.getElementById('nf-file-input').files[0];if(!f)return;
   document.getElementById('btn-upload-nf').disabled=false;
   document.getElementById('nf-preview-name').textContent='Selecionado: '+f.name+' ('+Math.round(f.size/1024)+' KB)';
 }
-async function uploadNF() {
-  const f=document.getElementById('nf-file-input').files[0]; if(!f||!currentNFOrcId) return;
-  const btn=document.getElementById('btn-upload-nf'); btn.disabled=true; btn.textContent='📤 Enviando…';
+async function uploadNF(){
+  const f=document.getElementById('nf-file-input').files[0];if(!f||!currentNFOrcId)return;
+  const btn=document.getElementById('btn-upload-nf');btn.disabled=true;btn.textContent='📤 Enviando…';
   try{
-    const fd=new FormData(); fd.append('nf',f);
+    const fd=new FormData();fd.append('nf',f);
     const res=await API.upload('/orcamentos/'+currentNFOrcId+'/nf',fd);
     toast('NF enviada!','success');
-    const orc=orcList.find(o=>o.id===currentNFOrcId); if(orc){orc.nfUrl=res.nfUrl;orc.nfStatus='emitida';}
-    closeModal('modal-nf-upload'); renderHist();
+    const orc=orcList.find(o=>o.id===currentNFOrcId);if(orc){orc.nfUrl=res.nfUrl;orc.nfStatus='emitida';}
+    closeModal('modal-nf-upload');renderHist();
   }catch(e){toast(e.message,'error');}
   finally{btn.disabled=false;btn.textContent='📤 Enviar NF';}
 }
-async function removerNF() {
-  if(!confirm('Remover a NF anexada?')) return;
+async function removerNF(){
+  if(!confirm('Remover a NF?'))return;
   try{
     await API.delete('/orcamentos/'+currentNFOrcId+'/nf');
     toast('NF removida.','success');
-    const orc=orcList.find(o=>o.id===currentNFOrcId); if(orc){delete orc.nfUrl;orc.nfStatus='nao_emitida';}
-    closeModal('modal-nf-upload'); renderHist();
+    const orc=orcList.find(o=>o.id===currentNFOrcId);if(orc){delete orc.nfUrl;orc.nfStatus='nao_emitida';}
+    closeModal('modal-nf-upload');renderHist();
   }catch(e){toast(e.message,'error');}
 }
 
 // ════ RELATÓRIOS ══════════════════════════════════════
-async function carregarRelatorio() {
-  const mes=document.getElementById('rel-mes').value, ano=document.getElementById('rel-ano').value;
-  const di=document.getElementById('rel-di').value, df=document.getElementById('rel-df').value;
+async function carregarRelatorio(){
+  const mes=document.getElementById('rel-mes').value,ano=document.getElementById('rel-ano').value;
+  const di=document.getElementById('rel-di').value,df=document.getElementById('rel-df').value;
   const params=new URLSearchParams();
-  if(mes) params.set('mes',mes); if(ano) params.set('ano',ano);
-  if(di) params.set('di',di); if(df) params.set('df',df);
-  try{ relData=await API.get('/orcamentos/relatorio?'+params.toString()); renderRelatorios(); }
+  if(mes)params.set('mes',mes);if(ano)params.set('ano',ano);if(di)params.set('di',di);if(df)params.set('df',df);
+  try{relData=await API.get('/orcamentos/relatorios?'+params.toString());renderRelatorios();}
   catch(e){toast(e.message,'error');}
 }
 function relTab(tab,btn){
   document.querySelectorAll('.rel-section').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.rel-tab').forEach(el=>el.classList.remove('active'));
-  document.getElementById('rel-'+tab).classList.add('active'); btn.classList.add('active');
+  document.getElementById('rel-'+tab).classList.add('active');btn.classList.add('active');
 }
-function renderRelatorios() {
-  if(!relData) return;
-  const {resumo,mensal,operadores,comNF,lista}=relData;
+function renderRelatorios(){
+  if(!relData)return;
+  const{resumo,porMes,porOperador,comNF,lista}=relData;
   document.getElementById('rel-stats-cards').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Orçamentos</div><div class="stat-val">${resumo.qtd}</div></div>
-    <div class="stat-card"><div class="stat-label">Valor Total</div><div class="stat-val sm">${fBRL(resumo.total)}</div></div>
-    <div class="stat-card"><div class="stat-label">Recebido</div><div class="stat-val sm green">${fBRL(resumo.recebido)}</div></div>
-    <div class="stat-card"><div class="stat-label">A Receber</div><div class="stat-val sm red">${fBRL(resumo.aReceber)}</div></div>
-    <div class="stat-card"><div class="stat-label">NF Emitidas</div><div class="stat-val">${resumo.nfEmitidas}</div></div>`;
-  const chartCard=document.getElementById('rel-chart-card');
-  if(mensal&&mensal.length){
-    chartCard.style.display='';
-    const max=Math.max(...mensal.map(m=>m.total),1);
-    document.getElementById('rel-chart').innerHTML=mensal.map(m=>`
+    <div class="stat-card"><div class="stat-label">Orçamentos</div><div class="stat-val">${resumo.totalOrcamentos}</div></div>
+    <div class="stat-card"><div class="stat-label">Valor Total</div><div class="stat-val sm">${fBRL(resumo.valorTotal)}</div></div>
+    <div class="stat-card"><div class="stat-label">Recebido</div><div class="stat-val sm green">${fBRL(resumo.valorRecebido)}</div></div>
+    <div class="stat-card"><div class="stat-label">A Receber</div><div class="stat-val sm red">${fBRL(resumo.valorFaltaReceber)}</div></div>
+    <div class="stat-card"><div class="stat-label">NF Emitidas</div><div class="stat-val">${resumo.comNF}</div></div>`;
+  const cc=document.getElementById('rel-chart-card');
+  if(porMes&&porMes.length){
+    cc.style.display='';
+    const max=Math.max(...porMes.map(m=>m.total),1);
+    document.getElementById('rel-chart').innerHTML=porMes.map(m=>`
       <div class="bar-wrap"><div class="bar-pct">${fBRL(m.total)}</div>
       <div class="bar" style="height:${Math.round((m.total/max)*120)}px"></div>
-      <div class="bar-label">${m.mesNome||m.mes}</div></div>`).join('');
-  } else chartCard.style.display='none';
-  document.getElementById('rel-mensal-content').innerHTML=mensal&&mensal.length
-    ?`<table class="tbl"><thead><tr><th>Mês</th><th>Qtd</th><th>Total</th><th>Recebido</th></tr></thead><tbody>
-      ${mensal.map(m=>`<tr><td>${m.mesNome||m.mes}</td><td>${m.qtd}</td><td>${fBRL(m.total)}</td><td>${fBRL(m.recebido)}</td></tr>`).join('')}
-      </tbody></table>`:'<div class="empty">Sem dados</div>';
-  document.getElementById('rel-op-content').innerHTML=operadores&&operadores.length
-    ?`<table class="tbl"><thead><tr><th>Operador</th><th>Qtd</th><th>Total</th><th>Recebido</th></tr></thead><tbody>
-      ${operadores.map(o=>`<tr><td>${esc(o.nome||o.owner)}</td><td>${o.qtd}</td><td>${fBRL(o.total)}</td><td>${fBRL(o.recebido)}</td></tr>`).join('')}
-      </tbody></table>`:'<div class="empty">Sem dados</div>';
+      <div class="bar-label">${m.key}</div></div>`).join('');
+  }else cc.style.display='none';
+  document.getElementById('rel-mensal-content').innerHTML=porMes&&porMes.length
+    ?`<table class="tbl"><thead><tr><th>Mês</th><th>Qtd</th><th>Total</th><th>Recebido</th></tr></thead><tbody>${porMes.map(m=>`<tr><td>${m.key}</td><td>${m.qtd}</td><td>${fBRL(m.total)}</td><td>${fBRL(m.totalPago)}</td></tr>`).join('')}</tbody></table>`
+    :'<div class="empty">Sem dados</div>';
+  document.getElementById('rel-op-content').innerHTML=porOperador&&porOperador.length
+    ?`<table class="tbl"><thead><tr><th>Operador</th><th>Qtd</th><th>Total</th></tr></thead><tbody>${porOperador.map(o=>`<tr><td>${esc(o.nome)}</td><td>${o.qtd}</td><td>${fBRL(o.total)}</td></tr>`).join('')}</tbody></table>`
+    :'<div class="empty">Sem dados</div>';
   document.getElementById('rel-nf-content').innerHTML=comNF&&comNF.length
-    ?`<table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Total</th></tr></thead><tbody>
-      ${comNF.map(o=>`<tr><td><span class="badge badge-orc">${String(o.num).padStart(3,'0')}</span></td><td>${esc(o.date||'')}</td><td>${esc(o.nome)}</td><td>${fBRL(o.total)}</td></tr>`).join('')}
-      </tbody></table>`:'<div class="empty">Nenhuma NF</div>';
+    ?`<table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Total</th></tr></thead><tbody>${comNF.map(o=>`<tr><td><span class="badge badge-orc">${String(o.num).padStart(3,'0')}</span></td><td>${esc(o.date||'')}</td><td>${esc(o.nome)}</td><td>${fBRL(o.total)}</td></tr>`).join('')}</tbody></table>`
+    :'<div class="empty">Nenhuma NF</div>';
   document.getElementById('rel-lista-content').innerHTML=lista&&lista.length
-    ?`<table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Total</th><th>Status</th></tr></thead><tbody>
-      ${lista.map(o=>`<tr>
-        <td><span class="badge badge-orc">${String(o.num).padStart(3,'0')}</span></td>
-        <td style="font-size:11px;color:var(--muted)">${esc(o.date||'')}</td>
-        <td>${esc(o.nome)}</td><td style="font-family:var(--mono)">${fBRL(o.total)}</td>
-        <td><span class="badge ${o.pago?'badge-pago':'badge-nao-pago'}">${o.pago?'Pago':'Pendente'}</span></td>
-      </tr>`).join('')}
-      </tbody></table>`:'<div class="empty">Sem dados</div>';
+    ?`<table class="tbl"><thead><tr><th>N°</th><th>Data</th><th>Cliente</th><th>Total</th><th>Status</th></tr></thead><tbody>${lista.map(o=>`<tr><td><span class="badge badge-orc">${String(o.num).padStart(3,'0')}</span></td><td style="font-size:11px;color:var(--muted)">${esc(o.date||'')}</td><td>${esc(o.nome)}</td><td style="font-family:var(--mono)">${fBRL(o.total)}</td><td><span class="badge ${o.pago?'badge-pago':'badge-nao-pago'}">${o.pago?'Pago':'Pendente'}</span></td></tr>`).join('')}</tbody></table>`
+    :'<div class="empty">Sem dados</div>';
 }
 
 // ════ USUÁRIOS ════════════════════════════════════════
-async function carregarUsers() {
+async function carregarUsers(){
   try{
     const users=await API.get('/auth/users');
     const ul=document.getElementById('users-list');
     if(!users.length){ul.innerHTML='<div class="empty">Nenhum usuário.</div>';return;}
     ul.innerHTML=`<table class="tbl"><thead><tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Ações</th></tr></thead><tbody>
-      ${users.map(u=>`<tr>
-        <td>${esc(u.nome)}</td><td style="font-family:var(--mono);font-size:12px">${esc(u.username)}</td>
+      ${users.map(u=>`<tr><td>${esc(u.nome)}</td><td style="font-family:var(--mono);font-size:12px">${esc(u.username)}</td>
         <td><span class="badge ${u.role==='admin'?'badge-pago':'badge-nf-nao'}">${u.role==='admin'?'⭐ Admin':'Operador'}</span></td>
         <td><div class="tbl-actions">${u.id!==currentUser.id?`<button class="ta del" onclick="excluirUser('${u.id}','${esc(u.nome)}')">🗑️</button>`:'<span style="font-size:11px;color:var(--muted)">Você</span>'}</div></td>
-      </tr>`).join('')}
-    </tbody></table>`;
+      </tr>`).join('')}</tbody></table>`;
   }catch(e){toast(e.message,'error');}
 }
-async function criarUser() {
-  const nome=document.getElementById('nu-nome').value.trim(), user=document.getElementById('nu-user').value.trim();
-  const pass=document.getElementById('nu-pass').value, role=document.getElementById('nu-role').value;
+async function criarUser(){
+  const nome=document.getElementById('nu-nome').value.trim(),user=document.getElementById('nu-user').value.trim();
+  const pass=document.getElementById('nu-pass').value,role=document.getElementById('nu-role').value;
   if(!nome||!user||!pass){toast('Preencha todos os campos.','error');return;}
   if(pass.length<6){toast('Senha mínimo 6 caracteres.','error');return;}
   try{
@@ -981,71 +1022,217 @@ async function criarUser() {
     carregarUsers();
   }catch(e){toast(e.message,'error');}
 }
-async function excluirUser(id,nome) {
-  if(!confirm(`Excluir "${nome}"?`)) return;
+async function excluirUser(id,nome){
+  if(!confirm(`Excluir "${nome}"?`))return;
   try{await API.delete('/auth/users/'+id);toast('Excluído.','success');carregarUsers();}
   catch(e){toast(e.message,'error');}
 }
 
 // ════ CONFIGURAÇÕES ═══════════════════════════════════
-async function carregarConfig() {
+async function carregarConfig(){
   await carregarNextNum();
-  const el=document.getElementById('cfg-num-atual'); if(el) el.textContent=String(nextNum).padStart(3,'0');
-  const input=document.getElementById('cfg-novo-num'); if(input) input.value=nextNum;
+  const el=document.getElementById('cfg-num-atual');if(el)el.textContent=String(nextNum).padStart(3,'0');
+  const input=document.getElementById('cfg-novo-num');if(input)input.value=nextNum;
   const hist=document.getElementById('cfg-num-historico');
-  if(hist) hist.textContent=ultimaDefNum?`N° ${ultimaDefNum.num} em ${ultimaDefNum.data} por ${ultimaDefNum.por}`:'Nenhuma alteração manual.';
+  if(hist)hist.textContent=ultimaDefNum?`N° ${ultimaDefNum.num} em ${ultimaDefNum.data} por ${ultimaDefNum.por}`:'Nenhuma alteração manual.';
 }
-async function definirNumeracao() {
-  const input=document.getElementById('cfg-novo-num'), feedback=document.getElementById('cfg-num-feedback');
-  const num=parseInt(input.value); feedback.textContent=''; feedback.style.color='';
+async function definirNumeracao(){
+  const input=document.getElementById('cfg-novo-num'),feedback=document.getElementById('cfg-num-feedback');
+  const num=parseInt(input.value);feedback.textContent='';feedback.style.color='';
   if(!num||isNaN(num)||num<1){feedback.textContent='⚠️ Digite um número válido.';feedback.style.color='var(--danger)';return;}
   try{
     const res=await API.put('/orcamentos/nextnum',{nextNum:num});
-    nextNum=res.nextNum; atualizaNumDisplay();
+    nextNum=res.nextNum;atualizaNumDisplay();
     document.getElementById('cfg-num-atual').textContent=String(nextNum).padStart(3,'0');
     ultimaDefNum={num:String(nextNum).padStart(3,'0'),data:new Date().toLocaleString('pt-BR'),por:currentUser.nome};
     localStorage.setItem('ultimaDefNum',JSON.stringify(ultimaDefNum));
     document.getElementById('cfg-num-historico').textContent=`N° ${ultimaDefNum.num} em ${ultimaDefNum.data} por ${ultimaDefNum.por}`;
-    feedback.textContent=`✅ Próximo será N° ${String(nextNum).padStart(3,'0')}`; feedback.style.color='var(--success)';
+    feedback.textContent=`✅ Próximo será N° ${String(nextNum).padStart(3,'0')}`;feedback.style.color='var(--success)';
     toast('Numeração atualizada!','success');
   }catch(e){feedback.textContent='❌ '+e.message;feedback.style.color='var(--danger)';toast(e.message,'error');}
 }
 
 // ════ PERFIL ══════════════════════════════════════════
-async function salvarPerfil() {
-  const nome=document.getElementById('p-nome').value.trim(), user=document.getElementById('p-user').value.trim();
-  const p1=document.getElementById('p-pass1').value, p2=document.getElementById('p-pass2').value;
+async function salvarPerfil(){
+  const nome=document.getElementById('p-nome').value.trim(),user=document.getElementById('p-user').value.trim();
+  const p1=document.getElementById('p-pass1').value,p2=document.getElementById('p-pass2').value;
   if(!nome||!user){toast('Nome e usuário são obrigatórios.','error');return;}
   if(p1&&p1!==p2){toast('As senhas não coincidem.','error');return;}
-  const payload={nome,username:user}; if(p1) payload.password=p1;
+  const payload={nome,username:user};if(p1)payload.password=p1;
   try{
     const updated=await API.put('/auth/users/'+currentUser.id,payload);
-    currentUser={...currentUser,...updated}; localStorage.setItem('orcUser',JSON.stringify(currentUser));
+    currentUser={...currentUser,...updated};localStorage.setItem('orcUser',JSON.stringify(currentUser));
     document.getElementById('sb-name').textContent=currentUser.nome;
     document.getElementById('sb-av').textContent=currentUser.nome.charAt(0).toUpperCase();
-    document.getElementById('p-pass1').value=''; document.getElementById('p-pass2').value='';
+    document.getElementById('p-pass1').value='';document.getElementById('p-pass2').value='';
     toast('Perfil atualizado!','success');
   }catch(e){toast(e.message,'error');}
 }
 
-// ════ CLIENTES ════════════════════════════════════════
-async function carregarClientes() {
-  document.getElementById('cli-list').innerHTML='<div class="empty">Carregando…</div>';
-  try { clienteList = await API.get('/clientes'); }
-  catch(e) { clienteList = []; console.warn('API /clientes:', e.message); }
-  renderCliStats(); renderClientes();
+// ════ PRODUTOS ════════════════════════════════════════
+async function carregarProdutos(){
+  document.getElementById('prod-list').innerHTML='<div class="empty">Carregando…</div>';
+  try{produtoList=await API.get('/produtos');}
+  catch(e){produtoList=[];console.warn('API /produtos:',e.message);}
+  renderProdStats();renderProdutos();atualizarDatalistCategorias();
 }
-function renderCliStats() {
+function renderProdStats(){
+  const ativos=produtoList.filter(p=>p.ativo).length;
+  document.getElementById('prod-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Total</div><div class="stat-val">${produtoList.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Ativos</div><div class="stat-val">${ativos}</div></div>
+    <div class="stat-card"><div class="stat-label">Categorias</div><div class="stat-val">${new Set(produtoList.map(p=>p.categoria).filter(Boolean)).size}</div></div>`;
+}
+function renderProdutos(){
+  const busca=(document.getElementById('prod-busca').value||'').toLowerCase();
+  const fativo=document.getElementById('prod-flt-ativo').value;
+  const list=produtoList.filter(p=>{
+    if(busca&&!p.nome.toLowerCase().includes(busca)&&!(p.categoria||'').toLowerCase().includes(busca))return false;
+    if(fativo==='ativo'&&!p.ativo)return false;
+    if(fativo==='inativo'&&p.ativo)return false;
+    return true;
+  });
+  const cont=document.getElementById('prod-list');
+  if(!list.length){cont.innerHTML='<div class="empty">'+(produtoList.length?'Nenhum encontrado.':'Clique em "Novo Produto" para cadastrar.')+'</div>';return;}
+  // Agrupa por categoria
+  const cats={};list.forEach(p=>{const c=p.categoria||'Sem categoria';if(!cats[c])cats[c]=[];cats[c].push(p);});
+  cont.innerHTML=Object.entries(cats).map(([cat,itens])=>`
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">${esc(cat)}</div>
+      ${itens.map(p=>`
+        <div class="prod-row">
+          <div class="prod-row-icon">📦</div>
+          <div class="prod-row-info">
+            <div class="prod-row-nome">${esc(p.nome)} <span class="${p.ativo?'badge-ativo':'badge-inativo'}">${p.ativo?'Ativo':'Inativo'}</span></div>
+            <div class="prod-row-sub">${esc(p.descricao||'')}${p.unidade?` · ${esc(p.unidade)}`:''}</div>
+          </div>
+          <div class="prod-row-preco">${fBRL(p.preco)}</div>
+          <div class="prod-row-actions">
+            <button class="ta edit" title="Editar" onclick="editarProduto('${p.id}')">✏️</button>
+            ${isAdmin()?`<button class="ta del" title="Excluir" onclick="excluirProduto('${p.id}','${esc(p.nome)}')">🗑️</button>`:''}
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+function atualizarDatalistCategorias(){
+  const cats=[...new Set(produtoList.map(p=>p.categoria).filter(Boolean))];
+  const dl=document.getElementById('cat-list');if(!dl)return;
+  dl.innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('');
+}
+function abrirModalNovoProduto(){
+  ['prod-nome','prod-descricao','prod-categoria'].forEach(id=>{ const el=document.getElementById(id);if(el)el.value=''; });
+  document.getElementById('prod-preco').value='0';
+  document.getElementById('prod-unidade').value='un';
+  document.getElementById('prod-ativo').value='true';
+  document.getElementById('prod-edit-id').value='';
+  document.getElementById('modal-prod-title').textContent='Novo Produto';
+  document.getElementById('prod-btn-txt').textContent='Salvar Produto';
+  openModal('modal-produto');
+}
+function editarProduto(id){
+  const p=produtoList.find(x=>x.id===id);if(!p)return;
+  document.getElementById('prod-nome').value=p.nome||'';
+  document.getElementById('prod-descricao').value=p.descricao||'';
+  document.getElementById('prod-categoria').value=p.categoria||'';
+  document.getElementById('prod-preco').value=p.preco||0;
+  document.getElementById('prod-unidade').value=p.unidade||'un';
+  document.getElementById('prod-ativo').value=String(p.ativo!==false);
+  document.getElementById('prod-edit-id').value=p.id;
+  document.getElementById('modal-prod-title').textContent='Editar Produto';
+  document.getElementById('prod-btn-txt').textContent='Salvar Alterações';
+  openModal('modal-produto');
+}
+async function salvarProduto(){
+  const nome=document.getElementById('prod-nome').value.trim();
+  if(!nome){toast('Nome é obrigatório.','error');return;}
+  const payload={
+    nome,
+    descricao: document.getElementById('prod-descricao').value.trim(),
+    categoria: document.getElementById('prod-categoria').value.trim(),
+    preco:     parseFloat(document.getElementById('prod-preco').value)||0,
+    unidade:   document.getElementById('prod-unidade').value.trim()||'un',
+    ativo:     document.getElementById('prod-ativo').value==='true'
+  };
+  const editId=document.getElementById('prod-edit-id').value;
+  const btn=document.getElementById('btn-salvar-prod');
+  btn.disabled=true;document.getElementById('prod-btn-txt').textContent='Salvando…';
+  try{
+    if(editId){
+      const updated=await API.put('/produtos/'+editId,payload);
+      const idx=produtoList.findIndex(p=>p.id===editId);
+      if(idx>=0)produtoList[idx]={...produtoList[idx],...updated};
+      toast('Produto atualizado!','success');
+    }else{
+      const novo=await API.post('/produtos',payload);
+      produtoList.push(novo);
+      toast('Produto cadastrado!','success');
+    }
+    closeModal('modal-produto');
+    renderProdStats();renderProdutos();atualizarDatalistCategorias();
+  }catch(e){toast(e.message,'error');}
+  finally{btn.disabled=false;document.getElementById('prod-btn-txt').textContent=editId?'Salvar Alterações':'Salvar Produto';}
+}
+async function excluirProduto(id,nome){
+  if(!confirm(`Excluir "${nome}"?`))return;
+  try{
+    await API.delete('/produtos/'+id);
+    produtoList=produtoList.filter(p=>p.id!==id);
+    toast('Excluído.','success');renderProdStats();renderProdutos();
+  }catch(e){toast(e.message,'error');}
+}
+
+// ════ CATÁLOGO ════════════════════════════════════════
+function abrirCatalogo(alvo){
+  catalogoAlvo=alvo;
+  document.getElementById('cat-busca').value='';
+  renderCatalogo();
+  openModal('modal-catalogo');
+}
+function renderCatalogo(){
+  const busca=(document.getElementById('cat-busca').value||'').toLowerCase();
+  const list=produtoList.filter(p=>p.ativo&&(!busca||p.nome.toLowerCase().includes(busca)||(p.categoria||'').toLowerCase().includes(busca)));
+  const grid=document.getElementById('cat-grid');
+  if(!list.length){
+    grid.innerHTML='<div class="empty" style="grid-column:1/-1">'+(produtoList.filter(p=>p.ativo).length?'Nenhum produto encontrado.':'Nenhum produto ativo. Cadastre em Produtos.')+'</div>';
+    return;
+  }
+  grid.innerHTML=list.map(p=>`
+    <div class="prod-item" onclick="adicionarProdutoDosCatalogo('${p.id}')">
+      ${p.categoria?`<div class="prod-cat-badge">${esc(p.categoria)}</div>`:''}
+      <div class="prod-item-nome">${esc(p.nome)}</div>
+      <div class="prod-item-info">${esc(p.descricao||'')}${p.descricao&&p.unidade?' · ':''}${p.unidade?esc(p.unidade):''}</div>
+      <div class="prod-item-preco">${fBRL(p.preco)}</div>
+    </div>`).join('');
+}
+function adicionarProdutoDosCatalogo(id){
+  const p=produtoList.find(x=>x.id===id);if(!p)return;
+  if(catalogoAlvo==='orc'){
+    addItem(p.nome+(p.descricao?' — '+p.descricao:''),1,p.preco);
+  }else{
+    addPedItem(p.nome+(p.descricao?' — '+p.descricao:''),1,p.preco);
+  }
+  closeModal('modal-catalogo');
+  toast(`"${p.nome}" adicionado!`,'success');
+}
+
+// ════ CLIENTES ════════════════════════════════════════
+async function carregarClientes(){
+  document.getElementById('cli-list').innerHTML='<div class="empty">Carregando…</div>';
+  try{clienteList=await API.get('/clientes');}
+  catch(e){clienteList=[];console.warn('API /clientes:',e.message);}
+  renderCliStats();renderClientes();
+}
+function renderCliStats(){
   document.getElementById('cli-stats').innerHTML=`
     <div class="stat-card"><div class="stat-label">Total</div><div class="stat-val">${clienteList.length}</div></div>
     <div class="stat-card"><div class="stat-label">Com E-mail</div><div class="stat-val">${clienteList.filter(c=>c.email).length}</div></div>
     <div class="stat-card"><div class="stat-label">Com Telefone</div><div class="stat-val">${clienteList.filter(c=>c.telefone).length}</div></div>`;
 }
-function renderClientes() {
+function renderClientes(){
   const busca=(document.getElementById('cli-busca').value||'').toLowerCase();
   const list=clienteList.filter(c=>!busca||c.nome.toLowerCase().includes(busca)||(c.comercio||'').toLowerCase().includes(busca)||(c.email||'').toLowerCase().includes(busca));
   const cont=document.getElementById('cli-list');
-  if(!list.length){ cont.innerHTML='<div class="empty">'+(clienteList.length?'Nenhum encontrado.':'Nenhum cliente. Clique em "Novo Cliente".')+'</div>'; return; }
+  if(!list.length){cont.innerHTML='<div class="empty">'+(clienteList.length?'Nenhum encontrado.':'Clique em "Novo Cliente".')+'</div>';return;}
   cont.innerHTML=list.map(c=>`
     <div class="client-card">
       <div class="client-avatar">${c.nome.charAt(0).toUpperCase()}</div>
@@ -1054,20 +1241,20 @@ function renderClientes() {
         <div class="client-sub">${c.comercio?`🏪 ${esc(c.comercio)} &nbsp;`:''}${c.telefone?`📞 ${esc(c.telefone)} &nbsp;`:''}${c.email?`✉️ ${esc(c.email)}`:''}</div>
       </div>
       <div class="client-actions">
-        <button class="ta edit" title="Editar" onclick="editarCliente('${c.id}')">✏️</button>
-        ${isAdmin()?`<button class="ta del" title="Excluir" onclick="excluirCliente('${c.id}','${esc(c.nome)}')">🗑️</button>`:''}
+        <button class="ta edit" onclick="editarCliente('${c.id}')">✏️</button>
+        ${isAdmin()?`<button class="ta del" onclick="excluirCliente('${c.id}','${esc(c.nome)}')">🗑️</button>`:''}
       </div>
     </div>`).join('');
 }
-function abrirModalNovoCliente() {
-  ['cli-nome','cli-comercio','cli-tel','cli-email','cli-cpfcnpj','cli-endereco','cli-obs'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+function abrirModalNovoCliente(){
+  ['cli-nome','cli-comercio','cli-tel','cli-email','cli-cpfcnpj','cli-endereco','cli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('cli-edit-id').value='';
   document.getElementById('modal-cli-title').textContent='Novo Cliente';
   document.getElementById('cli-btn-txt').textContent='Salvar Cliente';
   openModal('modal-cliente');
 }
-function editarCliente(id) {
-  const c=clienteList.find(x=>x.id===id); if(!c) return;
+function editarCliente(id){
+  const c=clienteList.find(x=>x.id===id);if(!c)return;
   document.getElementById('cli-nome').value=c.nome||'';
   document.getElementById('cli-comercio').value=c.comercio||'';
   document.getElementById('cli-tel').value=c.telefone||'';
@@ -1080,9 +1267,9 @@ function editarCliente(id) {
   document.getElementById('cli-btn-txt').textContent='Salvar Alterações';
   openModal('modal-cliente');
 }
-async function salvarCliente() {
+async function salvarCliente(){
   const nome=document.getElementById('cli-nome').value.trim();
-  if(!nome){ toast('Nome é obrigatório.','error'); return; }
+  if(!nome){toast('Nome é obrigatório.','error');return;}
   const payload={
     nome,
     comercio: document.getElementById('cli-comercio').value.trim(),
@@ -1094,121 +1281,106 @@ async function salvarCliente() {
   };
   const editId=document.getElementById('cli-edit-id').value;
   const btn=document.getElementById('btn-salvar-cli');
-  btn.disabled=true;
-  document.getElementById('cli-btn-txt').textContent='Salvando…';
+  btn.disabled=true;document.getElementById('cli-btn-txt').textContent='Salvando…';
   try{
     if(editId){
-      const updated=await API.put('/clientes/'+editId, payload);
+      const updated=await API.put('/clientes/'+editId,payload);
       const idx=clienteList.findIndex(c=>c.id===editId);
-      if(idx>=0) clienteList[idx]={...clienteList[idx],...updated};
+      if(idx>=0)clienteList[idx]={...clienteList[idx],...updated};
       toast('Cliente atualizado!','success');
-    } else {
-      const novo=await API.post('/clientes', payload);
+    }else{
+      const novo=await API.post('/clientes',payload);
       clienteList.unshift(novo);
       toast('Cliente cadastrado!','success');
     }
-    closeModal('modal-cliente');
-    renderCliStats(); renderClientes();
-  }catch(e){ toast(e.message,'error'); }
-  finally{ btn.disabled=false; document.getElementById('cli-btn-txt').textContent=editId?'Salvar Alterações':'Salvar Cliente'; }
-}
-async function excluirCliente(id,nome) {
-  if(!confirm(`Excluir "${nome}"?`)) return;
-  try{
-    await API.delete('/clientes/'+id);
-    clienteList=clienteList.filter(c=>c.id!==id);
-    toast('Excluído.','success'); renderCliStats(); renderClientes();
+    closeModal('modal-cliente');renderCliStats();renderClientes();
   }catch(e){toast(e.message,'error');}
+  finally{btn.disabled=false;document.getElementById('cli-btn-txt').textContent=editId?'Salvar Alterações':'Salvar Cliente';}
+}
+async function excluirCliente(id,nome){
+  if(!confirm(`Excluir "${nome}"?`))return;
+  try{await API.delete('/clientes/'+id);clienteList=clienteList.filter(c=>c.id!==id);toast('Excluído.','success');renderCliStats();renderClientes();}
+  catch(e){toast(e.message,'error');}
 }
 
 // ════ PEDIDOS ═════════════════════════════════════════
-async function carregarPedidos() {
-  try { pedidoList = await API.get('/pedidos'); }
-  catch(e) { pedidoList = []; console.warn('API /pedidos:', e.message); }
-  await garantirClientesCarregados();
-  preencherDatalistClientes();
-  renderPedidos();
+async function carregarPedidos(){
+  try{pedidoList=await API.get('/pedidos');}
+  catch(e){pedidoList=[];console.warn('API /pedidos:',e.message);}
+  if(!clienteList.length){try{clienteList=await API.get('/clientes');}catch{}}
+  preencherDatalistClientes();renderPedidos();
 }
-async function garantirClientesCarregados() {
-  if(!clienteList.length) { try{ clienteList=await API.get('/clientes'); }catch{} }
-}
-function preencherDatalistClientes() {
-  const dl=document.getElementById('ped-clientes-list'); if(!dl) return;
+function preencherDatalistClientes(){
+  const dl=document.getElementById('ped-clientes-list');if(!dl)return;
   dl.innerHTML=clienteList.map(c=>`<option value="${esc(c.nome)}">`).join('');
 }
 
-// ✅ Vincular orçamento ao pedido — busca na API pelo número
-let _orcBuscarTimeout = null;
-async function buscarOrcamentoParaPedido() {
-  const num = parseInt(document.getElementById('ped-orc-num').value);
-  const status = document.getElementById('ped-orc-status');
-  const preview = document.getElementById('ped-orc-preview');
-  preview.style.display='none'; status.textContent='';
-  clearTimeout(_orcBuscarTimeout);
-  if (!num || num < 1) return;
+let _orcTimeout=null;
+async function buscarOrcamentoParaPedido(){
+  const num=parseInt(document.getElementById('ped-orc-num').value);
+  const status=document.getElementById('ped-orc-status');
+  const preview=document.getElementById('ped-orc-preview');
+  preview.style.display='none';status.textContent='';
+  clearTimeout(_orcTimeout);
+  if(!num||num<1)return;
   status.textContent='🔍 Buscando…';
-  _orcBuscarTimeout = setTimeout(async () => {
-    try {
-      const orc = await API.get('/pedidos/por-orcamento/'+num);
-      // Preenche cliente
-      document.getElementById('ped-cliente-nome').value = orc.nome;
-      // Preenche itens
-      document.getElementById('ped-items-container').innerHTML=''; pedItemCount=0;
-      (orc.items||[]).forEach(i => addPedItem(i.desc, i.qty, i.unit));
-      if(!(orc.items||[]).length) addPedItem();
+  _orcTimeout=setTimeout(async()=>{
+    try{
+      const orc=await API.get('/pedidos/por-orcamento/'+num);
+      document.getElementById('ped-cliente-nome').value=orc.nome;
+      document.getElementById('ped-items-container').innerHTML='';pedItemCount=0;
+      (orc.items||[]).forEach(i=>addPedItem(i.desc,i.qty,i.unit));
+      if(!(orc.items||[]).length)addPedItem();
       calcPedGrand();
-      // Preview
       status.textContent='✅ Encontrado';
-      document.getElementById('ped-orc-preview').style.display='';
+      preview.style.display='';
       document.getElementById('ped-orc-preview-nome').textContent='Orç. N° '+String(orc.num).padStart(3,'0')+' — '+orc.nome;
-      document.getElementById('ped-orc-preview-info').textContent=fBRL(orc.total)+' | '+esc(orc.date||'')+(orc.comercio?' | '+orc.comercio:'');
-    } catch {
+      document.getElementById('ped-orc-preview-info').textContent=fBRL(orc.total)+' | '+(orc.date||'')+(orc.comercio?' | '+orc.comercio:'');
+    }catch{
       status.textContent='❌ Não encontrado';
-      document.getElementById('ped-orc-preview').style.display='none';
+      preview.style.display='none';
     }
-  }, 500);
+  },500);
 }
 
-// ✅ Criar pedido direto do botão 📦 no histórico
-function criarPedidoDeOrcamento(orc) {
+function criarPedidoDeOrcamento(orc){
   abrirModalNovoPedido();
-  // Preenche o número do orçamento e dispara a busca
-  document.getElementById('ped-orc-num').value = orc.num;
-  document.getElementById('ped-cliente-nome').value = orc.nome;
-  document.getElementById('ped-items-container').innerHTML=''; pedItemCount=0;
-  (orc.items||[]).forEach(i => addPedItem(i.desc, i.qty, i.unit));
-  if(!(orc.items||[]).length) addPedItem();
+  document.getElementById('ped-orc-num').value=orc.num;
+  document.getElementById('ped-cliente-nome').value=orc.nome;
+  document.getElementById('ped-items-container').innerHTML='';pedItemCount=0;
+  (orc.items||[]).forEach(i=>addPedItem(i.desc,i.qty,i.unit));
+  if(!(orc.items||[]).length)addPedItem();
   calcPedGrand();
   document.getElementById('ped-orc-preview').style.display='';
   document.getElementById('ped-orc-preview-nome').textContent='Orç. N° '+String(orc.num).padStart(3,'0')+' — '+orc.nome;
-  document.getElementById('ped-orc-preview-info').textContent=fBRL(orc.total)+' | '+esc(orc.date||'');
+  document.getElementById('ped-orc-preview-info').textContent=fBRL(orc.total)+' | '+(orc.date||'');
   document.getElementById('ped-orc-status').textContent='✅ Vinculado';
   goPage('pedidos');
 }
 
-function mudarViewPedido(v,btn) {
+function mudarViewPedido(v,btn){
   viewPedido=v;
-  document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active')); btn.classList.add('active');
+  document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
   document.getElementById('ped-kanban-view').style.display=v==='kanban'?'':'none';
   document.getElementById('ped-lista-view').style.display=v==='lista'?'':'none';
   renderPedidos();
 }
-function filtrarPedidos() {
+function filtrarPedidos(){
   const busca=(document.getElementById('ped-busca').value||'').toLowerCase();
   const sflt=document.getElementById('ped-status-flt').value;
   return pedidoList.filter(p=>{
-    if(busca&&!p.clienteNome.toLowerCase().includes(busca)) return false;
-    if(sflt&&p.status!==sflt) return false; return true;
+    if(busca&&!p.clienteNome.toLowerCase().includes(busca))return false;
+    if(sflt&&p.status!==sflt)return false;return true;
   });
 }
-function renderPedidos() {
+function renderPedidos(){
   const list=filtrarPedidos();
-  if(viewPedido==='kanban') renderKanban(list); else renderListaPedidos(list);
+  if(viewPedido==='kanban')renderKanban(list);else renderListaPedidos(list);
 }
-function renderKanban(list) {
+function renderKanban(list){
   const board=document.getElementById('kanban-board');
   board.innerHTML=['pendente','producao','pronto','entregue','cancelado'].map(status=>{
-    const items=list.filter(p=>p.status===status), lbl=PEDIDO_LABELS[status];
+    const items=list.filter(p=>p.status===status),lbl=PEDIDO_LABELS[status];
     return `<div class="kanban-col">
       <div class="kanban-col-title">${lbl.label} <span class="kanban-col-count">${items.length}</span></div>
       ${items.length?items.map(p=>`
@@ -1217,17 +1389,16 @@ function renderKanban(list) {
           <div class="kanban-card-sub">${p.prazoEntrega?'📅 '+esc(p.prazoEntrega):'Sem prazo'}</div>
           ${p.orcamentoNum?`<div class="kanban-card-sub">🔗 Orç. N° ${String(p.orcamentoNum).padStart(3,'0')}</div>`:''}
           <div class="kanban-card-val">${fBRL(p.total||0)}</div>
-        </div>`).join(''):'<div style="font-size:12px;color:var(--muted);text-align:center;padding:16px 0">Vazio</div>'}
+        </div>`).join(''):'<div style="font-size:12px;color:var(--muted);text-align:center;padding:14px 0">Vazio</div>'}
     </div>`;
   }).join('');
 }
-function renderListaPedidos(list) {
+function renderListaPedidos(list){
   const cont=document.getElementById('ped-lista-content');
-  if(!list.length){cont.innerHTML='<div class="empty">'+(pedidoList.length?'Nenhum encontrado.':'Clique em "Novo Pedido" para começar.')+'</div>';return;}
+  if(!list.length){cont.innerHTML='<div class="empty">'+(pedidoList.length?'Nenhum encontrado.':'Clique em "Novo Pedido".')+'</div>';return;}
   cont.innerHTML=`<div style="overflow-x:auto"><table class="tbl"><thead><tr>
     <th>Cliente</th><th>Status</th><th>Prazo</th><th>Total</th><th>Orç.</th><th>Ações</th>
-  </tr></thead><tbody>
-  ${list.map(p=>{
+  </tr></thead><tbody>${list.map(p=>{
     const lbl=PEDIDO_LABELS[p.status]||PEDIDO_LABELS.pendente;
     return `<tr>
       <td><div style="font-weight:600">${esc(p.clienteNome)}</div><div style="font-size:11px;color:var(--muted)">${esc(p.ownerNome||'')}</div></td>
@@ -1241,15 +1412,13 @@ function renderListaPedidos(list) {
         ${isAdmin()?`<button class="ta del" onclick="excluirPedido('${p.id}')">🗑️</button>`:''}
       </div></td>
     </tr>`;
-  }).join('')}
-  </tbody></table></div>`;
+  }).join('')}</tbody></table></div>`;
 }
-
-function verPedido(id) {
-  const p=pedidoList.find(x=>x.id===id); if(!p) return;
+function verPedido(id){
+  const p=pedidoList.find(x=>x.id===id);if(!p)return;
   const lbl=PEDIDO_LABELS[p.status]||PEDIDO_LABELS.pendente;
   document.getElementById('mpd-titulo').textContent='Pedido — '+esc(p.clienteNome);
-  document.getElementById('mpd-sub').textContent=(p.criadoEm?new Date(p.criadoEm).toLocaleDateString('pt-BR'):'')+' | '+esc(p.ownerNome||p.owner||'—');
+  document.getElementById('mpd-sub').textContent=(p.criadoEm?new Date(p.criadoEm).toLocaleDateString('pt-BR'):'')+' | '+(p.ownerNome||p.owner||'—');
   document.getElementById('mpd-badges').innerHTML=`
     <span class="badge ${lbl.cls}">${lbl.label}</span>
     ${p.prazoEntrega?`<span class="badge badge-orc">📅 ${esc(p.prazoEntrega)}</span>`:''}
@@ -1259,16 +1428,15 @@ function verPedido(id) {
       <span>${esc(i.desc)}</span>
       <span style="color:var(--muted);font-size:11px">${i.qty}× ${fBRL(i.unit)}</span>
       <span style="font-family:var(--mono);color:var(--azul)">${fBRL(i.total)}</span>
-    </div>`).join('') || '<div class="empty" style="font-size:12px">Sem itens</div>';
+    </div>`).join('')||'<div class="empty" style="font-size:12px">Sem itens</div>';
   document.getElementById('mpd-total').textContent=fBRL(p.total||0);
   document.getElementById('mpd-obs').textContent=p.obs?'📝 '+p.obs:'';
-  document.getElementById('mpd-btn-editar').onclick=()=>{ closeModal('modal-ped-detalhe'); editarPedido(p.id); };
+  document.getElementById('mpd-btn-editar').onclick=()=>{closeModal('modal-ped-detalhe');editarPedido(p.id);};
   openModal('modal-ped-detalhe');
 }
-
-function abrirModalNovoPedido() {
+function abrirModalNovoPedido(){
   pedItemCount=0;
-  ['ped-cliente-nome','ped-prazo','ped-obs'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['ped-cliente-nome','ped-prazo','ped-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('ped-orc-num').value='';
   document.getElementById('ped-orc-status').textContent='';
   document.getElementById('ped-orc-preview').style.display='none';
@@ -1279,11 +1447,11 @@ function abrirModalNovoPedido() {
   document.getElementById('ped-btn-txt').textContent='Salvar Pedido';
   document.getElementById('ped-grand-total').textContent='R$ 0,00';
   addPedItem();
-  garantirClientesCarregados().then(preencherDatalistClientes);
+  if(!clienteList.length)API.get('/clientes').then(l=>{clienteList=l;preencherDatalistClientes();}).catch(()=>{});
   openModal('modal-pedido');
 }
-function editarPedido(id) {
-  const p=pedidoList.find(x=>x.id===id); if(!p) return;
+function editarPedido(id){
+  const p=pedidoList.find(x=>x.id===id);if(!p)return;
   pedItemCount=0;
   document.getElementById('ped-cliente-nome').value=p.clienteNome||'';
   document.getElementById('ped-prazo').value=p.prazoEntrega||'';
@@ -1299,19 +1467,18 @@ function editarPedido(id) {
     document.getElementById('ped-orc-preview').style.display='';
     document.getElementById('ped-orc-preview-nome').textContent='Orç. N° '+String(p.orcamentoNum).padStart(3,'0')+' — '+p.clienteNome;
     document.getElementById('ped-orc-preview-info').textContent='';
-  } else { document.getElementById('ped-orc-preview').style.display='none'; }
+  }else document.getElementById('ped-orc-preview').style.display='none';
   (p.items||[]).forEach(i=>addPedItem(i.desc,i.qty,i.unit));
-  if(!(p.items||[]).length) addPedItem();
+  if(!(p.items||[]).length)addPedItem();
   calcPedGrand();
-  garantirClientesCarregados().then(preencherDatalistClientes);
   openModal('modal-pedido');
 }
 
 // Itens do pedido
-function addPedItem(desc='',qty='',unit='') {
+function addPedItem(desc='',qty='',unit=''){
   pedItemCount++;
   const id='pr'+pedItemCount;
-  const div=document.createElement('div'); div.className='item-row'; div.id=id;
+  const div=document.createElement('div');div.className='item-row';div.id=id;
   div.innerHTML=`
     <input type="text" placeholder="Descrição" value="${esc(desc)}" oninput="calcPedRow('${id}')">
     <input type="number" placeholder="1" min="0" value="${qty}" oninput="calcPedRow('${id}')">
@@ -1319,37 +1486,35 @@ function addPedItem(desc='',qty='',unit='') {
     <div class="item-total" id="pt-${id}">R$ 0,00</div>
     <button type="button" class="rm-btn" onclick="document.getElementById('${id}').remove();calcPedGrand()" title="Remover">×</button>`;
   document.getElementById('ped-items-container').appendChild(div);
-  if(desc&&qty&&unit) calcPedRow(id);
+  if(desc&&qty&&unit)calcPedRow(id);
 }
-function calcPedRow(id) {
-  const row=document.getElementById(id); if(!row) return;
+function calcPedRow(id){
+  const row=document.getElementById(id);if(!row)return;
   const ins=row.querySelectorAll('input');
   document.getElementById('pt-'+id).textContent=fBRL((parseFloat(ins[1].value)||0)*(parseFloat(ins[2].value)||0));
   calcPedGrand();
 }
-function calcPedGrand() {
-  let s=0; document.querySelectorAll('#ped-items-container .item-total').forEach(el=>s+=pBRL(el.textContent));
+function calcPedGrand(){
+  let s=0;document.querySelectorAll('#ped-items-container .item-total').forEach(el=>s+=pBRL(el.textContent));
   document.getElementById('ped-grand-total').textContent=fBRL(s);
 }
-function getPedItems() {
+function getPedItems(){
   return [...document.querySelectorAll('#ped-items-container .item-row')].map(row=>{
     const ins=row.querySelectorAll('input');
-    const desc=ins[0].value.trim(), qty=parseFloat(ins[1].value)||0, unit=parseFloat(ins[2].value)||0;
-    return {desc,qty,unit,total:qty*unit};
+    const desc=ins[0].value.trim(),qty=parseFloat(ins[1].value)||0,unit=parseFloat(ins[2].value)||0;
+    return{desc,qty,unit,total:qty*unit};
   }).filter(i=>i.desc&&i.qty>0);
 }
-
-async function salvarPedido() {
+async function salvarPedido(){
   const clienteNome=document.getElementById('ped-cliente-nome').value.trim();
-  if(!clienteNome){ toast('Informe o nome do cliente.','error'); return; }
+  if(!clienteNome){toast('Informe o nome do cliente.','error');return;}
   const items=getPedItems();
   const orcNum=parseInt(document.getElementById('ped-orc-num').value)||null;
-  // Tenta encontrar o orçamento vinculado na lista local para pegar o id
   let orcId='';
-  if(orcNum && orcList.length) { const o=orcList.find(x=>x.num===orcNum); if(o) orcId=o.id; }
+  if(orcNum&&orcList.length){const o=orcList.find(x=>x.num===orcNum);if(o)orcId=o.id;}
   const cli=clienteList.find(c=>c.nome.toLowerCase()===clienteNome.toLowerCase());
   const payload={
-    clienteId:   cli ? cli.id : '',
+    clienteId:   cli?cli.id:'',
     clienteNome,
     items,
     total:       items.reduce((s,i)=>s+i.total,0),
@@ -1361,71 +1526,67 @@ async function salvarPedido() {
   };
   const editId=document.getElementById('ped-edit-id').value;
   const btn=document.getElementById('btn-salvar-ped');
-  btn.disabled=true; document.getElementById('ped-btn-txt').textContent='Salvando…';
+  btn.disabled=true;document.getElementById('ped-btn-txt').textContent='Salvando…';
   try{
     if(editId){
-      const updated=await API.put('/pedidos/'+editId, payload);
+      const updated=await API.put('/pedidos/'+editId,payload);
       const idx=pedidoList.findIndex(p=>p.id===editId);
-      if(idx>=0) pedidoList[idx]={...pedidoList[idx],...updated};
+      if(idx>=0)pedidoList[idx]={...pedidoList[idx],...updated};
       toast('Pedido atualizado!','success');
-    } else {
-      const novo=await API.post('/pedidos', payload);
+    }else{
+      const novo=await API.post('/pedidos',payload);
       pedidoList.unshift(novo);
       toast('Pedido criado!','success');
     }
-    closeModal('modal-pedido'); renderPedidos();
-  }catch(e){ toast(e.message,'error'); }
-  finally{ btn.disabled=false; document.getElementById('ped-btn-txt').textContent=editId?'Salvar Alterações':'Salvar Pedido'; }
-}
-
-async function excluirPedido(id) {
-  if(!confirm('Excluir este pedido?')) return;
-  try{
-    await API.delete('/pedidos/'+id);
-    pedidoList=pedidoList.filter(p=>p.id!==id);
-    toast('Excluído.','success'); renderPedidos();
+    closeModal('modal-pedido');renderPedidos();
   }catch(e){toast(e.message,'error');}
+  finally{btn.disabled=false;document.getElementById('ped-btn-txt').textContent=editId?'Salvar Alterações':'Salvar Pedido';}
+}
+async function excluirPedido(id){
+  if(!confirm('Excluir este pedido?'))return;
+  try{await API.delete('/pedidos/'+id);pedidoList=pedidoList.filter(p=>p.id!==id);toast('Excluído.','success');renderPedidos();}
+  catch(e){toast(e.message,'error');}
 }
 
 // ════ DASHBOARD ═══════════════════════════════════════
-async function carregarDashboard() {
-  try {
-    const [orcs, pedidos, clientes] = await Promise.all([
+async function carregarDashboard(){
+  try{
+    const[orcs,pedidos,clientes,produtos]=await Promise.all([
       API.get('/orcamentos').catch(()=>[]),
       API.get('/pedidos').catch(()=>[]),
-      API.get('/clientes').catch(()=>[])
+      API.get('/clientes').catch(()=>[]),
+      API.get('/produtos').catch(()=>[])
     ]);
-    const totalRecebido=orcs.filter(o=>o.pago).reduce((s,o)=>s+(o.valorRecebido||o.total),0);
-    const totalAReceber=orcs.filter(o=>!o.pago).reduce((s,o)=>s+o.total,0);
+    const totalRec=orcs.filter(o=>o.pago).reduce((s,o)=>s+(o.valorRecebido||o.total),0);
+    const totalARec=orcs.filter(o=>!o.pago).reduce((s,o)=>s+o.total,0);
     document.getElementById('dash-tot-orc').textContent=orcs.length;
-    document.getElementById('dash-recebido').textContent=fBRL(totalRecebido);
-    document.getElementById('dash-areceber').textContent=fBRL(totalAReceber);
+    document.getElementById('dash-recebido').textContent=fBRL(totalRec);
+    document.getElementById('dash-areceber').textContent=fBRL(totalARec);
     document.getElementById('dash-clientes').textContent=clientes.length;
     document.getElementById('dash-pedidos-abertos').textContent=pedidos.filter(p=>!['entregue','cancelado'].includes(p.status)).length;
-    document.getElementById('dash-nf-pendente').textContent=orcs.filter(o=>o.nfStatus!=='emitida'&&o.pago).length;
+    document.getElementById('dash-produtos').textContent=produtos.filter(p=>p.ativo).length;
 
     const anoAtual=new Date().getFullYear();
     const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
     const porMes=Array(12).fill(0);
-    orcs.forEach(o=>{ if(!o.date) return; const p=o.date.split('/'); if(p.length<3) return; if(parseInt(p[2])===anoAtual) porMes[parseInt(p[1])-1]+=o.total; });
+    orcs.forEach(o=>{if(!o.date)return;const p=o.date.split('/');if(p.length<3)return;if(parseInt(p[2])===anoAtual)porMes[parseInt(p[1])-1]+=o.total;});
     const maxV=Math.max(...porMes,1);
     document.getElementById('dash-chart-mensal').innerHTML=meses.map((m,i)=>`
       <div class="dash-bar-wrap">
         <div class="dash-bar-val">${porMes[i]>0?fBRL(porMes[i]).replace('R$ ',''):'&nbsp;'}</div>
-        <div class="dash-bar" style="height:${Math.round((porMes[i]/maxV)*100)}px;opacity:${porMes[i]>0?1:.25}"></div>
+        <div class="dash-bar" style="height:${Math.round((porMes[i]/maxV)*100)}px;opacity:${porMes[i]>0?1:.2}"></div>
         <div class="dash-bar-label">${m}</div>
       </div>`).join('');
 
     const sc={pendente:0,producao:0,pronto:0,entregue:0,cancelado:0};
-    pedidos.forEach(p=>{ if(sc[p.status]!==undefined) sc[p.status]++; });
+    pedidos.forEach(p=>{if(sc[p.status]!==undefined)sc[p.status]++;});
     document.getElementById('dash-pedidos-status').innerHTML=Object.entries(sc).map(([k,v])=>{
       const lbl=PEDIDO_LABELS[k];
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
         <span class="badge ${lbl.cls}">${lbl.label}</span><span style="font-weight:700;font-size:14px">${v}</span></div>`;
     }).join('');
 
-    const ct={};
-    orcs.forEach(o=>{ if(!ct[o.nome]) ct[o.nome]={nome:o.nome,total:0,qtd:0}; ct[o.nome].total+=o.total; ct[o.nome].qtd++; });
+    const ct={};orcs.forEach(o=>{if(!ct[o.nome])ct[o.nome]={nome:o.nome,total:0,qtd:0};ct[o.nome].total+=o.total;ct[o.nome].qtd++;});
     const top=Object.values(ct).sort((a,b)=>b.total-a.total).slice(0,8);
     const maxT=Math.max(...top.map(t=>t.total),1);
     document.getElementById('dash-top-clientes').innerHTML=top.length?top.map(c=>`
@@ -1433,8 +1594,8 @@ async function carregarDashboard() {
         <div class="client-avatar" style="width:32px;height:32px;font-size:13px">${c.nome.charAt(0).toUpperCase()}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.nome)}</div>
-          <div style="height:6px;background:var(--border);border-radius:3px;margin-top:4px">
-            <div style="height:6px;background:var(--azul);border-radius:3px;width:${Math.round(c.total/maxT*100)}%"></div>
+          <div style="height:5px;background:var(--border);border-radius:3px;margin-top:4px">
+            <div style="height:5px;background:var(--azul);border-radius:3px;width:${Math.round(c.total/maxT*100)}%"></div>
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0">
@@ -1442,14 +1603,14 @@ async function carregarDashboard() {
           <div style="font-size:10px;color:var(--muted)">${c.qtd} orç.</div>
         </div>
       </div>`).join(''):'<div class="empty">Nenhum orçamento ainda.</div>';
-  }catch(e){toast('Erro ao carregar dashboard: '+e.message,'error');}
+  }catch(e){toast('Erro dashboard: '+e.message,'error');}
 }
 
 // ════ MODAIS ══════════════════════════════════════════
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id) {document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('open'); });
+  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
 });
 </script>
 </body>
