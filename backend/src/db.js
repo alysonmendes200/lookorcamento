@@ -110,6 +110,12 @@ async function init() {
     )
   `);
 
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS desconto_tipo TEXT DEFAULT 'pct'`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS desconto NUMERIC(12,2) DEFAULT 0`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS total_bruto NUMERIC(12,2) DEFAULT 0`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS pago BOOLEAN DEFAULT FALSE`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS valor_recebido NUMERIC(12,2) DEFAULT 0`);
+
   await query(`
     CREATE TABLE IF NOT EXISTS produtos (
       id            TEXT PRIMARY KEY,
@@ -347,23 +353,41 @@ const Pedidos = {
   create: async (data) => {
     const { rows } = await query(`
       INSERT INTO pedidos
-        (id, cliente_id, cliente_nome, items, total, prazo_entrega, obs,
-         orcamento_id, orcamento_num, status, owner, owner_nome, criado_em)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *
+        (id, cliente_id, cliente_nome, items, total, total_bruto, desconto_tipo, desconto,
+         prazo_entrega, obs, orcamento_id, orcamento_num, status, owner, owner_nome,
+         criado_em, pago, valor_recebido)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) RETURNING *
     `, [
       data.id, data.clienteId || '', data.clienteNome,
       JSON.stringify(data.items || []), data.total || 0,
+      data.totalBruto || data.total || 0,
+      data.descontoTipo || 'pct',
+      data.desconto || 0,
       data.prazoEntrega || '', data.obs || '',
       data.orcamentoId || '', data.orcamentoNum || null,
-      data.status || 'pendente', data.owner, data.ownerNome, data.criadoEm
+      data.status || 'pendente', data.owner, data.ownerNome, data.criadoEm,
+      data.pago || false, data.valorRecebido || 0
     ]);
     return fromDbPedido(rows[0]);
+  },
+  report: async ({ dataInicio, dataFim, mes, ano }) => {
+    let sql = 'SELECT * FROM pedidos WHERE 1=1';
+    const params = [];
+    if (dataInicio) { params.push(dataInicio);              sql += ` AND criado_em >= $${params.length}`; }
+    if (dataFim)    { params.push(dataFim + 'T23:59:59');   sql += ` AND criado_em <= $${params.length}`; }
+    if (ano)        { params.push(String(ano));              sql += ` AND SUBSTR(criado_em,1,4) = $${params.length}`; }
+    if (mes)        { params.push(String(parseInt(mes)).padStart(2,'0')); sql += ` AND SUBSTR(criado_em,6,2) = $${params.length}`; }
+    sql += ' ORDER BY criado_em DESC';
+    const { rows } = await query(sql, params);
+    return rows.map(fromDbPedido);
   },
   update: async (id, data) => {
     const map = {
       status: 'status', prazoEntrega: 'prazo_entrega', obs: 'obs',
-      items: 'items', total: 'total', clienteNome: 'cliente_nome',
-      atualizadoEm: 'atualizado_em'
+      items: 'items', total: 'total', totalBruto: 'total_bruto',
+      descontoTipo: 'desconto_tipo', desconto: 'desconto',
+      pago: 'pago', valorRecebido: 'valor_recebido',
+      clienteNome: 'cliente_nome', atualizadoEm: 'atualizado_em'
     };
     const fields = []; const values = [id]; let idx = 2;
     for (const [k, col] of Object.entries(map)) {
@@ -386,6 +410,11 @@ function fromDbPedido(r) {
     id: r.id, clienteId: r.cliente_id, clienteNome: r.cliente_nome,
     items: typeof r.items === 'string' ? JSON.parse(r.items) : (r.items || []),
     total: parseFloat(r.total) || 0,
+    totalBruto: parseFloat(r.total_bruto) || parseFloat(r.total) || 0,
+    descontoTipo: r.desconto_tipo || 'pct',
+    desconto: parseFloat(r.desconto) || 0,
+    pago: r.pago || false,
+    valorRecebido: parseFloat(r.valor_recebido) || 0,
     prazoEntrega: r.prazo_entrega, obs: r.obs,
     orcamentoId: r.orcamento_id, orcamentoNum: r.orcamento_num,
     status: r.status, owner: r.owner, ownerNome: r.owner_nome,
