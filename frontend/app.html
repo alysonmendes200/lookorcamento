@@ -94,6 +94,18 @@
 
 /* ── CNPJ LOOKUP ──────────────────────────────── */
 .cnpj-loading{font-size:11px;color:var(--muted);margin-top:4px;min-height:16px;}
+
+/* ── CATÁLOGO CLIENTES ────────────────────────── */
+#modal-catalogo-clientes{z-index:1200;}
+.cli-cat-item{border:1px solid var(--border);border-radius:8px;padding:11px 13px;cursor:pointer;transition:all .15s;background:var(--white);}
+.cli-cat-item:hover{border-color:var(--azul);background:var(--azul-bg);}
+.cli-cat-nome{font-weight:600;font-size:13px;color:var(--text);}
+.cli-cat-comercio{font-size:11px;color:var(--azul);margin-top:1px;}
+.cli-cat-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ── STAT CARDS CORES ─────────────────────────── */
+.stat-val.green,.stat-val.sm.green{color:#198754;}
+.stat-val.red,.stat-val.sm.red{color:#dc3545;}
 </style>
 </head>
 <body>
@@ -136,7 +148,6 @@
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
     <span>Produtos</span>
   </button>
-
   <button class="nav-btn" id="nav-caixa" onclick="goPage('caixa')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
     <span>Caixa</span>
@@ -190,9 +201,15 @@
     <div class="card">
       <div class="card-title">Dados do Cliente</div>
       <div class="form-row">
-        <div class="fg"><label>Nome do Cliente</label>
-          <input id="f-nome" type="text" placeholder="Ex: João Silva" list="orc-clientes-list" autocomplete="off" oninput="syncCom()" onchange="selecionarClienteOrc()">
-          <datalist id="orc-clientes-list"></datalist>
+        <div class="fg">
+          <label>Nome do Cliente</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input id="f-nome" type="text" placeholder="Ex: João Silva" autocomplete="off" oninput="syncCom()" style="flex:1">
+            <button type="button" class="prod-catalog-btn" onclick="abrirCatalogoClientes()" style="margin-bottom:0;white-space:nowrap">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              Buscar Cliente
+            </button>
+          </div>
         </div>
         <div class="fg"><label>Comércio / Projeto</label><input id="f-com" type="text" placeholder="Ex: Padaria do João" oninput="stopSync()"></div>
       </div>
@@ -464,35 +481,35 @@
     </div>
   </div>
 
-</main>
-</div>
-
-<!-- ══ CAIXA ════════════════════════════════════════ -->
-<div class="page" id="page-caixa">
-  <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-    <div><div class="page-title">Caixa</div><div class="page-sub">Controle de entradas e saídas</div></div>
-    <button class="btn btn-primary" onclick="abrirModalNovaCaixa()">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-      Nova Transação
-    </button>
-  </div>
-  <div class="stats-row" id="caixa-stats"></div>
-  <div class="card" style="margin-bottom:14px">
-    <div class="filter-bar" style="padding:0;border:none;background:none">
-      <div class="fg"><label>De</label><input id="caixa-di" type="date" onchange="renderCaixa()"></div>
-      <div class="fg"><label>Até</label><input id="caixa-df" type="date" onchange="renderCaixa()"></div>
-      <div class="fg"><label>Tipo</label>
-        <select id="caixa-tipo-flt" onchange="renderCaixa()">
-          <option value="">Todos</option>
-          <option value="entrada">Entradas</option>
-          <option value="saida">Saídas</option>
-        </select></div>
-      <div class="fg" style="min-width:160px"><label>Buscar</label>
-        <input id="caixa-busca" type="text" placeholder="Descrição ou categoria…" oninput="renderCaixa()"></div>
-      <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('caixa-di').value='';document.getElementById('caixa-df').value='';document.getElementById('caixa-tipo-flt').value='';document.getElementById('caixa-busca').value='';renderCaixa()">Limpar</button>
+  <!-- CAIXA -->
+  <div class="page" id="page-caixa">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div><div class="page-title">Caixa</div><div class="page-sub">Controle de entradas e saídas</div></div>
+      <button class="btn btn-primary" onclick="abrirModalNovaCaixa()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Nova Transação
+      </button>
     </div>
+    <div class="stats-row" id="caixa-stats"></div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="filter-bar" style="padding:0;border:none;background:none">
+        <div class="fg"><label>De</label><input id="caixa-di" type="date" onchange="carregarCaixa()"></div>
+        <div class="fg"><label>Até</label><input id="caixa-df" type="date" onchange="carregarCaixa()"></div>
+        <div class="fg"><label>Tipo</label>
+          <select id="caixa-tipo-flt" onchange="renderCaixa()">
+            <option value="">Todos</option>
+            <option value="entrada">Entradas</option>
+            <option value="saida">Saídas</option>
+          </select></div>
+        <div class="fg" style="min-width:160px"><label>Buscar</label>
+          <input id="caixa-busca" type="text" placeholder="Descrição ou categoria…" oninput="renderCaixa()"></div>
+        <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('caixa-di').value='';document.getElementById('caixa-df').value='';document.getElementById('caixa-tipo-flt').value='';document.getElementById('caixa-busca').value='';carregarCaixa()">Limpar</button>
+      </div>
+    </div>
+    <div class="card"><div id="caixa-content"><div class="empty">Carregando…</div></div></div>
   </div>
-  <div class="card"><div id="caixa-content"><div class="empty">Carregando…</div></div></div>
+
+</main>
 </div>
 
 <!-- ══ MODAL: NOVA TRANSAÇÃO CAIXA ══════════════ -->
@@ -570,23 +587,57 @@
   </div>
 </div>
 
+<!-- ══ MODAL: CATÁLOGO DE CLIENTES ══════════════════ -->
+<div class="modal-overlay" id="modal-catalogo-clientes">
+  <div class="modal" style="max-width:680px">
+    <button class="modal-close" onclick="closeModal('modal-catalogo-clientes')">✕</button>
+    <div class="modal-title">👤 Selecionar Cliente</div>
+    <div class="modal-sub">Clique no cliente para preencher os dados do orçamento</div>
+    <div class="prod-search-box" style="margin-top:12px">
+      <input id="cli-cat-busca" type="text" placeholder="Buscar por nome, comércio ou telefone…" oninput="renderCatalogoClientes()">
+    </div>
+    <div id="cli-cat-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;max-height:360px;overflow-y:auto;margin-top:4px">
+      <div class="empty">Carregando…</div>
+    </div>
+    <div style="margin-top:12px;text-align:center">
+      <button class="btn btn-ghost" style="font-size:12px" onclick="novoClienteRapido()">+ Cadastrar novo cliente</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MODAL: NOVO/EDITAR PRODUTO ═══════════════════ -->
 <div class="modal-overlay" id="modal-produto">
   <div class="modal" style="max-width:520px">
     <button class="modal-close" onclick="closeModal('modal-produto')">✕</button>
     <div class="modal-title" id="modal-prod-title">Novo Produto</div>
     <div class="form-row">
-      <div class="fg" style="flex:2"><label>Nome *</label><input id="prod-nome" placeholder="Ex: Luminária LED 40W"></div>
-      <div class="fg"><label>Categoria</label><input id="prod-categoria" placeholder="Ex: Iluminação" list="cat-list">
+      <div class="fg" style="flex:2"><label>Nome *</label><input id="prod-nome" placeholder="Ex: Adesivo Vinil 4x1"></div>
+      <div class="fg"><label>Categoria</label><input id="prod-categoria" placeholder="Ex: Impressão" list="cat-list">
         <datalist id="cat-list"></datalist></div>
     </div>
     <div class="fg" style="margin-bottom:12px"><label>Descrição</label>
       <textarea id="prod-descricao" rows="2" placeholder="Detalhes do produto ou serviço…" style="width:100%;resize:vertical;min-height:52px;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;box-sizing:border-box"></textarea></div>
     <div class="form-row">
-      <div class="fg"><label>Preço Unit. (R$)</label><input id="prod-preco" type="number" min="0" step="0.01" placeholder="0,00"></div>
-      <div class="fg"><label>Unidade</label><input id="prod-unidade" placeholder="un, m², m, kg, h…" value="un"></div>
+      <div class="fg"><label>Preço Unit. (R$)</label><input id="prod-preco" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcM2Prod()"></div>
+      <div class="fg">
+        <label>Unidade</label>
+        <input id="prod-unidade" placeholder="un, m², m, kg, h…" value="un" list="unidade-list" oninput="toggleM2Calc()" onchange="toggleM2Calc()">
+        <datalist id="unidade-list">
+          <option value="un"><option value="m²"><option value="m"><option value="kg"><option value="h"><option value="cx"><option value="pç">
+        </datalist>
+      </div>
       <div class="fg"><label>Status</label>
         <select id="prod-ativo"><option value="true">✅ Ativo</option><option value="false">❌ Inativo</option></select></div>
+    </div>
+    <!-- Calculadora m² — aparece só quando unidade = m² -->
+    <div id="prod-m2-calc" style="display:none;background:var(--azul-bg);border:1px solid var(--azul);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--azul);margin-bottom:10px">📐 Calculadora de Metro Quadrado</div>
+      <div class="form-row" style="margin-bottom:8px">
+        <div class="fg"><label>Largura (m)</label><input id="prod-m2-larg" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcM2Prod()"></div>
+        <div class="fg"><label>Altura (m)</label><input id="prod-m2-alt" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcM2Prod()"></div>
+        <div class="fg"><label>Quantidade</label><input id="prod-m2-qty" type="number" min="1" step="1" value="1" oninput="calcM2Prod()"></div>
+      </div>
+      <div id="prod-m2-result" style="font-size:12px;color:var(--muted)">Preencha largura e altura para calcular.</div>
     </div>
     <input type="hidden" id="prod-edit-id">
     <div class="btn-row">
@@ -1269,7 +1320,35 @@ function abrirModalNovoProduto(){
   document.getElementById('prod-edit-id').value='';
   document.getElementById('modal-prod-title').textContent='Novo Produto';
   document.getElementById('prod-btn-txt').textContent='Salvar Produto';
+  document.getElementById('prod-m2-calc').style.display='none';
+  document.getElementById('prod-m2-larg').value='';
+  document.getElementById('prod-m2-alt').value='';
+  document.getElementById('prod-m2-qty').value='1';
   openModal('modal-produto');
+}
+function toggleM2Calc(){
+  const un=(document.getElementById('prod-unidade').value||'').trim().toLowerCase();
+  const isM2=(un==='m²'||un==='m2');
+  document.getElementById('prod-m2-calc').style.display=isM2?'':'none';
+  if(!isM2){
+    document.getElementById('prod-m2-larg').value='';
+    document.getElementById('prod-m2-alt').value='';
+    document.getElementById('prod-m2-qty').value='1';
+  }
+}
+function calcM2Prod(){
+  const larg=parseFloat(document.getElementById('prod-m2-larg').value)||0;
+  const alt =parseFloat(document.getElementById('prod-m2-alt').value)||0;
+  const qty =parseInt(document.getElementById('prod-m2-qty').value)||1;
+  const preco=parseFloat(document.getElementById('prod-preco').value)||0;
+  const r=document.getElementById('prod-m2-result');
+  if(!larg||!alt){r.textContent='Preencha largura e altura para calcular.';return;}
+  const m2un=parseFloat((larg*alt).toFixed(4));
+  const m2tot=parseFloat((m2un*qty).toFixed(4));
+  const total=m2tot*preco;
+  r.innerHTML=`<strong>${larg} × ${alt} = ${m2un} m²</strong> por peça &nbsp;·&nbsp; `+
+    `<strong>${qty} × ${m2un} = ${m2tot} m²</strong> total`+
+    (preco?` &nbsp;·&nbsp; <span style="color:var(--azul);font-weight:700">${fBRL(total)}</span>`:'');
 }
 function editarProduto(id){
   const p=produtoList.find(x=>x.id===id);if(!p)return;
@@ -1282,6 +1361,10 @@ function editarProduto(id){
   document.getElementById('prod-edit-id').value=p.id;
   document.getElementById('modal-prod-title').textContent='Editar Produto';
   document.getElementById('prod-btn-txt').textContent='Salvar Alterações';
+  document.getElementById('prod-m2-larg').value='';
+  document.getElementById('prod-m2-alt').value='';
+  document.getElementById('prod-m2-qty').value='1';
+  toggleM2Calc();
   openModal('modal-produto');
 }
 async function salvarProduto(){
@@ -1777,21 +1860,42 @@ async function carregarDashboard(){
   }catch(e){toast('Erro dashboard: '+e.message,'error');}
 }
 
-// ════ ORÇAMENTO — BUSCA DE CLIENTE ════════════════════
-function preencherDatalistClientesOrc(){
-  const dl=document.getElementById('orc-clientes-list');if(!dl)return;
-  dl.innerHTML=clienteList.map(c=>`<option value="${esc(c.nome)}">`).join('');
+// ════ ORÇAMENTO — CATÁLOGO DE CLIENTES ════════════════
+function preencherDatalistClientesOrc(){} // mantido para compatibilidade
+
+function abrirCatalogoClientes(){
+  openModal('modal-catalogo-clientes');
+  document.getElementById('cli-cat-busca').value='';
+  renderCatalogoClientes();
 }
-function selecionarClienteOrc(){
-  const nome=document.getElementById('f-nome').value.trim();
-  if(!nome)return;
-  const cli=clienteList.find(c=>c.nome.toLowerCase()===nome.toLowerCase());
-  if(cli){
-    if(autoSync||!document.getElementById('f-com').value.trim()){
-      document.getElementById('f-com').value=cli.comercio||'';
-      autoSync=false;
-    }
+function renderCatalogoClientes(){
+  const busca=(document.getElementById('cli-cat-busca').value||'').toLowerCase().trim();
+  const grid=document.getElementById('cli-cat-grid');
+  if(!clienteList.length){
+    grid.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum cliente cadastrado.<br><small>Cadastre clientes no menu "Clientes".</small></div>';return;
   }
+  const list=busca
+    ? clienteList.filter(c=>c.nome.toLowerCase().includes(busca)||(c.comercio||'').toLowerCase().includes(busca)||(c.telefone||'').includes(busca))
+    : clienteList;
+  if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum cliente encontrado.</div>';return;}
+  grid.innerHTML=list.map(c=>`
+    <div class="cli-cat-item" onclick="selecionarClienteDoModal('${c.id}')">
+      <div class="cli-cat-nome">${esc(c.nome)}</div>
+      ${c.comercio?`<div class="cli-cat-comercio">🏪 ${esc(c.comercio)}</div>`:''}
+      <div class="cli-cat-sub">${[c.telefone?'📞 '+esc(c.telefone):'',c.email?'✉️ '+esc(c.email):''].filter(Boolean).join(' · ')||'Sem contato'}</div>
+    </div>`).join('');
+}
+function selecionarClienteDoModal(id){
+  const cli=clienteList.find(c=>c.id===id);if(!cli)return;
+  document.getElementById('f-nome').value=cli.nome;
+  document.getElementById('f-com').value=cli.comercio||cli.nome;
+  autoSync=false;
+  closeModal('modal-catalogo-clientes');
+  toast('Cliente selecionado: '+cli.nome,'success');
+}
+function novoClienteRapido(){
+  closeModal('modal-catalogo-clientes');
+  setTimeout(()=>abrirModalNovoCliente(),200);
 }
 
 // ════ CNPJ / CPF — RECEITA FEDERAL ════════════════════
