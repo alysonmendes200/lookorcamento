@@ -157,7 +157,26 @@
     <span>Caixa</span>
   </button>
 
+  <div class="nav-section">Ferramentas</div>
+  <div style="width:100%">
+    <button class="nav-btn nav-parent" id="nav-ferramentas-toggle" onclick="toggleNavGroup('ferramentas')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+      <span style="flex:1">Ferramentas</span>
+      <svg id="nav-ferramentas-arrow" class="nav-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="nav-sub-group" id="nav-ferramentas-group">
+      <button class="nav-btn nav-sub-item" id="nav-calculadora" onclick="goPage('calculadora');carregarCalculadora()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/></svg>
+        <span>Calculadora</span>
+      </button>
+    </div>
+  </div>
+
   <div class="nav-section admin-only">Administração</div>
+  <button class="nav-btn admin-only" id="nav-logs" onclick="goPage('logs');carregarLogs()">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <span>Logs de Auditoria</span>
+  </button>
   <button class="nav-btn admin-only" id="nav-relatorios" onclick="goPage('relatorios')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
     <span>Relatórios</span>
@@ -895,6 +914,270 @@
   </div>
 </div>
 
+<!-- ══ PÁGINA: LOGS DE AUDITORIA ════════════════════ -->
+<div class="page" id="page-logs">
+  <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+    <div><div class="page-title">Logs de Auditoria</div><div class="page-sub">Registro completo de ações no sistema</div></div>
+    <button class="btn btn-primary" onclick="carregarLogs()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      Atualizar
+    </button>
+  </div>
+  <div class="stats-row" id="log-stats-cards"></div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <div class="fg" style="min-width:220px;max-width:380px;margin-bottom:0">
+        <label>Buscar</label>
+        <input id="log-busca" type="text" placeholder="Usuário, email ou ID…" oninput="renderLogs()">
+      </div>
+      <div class="fg" style="min-width:130px;max-width:180px;margin-bottom:0">
+        <label>Ação</label>
+        <select id="log-flt-acao" onchange="renderLogs()">
+          <option value="">Todas</option>
+          <option value="LOGIN">LOGIN</option>
+          <option value="CREATE">CREATE</option>
+          <option value="UPDATE">UPDATE</option>
+          <option value="DELETE">DELETE</option>
+          <option value="APPROVE">APPROVE</option>
+        </select>
+      </div>
+      <div class="fg" style="min-width:130px;max-width:180px;margin-bottom:0">
+        <label>Tipo</label>
+        <select id="log-flt-entidade" onchange="renderLogs()">
+          <option value="">Todos</option>
+          <option value="orcamento">Orçamento</option>
+          <option value="pedido">Pedido</option>
+          <option value="cliente">Cliente</option>
+          <option value="produto">Produto</option>
+          <option value="caixa">Caixa</option>
+          <option value="auth">Auth</option>
+        </select>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:14px" onclick="limparFiltrosLog()">Limpar</button>
+      <button class="btn btn-ghost" style="margin-top:14px" onclick="exportLogCSV()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        CSV
+      </button>
+    </div>
+  </div>
+  <div class="card" style="overflow-x:auto;padding:0">
+    <table class="tbl" id="log-table">
+      <thead><tr>
+        <th>DATA/HORA</th><th>USUÁRIO</th><th>AÇÃO</th><th>TIPO</th><th>OBJETO (ALVO)</th><th>AÇÕES</th>
+      </tr></thead>
+      <tbody id="log-tbody"><tr><td colspan="6" class="empty">Carregando…</td></tr></tbody>
+    </table>
+  </div>
+  <div id="log-pagination" class="log-pagination"></div>
+</div>
+
+<!-- ══ MODAL: DETALHE LOG ════════════════════════════ -->
+<div class="modal-overlay" id="modal-log-detalhe">
+  <div class="modal" style="max-width:540px">
+    <button class="modal-close" onclick="closeModal('modal-log-detalhe')">✕</button>
+    <div class="modal-title">Detalhes do Log</div>
+    <div id="modal-log-content" style="font-size:13px"></div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-ghost" onclick="closeModal('modal-log-detalhe')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PÁGINA: CALCULADORA ══════════════════════════ -->
+<div class="page" id="page-calculadora">
+  <div class="page-header"><div class="page-title">Calculadora de Custos</div><div class="page-sub">Simulação de orçamentos e precificação</div></div>
+
+  <div class="calc-tabs">
+    <button class="calc-tab active" id="ctab-calc"     onclick="calcTab('calc')">📐 Calculadora</button>
+    <button class="calc-tab"        id="ctab-insumos"  onclick="calcTab('insumos')">📦 Insumos</button>
+    <button class="calc-tab"        id="ctab-servicos" onclick="calcTab('servicos')">⚙️ Serviços</button>
+  </div>
+
+  <!-- ABA CALCULADORA -->
+  <div class="calc-pane active" id="cpane-calc">
+    <div class="calc-grid">
+      <!-- Coluna Esquerda -->
+      <div>
+        <!-- Bloco 1: Dimensões -->
+        <div class="calc-block">
+          <div class="calc-block-title">📏 Dimensões Básicas</div>
+          <div class="form-row">
+            <div class="fg"><label>Largura (m)</label><input id="calc-larg" type="number" step="0.01" min="0" value="1" oninput="calcDims()"></div>
+            <div class="fg"><label>Altura (m)</label><input id="calc-alt"  type="number" step="0.01" min="0" value="1" oninput="calcDims()"></div>
+            <div class="fg"><label>Quantidade</label><input id="calc-qty"  type="number" min="1" value="1" oninput="calcDims()"></div>
+          </div>
+          <div class="calc-dim-result" id="calc-dim-result">
+            <span>Área unit.: <strong id="cdr-area-un">1,00 m²</strong></span>
+            <span>Área total: <strong id="cdr-area-tot">1,00 m²</strong></span>
+            <span>Perímetro: <strong id="cdr-perim">4,00 m</strong></span>
+          </div>
+        </div>
+
+        <!-- Bloco 2: Insumos -->
+        <div class="calc-block">
+          <div class="calc-block-title">📦 Insumos & Materiais</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <select id="calc-ins-sel" style="flex:1">
+              <option value="">Selecione um insumo…</option>
+            </select>
+            <input id="calc-ins-qty" type="number" min="0.01" step="0.01" value="1" placeholder="Qtd" style="width:70px">
+            <button class="btn btn-primary" style="white-space:nowrap" onclick="calcAddInsumo()">+ Adicionar</button>
+          </div>
+          <div id="calc-ins-list"><div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">Nenhum insumo adicionado.</div></div>
+        </div>
+
+        <!-- Bloco 3: Serviços -->
+        <div class="calc-block">
+          <div class="calc-block-title">⚙️ Serviços de Produção</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <select id="calc-serv-sel" style="flex:1">
+              <option value="">Selecione um serviço…</option>
+            </select>
+            <input id="calc-serv-qty" type="number" min="0.01" step="0.01" value="1" placeholder="Qtd" style="width:70px">
+            <button class="btn btn-primary" style="white-space:nowrap" onclick="calcAddServico()">+ Adicionar</button>
+          </div>
+          <div id="calc-serv-list"><div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">Nenhum serviço adicionado.</div></div>
+        </div>
+      </div>
+
+      <!-- Coluna Direita (fixada) -->
+      <div class="calc-right">
+        <div class="card-title">💰 Precificação</div>
+        <div class="calc-slider-row">
+          <div class="calc-slider-label"><span>Impostos</span><strong id="sl-imp-val">10%</strong></div>
+          <input type="range" id="sl-imp" min="0" max="50" value="10" step="0.5" oninput="calcPreco()">
+        </div>
+        <div class="calc-slider-row">
+          <div class="calc-slider-label"><span>Taxa Cartão</span><strong id="sl-cart-val">3%</strong></div>
+          <input type="range" id="sl-cart" min="0" max="10" value="3" step="0.5" oninput="calcPreco()">
+        </div>
+        <div class="calc-slider-row">
+          <div class="calc-slider-label"><span>Margem de Lucro</span><strong id="sl-mg-val">30%</strong></div>
+          <input type="range" id="sl-mg" min="0" max="80" value="30" step="1" oninput="calcPreco()">
+        </div>
+
+        <div class="calc-totals">
+          <div class="calc-total-row"><span>Custo Insumos</span><span id="calc-t-ins">R$ 0,00</span></div>
+          <div class="calc-total-row"><span>Custo Serviços</span><span id="calc-t-serv">R$ 0,00</span></div>
+          <div class="calc-total-row destaque"><span>Custo Total</span><span id="calc-t-total">R$ 0,00</span></div>
+        </div>
+
+        <div class="calc-preco-card">
+          <div class="calc-preco-label">Preço de Venda Sugerido</div>
+          <div class="calc-preco-val" id="calc-preco-venda">R$ 0,00</div>
+          <div class="calc-lucro-row">
+            <span>Lucro Líquido</span>
+            <span id="calc-lucro-liq" style="font-weight:700">R$ 0,00</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="usarCalculoNoOrcamento()">
+          Usar no Orçamento ↗
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA INSUMOS -->
+  <div class="calc-pane" id="cpane-insumos">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <input id="ins-busca" type="text" placeholder="Buscar insumo…" style="max-width:280px" oninput="renderInsumos()">
+      <button class="btn btn-primary" onclick="abrirModalInsumo()">+ Insumo</button>
+    </div>
+    <div class="card" style="overflow-x:auto;padding:0">
+      <table class="tbl"><thead><tr>
+        <th>Nome</th><th>Categoria</th><th>Unidade</th><th>Custo Unit.</th><th>Ações</th>
+      </tr></thead>
+      <tbody id="ins-tbody"><tr><td colspan="5" class="empty">Carregando…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ABA SERVIÇOS -->
+  <div class="calc-pane" id="cpane-servicos">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <input id="serv-busca" type="text" placeholder="Buscar serviço…" style="max-width:280px" oninput="renderServicos()">
+      <button class="btn btn-primary" onclick="abrirModalServico()">+ Serviço</button>
+    </div>
+    <div class="card" style="overflow-x:auto;padding:0">
+      <table class="tbl"><thead><tr>
+        <th>Nome</th><th>Tipo de Custo</th><th>Custo Unit.</th><th>Descrição</th><th>Ações</th>
+      </tr></thead>
+      <tbody id="serv-tbody"><tr><td colspan="5" class="empty">Carregando…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: INSUMO ════════════════════════════════ -->
+<div class="modal-overlay" id="modal-insumo">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('modal-insumo')">✕</button>
+    <div class="modal-title" id="modal-ins-title">Novo Insumo</div>
+    <div class="form-row">
+      <div class="fg"><label>Nome *</label><input id="ins-nome" placeholder="Ex: Lona 440g"></div>
+      <div class="fg"><label>Categoria</label><input id="ins-cat" placeholder="Ex: Impressão"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Unidade</label>
+        <select id="ins-un">
+          <option value="m²">m²</option><option value="m">m</option><option value="un">un</option>
+          <option value="kg">kg</option><option value="l">l</option><option value="folha">folha</option>
+        </select>
+      </div>
+      <div class="fg"><label>Custo Unitário (R$)</label><input id="ins-custo" type="number" step="0.01" min="0" value="0"></div>
+    </div>
+    <div class="fg" style="margin-bottom:14px"><label>Descrição</label><input id="ins-desc" placeholder="Opcional"></div>
+    <input type="hidden" id="ins-edit-id">
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="salvarInsumo()"><span id="ins-btn-txt">Salvar Insumo</span></button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-insumo')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SERVIÇO ═══════════════════════════════ -->
+<div class="modal-overlay" id="modal-servico">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('modal-servico')">✕</button>
+    <div class="modal-title" id="modal-serv-title">Novo Serviço</div>
+    <div class="form-row">
+      <div class="fg"><label>Nome *</label><input id="serv-nome" placeholder="Ex: Corte a laser"></div>
+      <div class="fg"><label>Tipo de Custo</label>
+        <select id="serv-tipo">
+          <option value="hora">Por hora</option>
+          <option value="m2">Por m²</option>
+          <option value="un">Por unidade</option>
+          <option value="fixo">Custo fixo</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Custo Unit. (R$)</label><input id="serv-custo" type="number" step="0.01" min="0" value="0"></div>
+      <div class="fg"><label>Descrição</label><input id="serv-desc" placeholder="Opcional"></div>
+    </div>
+    <input type="hidden" id="serv-edit-id">
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="salvarServico()"><span id="serv-btn-txt">Salvar Serviço</span></button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-servico')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: TEXTO WHATSAPP ════════════════════════ -->
+<div class="modal-overlay" id="modal-wpp-txt">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="closeModal('modal-wpp-txt')">✕</button>
+    <div class="modal-title">💬 Texto para WhatsApp</div>
+    <div class="modal-sub" id="wpp-txt-sub"></div>
+    <textarea id="wpp-txt-content" rows="14" readonly style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);padding:12px;border:1px solid var(--border);border-radius:8px;box-sizing:border-box;color:var(--text)"></textarea>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn btn-primary" id="wpp-copy-btn" onclick="copiarWppTxt()">📋 Copiar texto</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-wpp-txt')">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <div id="_toast" style="display:none"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1327,14 +1610,18 @@ function renderHist(){
           ${orc.editedAt?`<div style="font-size:10px;color:var(--warning)">Editado: ${esc(orc.editedAt)}</div>`:''}</td>
       ${isAdmin()?`<td style="font-size:11px;color:var(--muted)">${esc(orc.ownerNome||orc.owner||'—')}</td>`:''}
       <td style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:600">${fBRL(orc.total)}</td>
-      <td><span class="badge ${orc.pago?'badge-pago':'badge-nao-pago'}">${orc.pago?'✅ Pago':'🔴 Pendente'}</span></td>
+      <td>
+        <span class="badge ${orc.pago?'badge-pago':'badge-nao-pago'}">${orc.pago?'✅ Pago':'🔴 Pendente'}</span>
+        ${orc.status&&orc.status!=='ativo'?`<span class="badge badge-orc-${orc.status}" style="margin-top:3px;display:block;width:fit-content">${orc.status==='aprovado'?'✅ Aprovado':'❌ Cancelado'}</span>`:''}
+      </td>
       <td><span class="badge ${orc.nfStatus==='emitida'?'badge-nf-sim':'badge-nf-nao'}">${orc.nfStatus==='emitida'?'✅':'❌'}</span></td>
       <td><div class="tbl-actions">
         ${canEdit?`<button class="ta edit" title="Editar" data-idx="${list.indexOf(orc)}">✏️</button>`:''}
         <button class="ta pdf" title="PDF" data-idx="${list.indexOf(orc)}">📄</button>
         <button class="ta docx" title="DOCX" data-idx="${list.indexOf(orc)}">📝</button>
         <button class="ta nota" title="Texto NF" data-idx="${list.indexOf(orc)}">📋</button>
-        <button class="ta wpp" title="Enviar WhatsApp" data-idx="${list.indexOf(orc)}">💬</button>
+        <button class="ta wpp" title="WhatsApp" data-idx="${list.indexOf(orc)}">💬</button>
+        ${orc.status!=='aprovado'?`<button class="ta aprovar" title="Aprovar e Gerar Pedido" data-idx="${list.indexOf(orc)}" style="color:#198754">✅</button>`:''}
         <button class="ta pedido" title="Criar Pedido" data-idx="${list.indexOf(orc)}">📦</button>
         ${canEdit?`<button class="ta nf" title="Arquivo NF" data-idx="${list.indexOf(orc)}">🧾</button>`:''}
         ${isAdmin()?`<button class="ta del" title="Excluir" data-id="${orc.id}">🗑️</button>`:''}
@@ -1344,14 +1631,15 @@ function renderHist(){
   tb.onclick=e=>{
     const btn=e.target.closest('button');if(!btn)return;
     const idx=parseInt(btn.dataset.idx);const orc=list[idx];
-    if(btn.classList.contains('edit'))  editarOrc(orc);
-    if(btn.classList.contains('pdf'))   acaoPDF(orc);
-    if(btn.classList.contains('docx'))  acaoDOCX(orc);
-    if(btn.classList.contains('nota'))  abrirNota(orc);
-    if(btn.classList.contains('wpp'))   wppOrcamento(orc);
-    if(btn.classList.contains('pedido'))criarPedidoDeOrcamento(orc);
-    if(btn.classList.contains('nf'))    abrirUploadNF(orc);
-    if(btn.classList.contains('del'))   excluir(btn.dataset.id);
+    if(btn.classList.contains('edit'))   editarOrc(orc);
+    if(btn.classList.contains('pdf'))    acaoPDF(orc);
+    if(btn.classList.contains('docx'))   acaoDOCX(orc);
+    if(btn.classList.contains('nota'))   abrirNota(orc);
+    if(btn.classList.contains('wpp'))    wppOrcamento(orc);
+    if(btn.classList.contains('aprovar'))aprovarOrcamento(orc);
+    if(btn.classList.contains('pedido')) criarPedidoDeOrcamento(orc);
+    if(btn.classList.contains('nf'))     abrirUploadNF(orc);
+    if(btn.classList.contains('del'))    excluir(btn.dataset.id);
   };
 }
 async function excluir(id){
@@ -2773,6 +3061,446 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
   if(_noOverlayClose.includes(el.id))return;
   el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
 });
+
+// ═══════════════════════════════════════════════════════
+// NAV DROPDOWN
+// ═══════════════════════════════════════════════════════
+function toggleNavGroup(name){
+  const grp=document.getElementById('nav-'+name+'-group');
+  const arr=document.getElementById('nav-'+name+'-arrow');
+  if(!grp)return;
+  grp.classList.toggle('open');
+  arr?.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════
+// LOGS DE AUDITORIA
+// ═══════════════════════════════════════════════════════
+let logData=[];let logPage=0;const LOG_PER_PAGE=25;
+
+async function carregarLogs(){
+  if(!isAdmin())return;
+  document.getElementById('log-tbody').innerHTML='<tr><td colspan="6" class="empty">Carregando…</td></tr>';
+  try{
+    const res=await API.get('/logs?limit=500');
+    logData=res.rows||[];
+    renderLogStats();
+    renderLogs();
+  }catch(e){
+    document.getElementById('log-tbody').innerHTML=`<tr><td colspan="6" class="empty">Erro: ${esc(e.message)}</td></tr>`;
+  }
+}
+
+function renderLogStats(){
+  const total=logData.length;
+  const creates=logData.filter(l=>l.acao==='CREATE').length;
+  const updates=logData.filter(l=>l.acao==='UPDATE').length;
+  const deletes=logData.filter(l=>l.acao==='DELETE').length;
+  const logins =logData.filter(l=>l.acao==='LOGIN').length;
+  document.getElementById('log-stats-cards').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Total Registros</div><div class="stat-val">${total}</div></div>
+    <div class="stat-card" style="border-left:3px solid #198754"><div class="stat-label">Criações</div><div class="stat-val green">${creates}</div></div>
+    <div class="stat-card" style="border-left:3px solid var(--azul)"><div class="stat-label">Edições</div><div class="stat-val" style="color:var(--azul)">${updates}</div></div>
+    <div class="stat-card" style="border-left:3px solid var(--danger)"><div class="stat-label">Exclusões</div><div class="stat-val red">${deletes}</div></div>
+    <div class="stat-card"><div class="stat-label">Logins</div><div class="stat-val">${logins}</div></div>`;
+}
+
+function renderLogs(){
+  const busca=(document.getElementById('log-busca')?.value||'').toLowerCase();
+  const fAcao=document.getElementById('log-flt-acao')?.value||'';
+  const fEnt =document.getElementById('log-flt-entidade')?.value||'';
+  let list=logData.filter(l=>{
+    if(fAcao&&l.acao!==fAcao)return false;
+    if(fEnt &&l.entidade!==fEnt)return false;
+    if(busca&&!(l.userNome||'').toLowerCase().includes(busca)&&!(l.userLogin||'').toLowerCase().includes(busca)&&!(l.label||'').toLowerCase().includes(busca)&&!(l.entidadeId||'').includes(busca))return false;
+    return true;
+  });
+  const total=list.length;
+  const pages=Math.ceil(total/LOG_PER_PAGE)||1;
+  if(logPage>=pages)logPage=pages-1;
+  const slice=list.slice(logPage*LOG_PER_PAGE,(logPage+1)*LOG_PER_PAGE);
+  const ACAO_CLS={CREATE:'badge-create',UPDATE:'badge-update',DELETE:'badge-delete',LOGIN:'badge-login',APPROVE:'badge-approve'};
+  const ENT_LABEL={orcamento:'Orçamento',pedido:'Pedido',cliente:'Cliente',produto:'Produto',caixa:'Caixa',auth:'Auth'};
+  const tbody=document.getElementById('log-tbody');
+  if(!slice.length){tbody.innerHTML='<tr><td colspan="6" class="empty">Nenhum log encontrado.</td></tr>';renderLogPagination(pages,total);return;}
+  tbody.innerHTML=slice.map(l=>{
+    const dt=l.createdAt?new Date(l.createdAt).toLocaleString('pt-BR'):'—';
+    const cls=ACAO_CLS[l.acao]||'badge-entity';
+    const ent=ENT_LABEL[l.entidade]||l.entidade;
+    return `<tr>
+      <td style="font-size:12px;white-space:nowrap">${dt}</td>
+      <td><div style="font-weight:600;font-size:13px">${esc(l.userNome||'—')}</div><div style="font-size:11px;color:var(--muted)">${esc(l.userLogin||'')}</div></td>
+      <td><span class="badge log-badge ${cls}">${l.acao}</span></td>
+      <td><span class="badge badge-entity log-badge">${ent}</span></td>
+      <td class="log-detalhes" title="${esc(l.label||'')}">${esc(l.label||'—')}</td>
+      <td><button class="btn btn-ghost" style="font-size:11px;padding:3px 8px" onclick="verLogDetalhe('${l.id}')">👁 Detalhes</button></td>
+    </tr>`;
+  }).join('');
+  renderLogPagination(pages,total);
+}
+
+function renderLogPagination(pages,total){
+  const pg=document.getElementById('log-pagination');if(!pg)return;
+  if(pages<=1){pg.innerHTML=`<span style="font-size:12px;color:var(--muted)">${total} registro(s)</span>`;return;}
+  let html=`<span style="font-size:12px;color:var(--muted);margin-right:8px">${total} registros</span>`;
+  html+=`<button class="log-page-btn" onclick="logGoPage(0)" ${logPage===0?'disabled':''}>«</button>`;
+  html+=`<button class="log-page-btn" onclick="logGoPage(${logPage-1})" ${logPage===0?'disabled':''}>‹</button>`;
+  for(let i=Math.max(0,logPage-2);i<=Math.min(pages-1,logPage+2);i++){
+    html+=`<button class="log-page-btn ${i===logPage?'active':''}" onclick="logGoPage(${i})">${i+1}</button>`;
+  }
+  html+=`<button class="log-page-btn" onclick="logGoPage(${logPage+1})" ${logPage>=pages-1?'disabled':''}>›</button>`;
+  html+=`<button class="log-page-btn" onclick="logGoPage(${pages-1})" ${logPage>=pages-1?'disabled':''}>»</button>`;
+  pg.innerHTML=html;
+}
+function logGoPage(p){logPage=p;renderLogs();}
+
+function limparFiltrosLog(){
+  document.getElementById('log-busca').value='';
+  document.getElementById('log-flt-acao').value='';
+  document.getElementById('log-flt-entidade').value='';
+  logPage=0;renderLogs();
+}
+
+function verLogDetalhe(id){
+  const l=logData.find(x=>x.id===id);if(!l)return;
+  const dt=l.createdAt?new Date(l.createdAt).toLocaleString('pt-BR'):'—';
+  const det=JSON.stringify(l.detalhes||{},null,2);
+  document.getElementById('modal-log-content').innerHTML=`
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;margin-bottom:12px">
+      <span style="color:var(--muted)">Data/Hora</span><strong>${dt}</strong>
+      <span style="color:var(--muted)">Usuário</span><strong>${esc(l.userNome||'—')} (${esc(l.userLogin||'')})</strong>
+      <span style="color:var(--muted)">Ação</span><strong>${l.acao}</strong>
+      <span style="color:var(--muted)">Entidade</span><strong>${l.entidade} ${l.entidadeId?'#'+l.entidadeId:''}</strong>
+      <span style="color:var(--muted)">Objeto</span><strong>${esc(l.label||'—')}</strong>
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Detalhes técnicos</div>
+    <pre style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:11px;overflow-x:auto;white-space:pre-wrap">${esc(det)}</pre>`;
+  openModal('modal-log-detalhe');
+}
+
+function exportLogCSV(){
+  const rows=[['Data/Hora','Usuário','Login','Ação','Entidade','ID','Label']];
+  logData.forEach(l=>rows.push([
+    l.createdAt?new Date(l.createdAt).toLocaleString('pt-BR'):'',
+    l.userNome||'',l.userLogin||'',l.acao,l.entidade,l.entidadeId||'',l.label||''
+  ]));
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='logs_auditoria_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════════
+// APROVAR ORÇAMENTO
+// ═══════════════════════════════════════════════════════
+async function aprovarOrcamento(orc){
+  if(!confirm(`Aprovar o Orçamento N° ${String(orc.num).padStart(3,'0')} de ${orc.nome} e gerar pedido automaticamente?`))return;
+  try{
+    const res=await API.post('/orcamentos/'+orc.id+'/aprovar',{});
+    const idx=orcList.findIndex(o=>o.id===orc.id);
+    if(idx>=0)orcList[idx]={...orcList[idx],...res.orcamento};
+    if(res.pedido)pedidoList.unshift(res.pedido);
+    toast(`✅ Orçamento aprovado! Pedido criado para ${orc.nome}.`,'success');
+    renderHist();
+  }catch(e){toast(e.message,'error');}
+}
+
+// ═══════════════════════════════════════════════════════
+// WHATSAPP — MODAL COM COPIAR (Parte 3)
+// ═══════════════════════════════════════════════════════
+function wppOrcamento(orc){
+  const o=orc||getOrcAtual();if(!o)return;
+  const txt=_txtWppOrcamento(o);
+  document.getElementById('wpp-txt-content').value=txt;
+  document.getElementById('wpp-txt-sub').textContent='N° '+String(o.num).padStart(3,'0')+' — '+o.nome;
+  const b=document.getElementById('wpp-copy-btn');b.textContent='📋 Copiar texto';b.classList.remove('ok');
+  openModal('modal-wpp-txt');
+}
+function copiarWppTxt(){
+  const txt=document.getElementById('wpp-txt-content').value;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b=document.getElementById('wpp-copy-btn');b.textContent='✓ Copiado!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='📋 Copiar texto';b.classList.remove('ok');},2500);
+    toast('Texto copiado! Cole no WhatsApp do cliente.','success');
+  }).catch(()=>toast('Não foi possível copiar.','error'));
+}
+
+// ═══════════════════════════════════════════════════════
+// CALCULADORA
+// ═══════════════════════════════════════════════════════
+let insumoList=[];let servicoList=[];
+let calcInsumosAdic=[];let calcServicosAdic=[];
+
+function calcTab(tab){
+  document.querySelectorAll('.calc-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.calc-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('ctab-'+tab).classList.add('active');
+  document.getElementById('cpane-'+tab).classList.add('active');
+}
+
+async function carregarCalculadora(){
+  try{
+    [insumoList,servicoList]=await Promise.all([
+      API.get('/insumos').catch(()=>[]),
+      API.get('/servicos').catch(()=>[])
+    ]);
+  }catch{}
+  renderInsumos();renderServicos();
+  preencherSelectsCalc();
+  calcDims();
+}
+
+function preencherSelectsCalc(){
+  const si=document.getElementById('calc-ins-sel');
+  const ss=document.getElementById('calc-serv-sel');
+  if(si)si.innerHTML='<option value="">Selecione um insumo…</option>'+insumoList.map(i=>`<option value="${i.id}">[${esc(i.unidade)}] ${esc(i.nome)} — ${fBRL(i.custo)}</option>`).join('');
+  if(ss)ss.innerHTML='<option value="">Selecione um serviço…</option>'+servicoList.map(s=>`<option value="${s.id}">${esc(s.nome)} (${esc(s.tipoCusto)}) — ${fBRL(s.custo)}</option>`).join('');
+}
+
+function calcDims(){
+  const larg=parseFloat(document.getElementById('calc-larg')?.value)||0;
+  const alt =parseFloat(document.getElementById('calc-alt')?.value)||0;
+  const qty =parseInt(document.getElementById('calc-qty')?.value)||1;
+  const areaUn=parseFloat((larg*alt).toFixed(4));
+  const areaTot=parseFloat((areaUn*qty).toFixed(4));
+  const perim=parseFloat((2*(larg+alt)).toFixed(4));
+  const fmt=v=>v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:4});
+  document.getElementById('cdr-area-un').textContent =fmt(areaUn)+' m²';
+  document.getElementById('cdr-area-tot').textContent=fmt(areaTot)+' m²';
+  document.getElementById('cdr-perim').textContent   =fmt(perim)+' m';
+  calcPreco();
+}
+
+function calcAddInsumo(){
+  const sel=document.getElementById('calc-ins-sel');
+  const qty=parseFloat(document.getElementById('calc-ins-qty').value)||1;
+  const id=sel.value;if(!id){toast('Selecione um insumo.','error');return;}
+  const ins=insumoList.find(i=>i.id===id);if(!ins)return;
+  const exist=calcInsumosAdic.findIndex(x=>x.id===id);
+  if(exist>=0){calcInsumosAdic[exist].qty+=qty;}
+  else{calcInsumosAdic.push({id,nome:ins.nome,unidade:ins.unidade,custo:ins.custo,qty});}
+  renderCalcItens();calcPreco();
+}
+
+function calcAddServico(){
+  const sel=document.getElementById('calc-serv-sel');
+  const qty=parseFloat(document.getElementById('calc-serv-qty').value)||1;
+  const id=sel.value;if(!id){toast('Selecione um serviço.','error');return;}
+  const serv=servicoList.find(s=>s.id===id);if(!serv)return;
+  const exist=calcServicosAdic.findIndex(x=>x.id===id);
+  if(exist>=0){calcServicosAdic[exist].qty+=qty;}
+  else{calcServicosAdic.push({id,nome:serv.nome,tipo:serv.tipoCusto,custo:serv.custo,qty});}
+  renderCalcItens();calcPreco();
+}
+
+function remCalcIns(id){calcInsumosAdic=calcInsumosAdic.filter(x=>x.id!==id);renderCalcItens();calcPreco();}
+function remCalcServ(id){calcServicosAdic=calcServicosAdic.filter(x=>x.id!==id);renderCalcItens();calcPreco();}
+
+function renderCalcItens(){
+  const li=document.getElementById('calc-ins-list');
+  const ls=document.getElementById('calc-serv-list');
+  if(li)li.innerHTML=calcInsumosAdic.length
+    ?calcInsumosAdic.map(i=>`<div class="calc-item-row">
+        <span class="calc-item-nome">${esc(i.nome)}</span>
+        <span style="font-size:11px;color:var(--muted)">${i.qty} ${i.unidade}</span>
+        <span class="calc-item-custo">${fBRL(i.custo*i.qty)}</span>
+        <button class="calc-item-del" onclick="remCalcIns('${i.id}')">×</button>
+      </div>`).join('')
+    :'<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px">Nenhum insumo adicionado.</div>';
+  if(ls)ls.innerHTML=calcServicosAdic.length
+    ?calcServicosAdic.map(s=>`<div class="calc-item-row">
+        <span class="calc-item-nome">${esc(s.nome)}</span>
+        <span style="font-size:11px;color:var(--muted)">${s.qty} ${s.tipo}</span>
+        <span class="calc-item-custo">${fBRL(s.custo*s.qty)}</span>
+        <button class="calc-item-del" onclick="remCalcServ('${s.id}')">×</button>
+      </div>`).join('')
+    :'<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px">Nenhum serviço adicionado.</div>';
+}
+
+function calcPreco(){
+  const imp =parseFloat(document.getElementById('sl-imp')?.value)||0;
+  const cart=parseFloat(document.getElementById('sl-cart')?.value)||0;
+  const mg  =parseFloat(document.getElementById('sl-mg')?.value)||0;
+
+  document.getElementById('sl-imp-val').textContent =imp+'%';
+  document.getElementById('sl-cart-val').textContent=cart+'%';
+  document.getElementById('sl-mg-val').textContent  =mg+'%';
+
+  const custoIns =calcInsumosAdic.reduce((s,i)=>s+i.custo*i.qty,0);
+  const custoServ=calcServicosAdic.reduce((s,i)=>s+i.custo*i.qty,0);
+  const custoTotal=custoIns+custoServ;
+
+  document.getElementById('calc-t-ins').textContent   =fBRL(custoIns);
+  document.getElementById('calc-t-serv').textContent  =fBRL(custoServ);
+  document.getElementById('calc-t-total').textContent =fBRL(custoTotal);
+
+  const divisor=(100-imp-cart-mg)/100;
+  const preco=divisor>0?custoTotal/divisor:0;
+  const lucro=preco-custoTotal-(preco*(imp+cart)/100);
+
+  document.getElementById('calc-preco-venda').textContent=fBRL(preco);
+  document.getElementById('calc-lucro-liq').textContent  =fBRL(Math.max(0,lucro));
+}
+
+function usarCalculoNoOrcamento(){
+  if(!calcInsumosAdic.length&&!calcServicosAdic.length){toast('Adicione insumos ou serviços à calculadora.','error');return;}
+  goPage('novo');
+  const todos=[
+    ...calcInsumosAdic.map(i=>({desc:i.nome,qty:i.qty,unit:i.custo})),
+    ...calcServicosAdic.map(s=>({desc:s.nome,qty:s.qty,unit:s.custo}))
+  ];
+  document.getElementById('items-container').innerHTML='';
+  todos.forEach(it=>addItem(it.desc,it.qty,it.unit));
+  toast('Itens transferidos para o orçamento!','success');
+}
+
+// ─── Insumos CRUD ──────────────────────────
+function renderInsumos(){
+  const busca=(document.getElementById('ins-busca')?.value||'').toLowerCase();
+  const list=insumoList.filter(i=>!busca||i.nome.toLowerCase().includes(busca)||(i.categoria||'').toLowerCase().includes(busca));
+  const tb=document.getElementById('ins-tbody');if(!tb)return;
+  tb.innerHTML=list.length?list.map(i=>`<tr>
+    <td style="font-weight:600">${esc(i.nome)}</td>
+    <td>${esc(i.categoria||'—')}</td>
+    <td>${esc(i.unidade)}</td>
+    <td style="font-family:var(--mono);color:var(--azul)">${fBRL(i.custo)}</td>
+    <td><div class="tbl-actions">
+      <button class="ta edit" onclick="editarInsumo('${i.id}')">✏️</button>
+      <button class="ta del" onclick="excluirInsumo('${i.id}','${esc(i.nome)}')">🗑️</button>
+    </div></td></tr>`).join(''):'<tr><td colspan="5" class="empty">Nenhum insumo cadastrado.</td></tr>';
+}
+
+function abrirModalInsumo(){
+  ['ins-nome','ins-cat','ins-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ins-custo').value='0';
+  document.getElementById('ins-un').value='m²';
+  document.getElementById('ins-edit-id').value='';
+  document.getElementById('modal-ins-title').textContent='Novo Insumo';
+  document.getElementById('ins-btn-txt').textContent='Salvar Insumo';
+  openModal('modal-insumo');
+}
+
+function editarInsumo(id){
+  const i=insumoList.find(x=>x.id===id);if(!i)return;
+  document.getElementById('ins-nome').value=i.nome||'';
+  document.getElementById('ins-cat').value=i.categoria||'';
+  document.getElementById('ins-un').value=i.unidade||'m²';
+  document.getElementById('ins-custo').value=i.custo||0;
+  document.getElementById('ins-desc').value=i.descricao||'';
+  document.getElementById('ins-edit-id').value=i.id;
+  document.getElementById('modal-ins-title').textContent='Editar Insumo';
+  document.getElementById('ins-btn-txt').textContent='Salvar Alterações';
+  openModal('modal-insumo');
+}
+
+async function salvarInsumo(){
+  const nome=document.getElementById('ins-nome').value.trim();
+  if(!nome){toast('Nome é obrigatório.','error');return;}
+  const payload={
+    nome,
+    unidade:  document.getElementById('ins-un').value,
+    custo:    parseFloat(document.getElementById('ins-custo').value)||0,
+    categoria:document.getElementById('ins-cat').value.trim(),
+    descricao:document.getElementById('ins-desc').value.trim()
+  };
+  const editId=document.getElementById('ins-edit-id').value;
+  try{
+    if(editId){
+      const u=await API.put('/insumos/'+editId,payload);
+      const i=insumoList.findIndex(x=>x.id===editId);if(i>=0)insumoList[i]={...insumoList[i],...u};
+      toast('Insumo atualizado!','success');
+    }else{
+      const n=await API.post('/insumos',payload);
+      insumoList.push(n);
+      toast('Insumo cadastrado!','success');
+    }
+    closeModal('modal-insumo');renderInsumos();preencherSelectsCalc();
+  }catch(e){toast(e.message,'error');}
+}
+
+async function excluirInsumo(id,nome){
+  if(!confirm(`Excluir insumo "${nome}"?`))return;
+  try{
+    await API.delete('/insumos/'+id);
+    insumoList=insumoList.filter(x=>x.id!==id);
+    renderInsumos();preencherSelectsCalc();
+    toast('Excluído.','success');
+  }catch(e){toast(e.message,'error');}
+}
+
+// ─── Serviços CRUD ─────────────────────────
+function renderServicos(){
+  const busca=(document.getElementById('serv-busca')?.value||'').toLowerCase();
+  const list=servicoList.filter(s=>!busca||s.nome.toLowerCase().includes(busca));
+  const tb=document.getElementById('serv-tbody');if(!tb)return;
+  const TIPOS={hora:'Por hora',m2:'Por m²',un:'Por unidade',fixo:'Custo fixo'};
+  tb.innerHTML=list.length?list.map(s=>`<tr>
+    <td style="font-weight:600">${esc(s.nome)}</td>
+    <td>${esc(TIPOS[s.tipoCusto]||s.tipoCusto)}</td>
+    <td style="font-family:var(--mono);color:var(--azul)">${fBRL(s.custo)}</td>
+    <td style="font-size:12px;color:var(--muted)">${esc(s.descricao||'—')}</td>
+    <td><div class="tbl-actions">
+      <button class="ta edit" onclick="editarServico('${s.id}')">✏️</button>
+      <button class="ta del" onclick="excluirServico('${s.id}','${esc(s.nome)}')">🗑️</button>
+    </div></td></tr>`).join(''):'<tr><td colspan="5" class="empty">Nenhum serviço cadastrado.</td></tr>';
+}
+
+function abrirModalServico(){
+  ['serv-nome','serv-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('serv-custo').value='0';
+  document.getElementById('serv-tipo').value='hora';
+  document.getElementById('serv-edit-id').value='';
+  document.getElementById('modal-serv-title').textContent='Novo Serviço';
+  document.getElementById('serv-btn-txt').textContent='Salvar Serviço';
+  openModal('modal-servico');
+}
+
+function editarServico(id){
+  const s=servicoList.find(x=>x.id===id);if(!s)return;
+  document.getElementById('serv-nome').value=s.nome||'';
+  document.getElementById('serv-tipo').value=s.tipoCusto||'hora';
+  document.getElementById('serv-custo').value=s.custo||0;
+  document.getElementById('serv-desc').value=s.descricao||'';
+  document.getElementById('serv-edit-id').value=s.id;
+  document.getElementById('modal-serv-title').textContent='Editar Serviço';
+  document.getElementById('serv-btn-txt').textContent='Salvar Alterações';
+  openModal('modal-servico');
+}
+
+async function salvarServico(){
+  const nome=document.getElementById('serv-nome').value.trim();
+  if(!nome){toast('Nome é obrigatório.','error');return;}
+  const payload={
+    nome,
+    tipoCusto:document.getElementById('serv-tipo').value,
+    custo:    parseFloat(document.getElementById('serv-custo').value)||0,
+    descricao:document.getElementById('serv-desc').value.trim()
+  };
+  const editId=document.getElementById('serv-edit-id').value;
+  try{
+    if(editId){
+      const u=await API.put('/servicos/'+editId,payload);
+      const i=servicoList.findIndex(x=>x.id===editId);if(i>=0)servicoList[i]={...servicoList[i],...u};
+      toast('Serviço atualizado!','success');
+    }else{
+      const n=await API.post('/servicos',payload);
+      servicoList.push(n);
+      toast('Serviço cadastrado!','success');
+    }
+    closeModal('modal-servico');renderServicos();preencherSelectsCalc();
+  }catch(e){toast(e.message,'error');}
+}
+
+async function excluirServico(id,nome){
+  if(!confirm(`Excluir serviço "${nome}"?`))return;
+  try{
+    await API.delete('/servicos/'+id);
+    servicoList=servicoList.filter(x=>x.id!==id);
+    renderServicos();preencherSelectsCalc();
+    toast('Excluído.','success');
+  }catch(e){toast(e.message,'error');}
+}
 </script>
 </body>
 </html>
