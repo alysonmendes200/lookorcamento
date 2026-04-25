@@ -238,6 +238,35 @@ select option { background:#fff; }
 .wpp-chip { display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:2px 8px;color:var(--text);text-decoration:none;transition:background .15s,border-color .15s; }
 .wpp-chip:hover { background:#e6fdf0;border-color:#25D366;color:#128C7E; }
 
+/* ── AUTOCOMPLETE CUSTOMIZADO ── */
+.ac-wrap        { position:relative; }
+.ac-dropdown    {
+  position:absolute; top:calc(100% + 4px); left:0; right:0;
+  z-index:9999;
+  background:#ffffff;
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:0 8px 28px rgba(0,20,60,.13);
+  max-height:224px;
+  overflow-y:auto;
+  display:none;
+  scrollbar-width:thin;
+}
+.ac-dropdown.open { display:block; }
+.ac-option {
+  padding:9px 14px;
+  font-size:13px;
+  color:#1a1a2e;
+  cursor:pointer;
+  border-bottom:1px solid #eaf0fb;
+  line-height:1.4;
+  transition:background .1s;
+}
+.ac-option:last-child { border-bottom:none; }
+.ac-option:hover,
+.ac-option.ac-active  { background:#ebf2ff; color:#003399; }
+.ac-option-sub { font-size:11px; color:#6070a0; display:block; margin-top:1px; }
+
 /* ── MODAL ── */
 .modal-overlay {
   display:none; position:fixed; inset:0; background:rgba(0,20,60,.75);

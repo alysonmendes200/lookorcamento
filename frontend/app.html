@@ -791,8 +791,14 @@
           <label style="margin:0">Cliente *</label>
           <button type="button" class="btn btn-ghost" style="font-size:11px;padding:3px 8px;height:auto" onclick="novoClienteNoPedido()" title="Cadastrar novo cliente">+ Novo Cliente</button>
         </div>
-        <input id="ped-cliente-nome" list="ped-clientes-list" placeholder="Digite o nome do cliente…">
-        <datalist id="ped-clientes-list"></datalist>
+        <div class="ac-wrap">
+          <input id="ped-cliente-nome" autocomplete="off" placeholder="Digite o nome do cliente…"
+            oninput="acPedCliente(this)"
+            onfocus="acPedCliente(this)"
+            onblur="acPedFechar()"
+            onkeydown="acPedKey(event)">
+          <div id="ped-ac-list" class="ac-dropdown" role="listbox"></div>
+        </div>
       </div>
       <div class="fg"><label>Prazo de Entrega</label><input id="ped-prazo" placeholder="Ex: 5 dias úteis"></div>
     </div>
@@ -2014,9 +2020,75 @@ async function carregarPedidos(){
   if(!clienteList.length){try{clienteList=await API.get('/clientes');}catch{}}
   preencherDatalistClientes();renderPedidos();
 }
-function preencherDatalistClientes(){
-  const dl=document.getElementById('ped-clientes-list');if(!dl)return;
-  dl.innerHTML=clienteList.map(c=>`<option value="${esc(c.nome)}">`).join('');
+// ── autocomplete de clientes no pedido ────────────────
+function preencherDatalistClientes(){} // mantido p/ compatibilidade
+
+let _acPedIdx = -1;
+
+function acPedCliente(input){
+  const val=(input.value||'').toLowerCase().trim();
+  const dl=document.getElementById('ped-ac-list');
+  if(!dl)return;
+  _acPedIdx=-1;
+
+  const matches=val
+    ? clienteList.filter(c=>
+        c.nome.toLowerCase().includes(val)||
+        (c.comercio||'').toLowerCase().includes(val)||
+        (c.telefone||'').includes(val))
+    : clienteList.slice(0,15);
+
+  if(!matches.length){dl.classList.remove('open');return;}
+
+  dl.innerHTML=matches.slice(0,15).map(c=>`
+    <div class="ac-option" role="option"
+      data-nome="${c.nome.replace(/"/g,'&quot;')}"
+      onmousedown="acPedSelecionar(event,this)">
+      <strong>${esc(c.nome)}</strong>
+      ${(c.comercio&&c.comercio!==c.nome)?`<span class="ac-option-sub">🏪 ${esc(c.comercio)}</span>`:''}
+      ${c.telefone?`<span class="ac-option-sub">📞 ${esc(c.telefone)}</span>`:''}
+    </div>`).join('');
+
+  dl.classList.add('open');
+}
+
+function acPedSelecionar(e,el){
+  e.preventDefault(); // impede onblur fechar antes do clique
+  const nome=el.dataset.nome;
+  document.getElementById('ped-cliente-nome').value=nome;
+  document.getElementById('ped-ac-list').classList.remove('open');
+  _acPedIdx=-1;
+}
+
+function acPedFechar(){
+  setTimeout(()=>{
+    const dl=document.getElementById('ped-ac-list');
+    if(dl)dl.classList.remove('open');
+    _acPedIdx=-1;
+  },150);
+}
+
+function acPedKey(e){
+  const dl=document.getElementById('ped-ac-list');
+  if(!dl||!dl.classList.contains('open'))return;
+  const opts=[...dl.querySelectorAll('.ac-option')];
+  if(!opts.length)return;
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    _acPedIdx=Math.min(_acPedIdx+1,opts.length-1);
+    opts.forEach((o,i)=>o.classList.toggle('ac-active',i===_acPedIdx));
+    opts[_acPedIdx]?.scrollIntoView({block:'nearest'});
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    _acPedIdx=Math.max(_acPedIdx-1,0);
+    opts.forEach((o,i)=>o.classList.toggle('ac-active',i===_acPedIdx));
+    opts[_acPedIdx]?.scrollIntoView({block:'nearest'});
+  }else if(e.key==='Enter'&&_acPedIdx>=0){
+    e.preventDefault();
+    opts[_acPedIdx].dispatchEvent(new MouseEvent('mousedown',{bubbles:true}));
+  }else if(e.key==='Escape'){
+    dl.classList.remove('open');_acPedIdx=-1;
+  }
 }
 
 let _orcTimeout=null;
