@@ -44,13 +44,17 @@
 .dash-bar-label{font-size:9px;color:var(--muted);text-align:center;}
 .dash-bar-val  {font-size:8px;color:var(--azul);font-weight:700;text-align:center;}
 
-.client-card   {display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
-.client-card:last-child{border-bottom:none;}
-.client-avatar {width:38px;height:38px;border-radius:50%;background:var(--azul-bg);color:var(--azul);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.cli-grid      {display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.client-card   {background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s,transform .15s;}
+.client-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px);}
+.client-card-top{display:flex;align-items:flex-start;gap:12px;}
+.client-avatar {width:44px;height:44px;border-radius:50%;background:var(--azul-bg);color:var(--azul);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
 .client-info   {flex:1;min-width:0;}
-.client-name   {font-weight:600;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.client-sub    {font-size:11px;color:var(--muted);}
-.client-actions{display:flex;gap:6px;}
+.client-name   {font-weight:700;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.client-comercio{font-size:12px;color:var(--azul);font-weight:600;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.client-chips  {display:flex;flex-wrap:wrap;gap:5px;}
+.client-chip   {font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:2px 8px;color:var(--muted);display:flex;align-items:center;gap:3px;}
+.client-actions{display:flex;gap:6px;justify-content:flex-end;}
 
 /* Catálogo de produtos no modal de pedido/orçamento */
 .prod-catalog-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;border:1px dashed var(--azul);background:var(--azul-bg);color:var(--azul);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:8px;}
@@ -187,7 +191,7 @@
 <main class="main">
 
   <!-- NOVO / EDITAR ORÇAMENTO -->
-  <div class="page active" id="page-novo">
+  <div class="page" id="page-novo">
     <div class="page-header">
       <div class="page-title" id="form-title">Novo Orçamento</div>
       <div class="page-sub">Preencha os dados para gerar o orçamento</div>
@@ -228,10 +232,15 @@
       <div class="card-title">Status Financeiro</div>
       <div class="form-row">
         <div class="fg"><label>Situação</label>
-          <select id="f-pago"><option value="false">🔴 Não Recebido</option><option value="true">🟢 Recebido/Pago</option></select></div>
+          <select id="f-pago" onchange="toggleOrcPago()"><option value="false">🔴 Não Recebido</option><option value="true">🟢 Recebido/Pago</option></select></div>
         <div class="fg"><label>Valor Recebido (R$)</label><input id="f-vreceb" type="number" min="0" step="0.01" placeholder="0,00"></div>
         <div class="fg"><label>Status NF</label>
           <select id="f-nfstatus"><option value="nao_emitida">❌ Não Emitida</option><option value="emitida">✅ Emitida</option></select></div>
+      </div>
+      <div id="f-caixa-auto" style="display:none;background:var(--azul-bg);border:1px solid var(--azul);border-radius:8px;padding:8px 12px;margin-top:6px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer">
+          <input type="checkbox" id="f-reg-caixa" checked> Registrar recebimento no Caixa automaticamente
+        </label>
       </div>
     </div>
 
@@ -320,9 +329,12 @@
         <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('ped-busca').value='';document.getElementById('ped-status-flt').value='';renderPedidos()">Limpar</button>
       </div>
     </div>
-    <div class="view-tabs">
+    <div class="view-tabs" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <button class="view-tab active" id="vtab-kanban" onclick="mudarViewPedido('kanban',this)">🗂️ Kanban</button>
       <button class="view-tab" id="vtab-lista" onclick="mudarViewPedido('lista',this)">📋 Lista</button>
+      <label id="kanban-show-fin" style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);cursor:pointer;margin-left:auto">
+        <input type="checkbox" id="chk-show-fin" onchange="renderPedidos()"> Mostrar entregues/cancelados
+      </label>
     </div>
     <div id="ped-kanban-view"><div class="kanban-board" id="kanban-board"></div></div>
     <div id="ped-lista-view" style="display:none">
@@ -345,7 +357,7 @@
       <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('cli-busca').value='';renderClientes()">Limpar</button>
     </div>
     <div class="stats-row" id="cli-stats"></div>
-    <div class="card"><div id="cli-list"><div class="empty">Carregando…</div></div></div>
+    <div id="cli-list"><div class="empty">Carregando…</div></div>
   </div>
 
   <!-- ══ PRODUTOS ══════════════════════════════════════ -->
@@ -400,7 +412,10 @@
       <div class="card"><div class="card-title">📅 Orçamentos por Mês</div><div class="dash-chart" id="dash-chart-mensal"></div></div>
       <div class="card"><div class="card-title">📦 Status dos Pedidos</div><div id="dash-pedidos-status" style="margin-top:8px"></div></div>
     </div>
-    <div class="card"><div class="card-title">🏆 Top Clientes (por valor)</div><div id="dash-top-clientes" style="margin-top:8px"></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div class="card"><div class="card-title">🏆 Top Clientes (por valor)</div><div id="dash-top-clientes" style="margin-top:8px"></div></div>
+      <div class="card"><div class="card-title">🔥 Itens Mais Vendidos</div><div id="dash-top-itens" style="margin-top:8px"></div></div>
+    </div>
   </div>
 
   <!-- RELATÓRIOS -->
@@ -758,8 +773,11 @@
     <div class="form-row">
       <div class="fg">
         <label>Cliente *</label>
-        <input id="ped-cliente-nome" list="ped-clientes-list" placeholder="Digite o nome do cliente…">
-        <datalist id="ped-clientes-list"></datalist>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input id="ped-cliente-nome" list="ped-clientes-list" placeholder="Digite o nome do cliente…" style="flex:1">
+          <datalist id="ped-clientes-list"></datalist>
+          <button type="button" class="btn btn-ghost" style="white-space:nowrap;font-size:12px;padding:6px 10px" onclick="novoClienteNoPedido()" title="Cadastrar novo cliente">+ Novo</button>
+        </div>
       </div>
       <div class="fg"><label>Prazo de Entrega</label><input id="ped-prazo" placeholder="Ex: 5 dias úteis"></div>
     </div>
@@ -955,6 +973,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   sincronizarStatusLabels();
   await carregarNextNum();
   novoForm();
+  // Tela inicial: dashboard para admin, novo orçamento para operador
+  if(isAdmin()) goPage('dashboard'); else goPage('novo');
   // Pré-carrega produtos e clientes em background
   API.get('/produtos').then(list=>{ produtoList=list; }).catch(()=>{});
   API.get('/clientes').then(list=>{ clienteList=list; preencherDatalistClientesOrc(); }).catch(()=>{});
@@ -1088,9 +1108,17 @@ function editarOrc(orc){
   document.getElementById('edit-bar-num').textContent='N° '+String(orc.num).padStart(3,'0');
   document.getElementById('card-status').style.display='';
   document.getElementById('num-display').textContent=String(orc.num).padStart(3,'0');
+  // Mostra opção caixa somente se mudou para pago
+  document.getElementById('f-caixa-auto').style.display=orc.pago?'none':'none';
+  if(document.getElementById('f-reg-caixa'))document.getElementById('f-reg-caixa').checked=true;
   goPage('novo');window.scrollTo(0,0);
 }
 function cancelEdit(){novoForm();carregarNextNum();}
+
+function toggleOrcPago(){
+  const pago=document.getElementById('f-pago').value==='true';
+  document.getElementById('f-caixa-auto').style.display=pago?'':'none';
+}
 
 // ════ SALVAR ORÇAMENTO ════════════════════════════════
 async function salvar(){
@@ -1110,10 +1138,26 @@ async function salvar(){
   btn.disabled=true;document.getElementById('btn-salvar-txt').textContent='Salvando…';
   try{
     if(editingId){
-      payload.pago=document.getElementById('f-pago').value==='true';
+      const novoPago=document.getElementById('f-pago').value==='true';
+      const orcAnterior=orcList.find(o=>o.id===editingId);
+      const eraPago=orcAnterior?.pago||false;
+      payload.pago=novoPago;
       payload.valorRecebido=parseFloat(document.getElementById('f-vreceb').value)||0;
       payload.nfStatus=document.getElementById('f-nfstatus').value;
-      await API.put('/orcamentos/'+editingId,payload);
+      const updated=await API.put('/orcamentos/'+editingId,payload);
+      // Auto-registro no caixa ao marcar como pago
+      if(novoPago&&!eraPago&&document.getElementById('f-reg-caixa')?.checked&&payload.valorRecebido>0){
+        try{
+          const nova=await API.post('/caixa',{
+            data:new Date().toISOString().split('T')[0],
+            descricao:'Orçamento N° '+String(orcAnterior?.num||'').padStart(3,'0')+' — '+(payload.nome||orcAnterior?.nome||''),
+            tipo:'entrada',valor:payload.valorRecebido,
+            categoria:'Orçamentos',orcamentoNum:orcAnterior?.num||null
+          });
+          caixaList.unshift(nova);
+          toast('Recebimento registrado no Caixa!','success');
+        }catch(ce){toast('Orç. atualizado, mas erro no Caixa: '+ce.message,'error');}
+      }
       toast('Orçamento atualizado!','success');cancelEdit();
     }else{
       const orc=await API.post('/orcamentos',payload);
@@ -1309,12 +1353,16 @@ function renderRelatorios(){
   const pedResumo=ped.resumo||{};
 
   // ── Resumo
+  const restaPagarOrc=resumo.valorFaltaReceber||0;
+  const restaPagarPed=pedResumo.valorPendente||0;
+  const restaPagarTotal=restaPagarOrc+restaPagarPed;
   document.getElementById('rel-stats-cards').innerHTML=`
     <div class="stat-card"><div class="stat-label">Orçamentos</div><div class="stat-val">${resumo.totalOrcamentos}</div></div>
     <div class="stat-card"><div class="stat-label">Fat. Orçamentos</div><div class="stat-val sm">${fBRL(resumo.valorTotal)}</div></div>
     <div class="stat-card"><div class="stat-label">Recebido (Orç.)</div><div class="stat-val sm green">${fBRL(resumo.valorRecebido)}</div></div>
     <div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-val">${pedResumo.totalPedidos||0}</div></div>
     <div class="stat-card"><div class="stat-label">Recebido (Ped.)</div><div class="stat-val sm green">${fBRL(pedResumo.valorRecebido||0)}</div></div>
+    <div class="stat-card" style="border-color:#dc3545"><div class="stat-label" style="color:#dc3545">Falta Receber (Total)</div><div class="stat-val sm red">${fBRL(restaPagarTotal)}</div></div>
     <div class="stat-card"><div class="stat-label">NF Emitidas</div><div class="stat-val">${resumo.comNF}</div></div>`;
   document.getElementById('rel-caixa-stats-mini').innerHTML=cx.length?`
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
@@ -1361,6 +1409,7 @@ function renderRelatorios(){
       <tr><td>Saldo do Caixa</td><td class="${cxSaldo>=0?'dre-pos':'dre-neg'}">${fBRL(cxSaldo)}</td></tr>
       <tr class="dre-group"><td colspan="2">📊 RESULTADO CONSOLIDADO</td></tr>
       <tr><td>Faturamento Total (Orç. + Ped.)</td><td class="dre-neu">${fBRL(fatTotal)}</td></tr>
+      <tr><td style="color:#dc3545">⚠️ Falta Receber (Orç. + Ped. pendentes)</td><td style="font-family:var(--mono);text-align:right;font-weight:700;color:#dc3545">- ${fBRL(restaPagarOrc+restaPagarPed)}</td></tr>
       <tr class="dre-total"><td>RESULTADO LÍQUIDO DO PERÍODO</td><td style="font-family:var(--mono);text-align:right;font-size:15px">${fBRL(lucro)}</td></tr>
       <tr><td style="font-size:12px;color:var(--muted)">Margem sobre faturamento total</td><td style="text-align:right;font-size:12px;font-weight:700;color:${lucro>=0?'#198754':'#dc3545'}">${margem}%</td></tr>
     </table>`;
@@ -1758,21 +1807,34 @@ function renderCliStats(){
 }
 function renderClientes(){
   const busca=(document.getElementById('cli-busca').value||'').toLowerCase();
-  const list=clienteList.filter(c=>!busca||c.nome.toLowerCase().includes(busca)||(c.comercio||'').toLowerCase().includes(busca)||(c.email||'').toLowerCase().includes(busca));
+  const list=clienteList.filter(c=>!busca||c.nome.toLowerCase().includes(busca)||(c.comercio||'').toLowerCase().includes(busca)||(c.email||'').toLowerCase().includes(busca)||(c.telefone||'').includes(busca)||(c.cpfCnpj||'').includes(busca));
   const cont=document.getElementById('cli-list');
-  if(!list.length){cont.innerHTML='<div class="empty">'+(clienteList.length?'Nenhum encontrado.':'Clique em "Novo Cliente".')+'</div>';return;}
-  cont.innerHTML=list.map(c=>`
-    <div class="client-card">
-      <div class="client-avatar">${c.nome.charAt(0).toUpperCase()}</div>
-      <div class="client-info">
-        <div class="client-name">${esc(c.nome)}</div>
-        <div class="client-sub">${c.comercio?`🏪 ${esc(c.comercio)} &nbsp;`:''}${c.telefone?`📞 ${esc(c.telefone)} &nbsp;`:''}${c.email?`✉️ ${esc(c.email)}`:''}</div>
+  if(!list.length){cont.innerHTML='<div class="empty" style="padding:32px">'+(clienteList.length?'Nenhum cliente encontrado.':'Clique em "Novo Cliente" para cadastrar.')+'</div>';return;}
+  cont.innerHTML=`<div class="cli-grid">${list.map(c=>{
+    const ini=c.nome.trim().split(' ').filter(Boolean);
+    const av=(ini[0]?.[0]||'').toUpperCase()+(ini[1]?.[0]||'').toUpperCase()||c.nome.charAt(0).toUpperCase();
+    const chips=[
+      c.telefone?`<span class="client-chip">📞 ${esc(c.telefone)}</span>`:'',
+      c.email?`<span class="client-chip">✉️ ${esc(c.email)}</span>`:'',
+      c.cpfCnpj?`<span class="client-chip">🪪 ${esc(c.cpfCnpj)}</span>`:'',
+      c.endereco?`<span class="client-chip">📍 ${esc(c.endereco.substring(0,30))}${c.endereco.length>30?'…':''}</span>`:'',
+      c.obs?`<span class="client-chip">📝 ${esc(c.obs.substring(0,25))}${c.obs.length>25?'…':''}</span>`:''
+    ].filter(Boolean).join('');
+    return `<div class="client-card">
+      <div class="client-card-top">
+        <div class="client-avatar">${av}</div>
+        <div class="client-info">
+          <div class="client-name">${esc(c.nome)}</div>
+          ${c.comercio?`<div class="client-comercio">🏪 ${esc(c.comercio)}</div>`:''}
+        </div>
+        <div class="client-actions">
+          <button class="ta edit" onclick="editarCliente('${c.id}')" title="Editar">✏️</button>
+          ${isAdmin()?`<button class="ta del" onclick="excluirCliente('${c.id}','${esc(c.nome)}')" title="Excluir">🗑️</button>`:''}
+        </div>
       </div>
-      <div class="client-actions">
-        <button class="ta edit" onclick="editarCliente('${c.id}')">✏️</button>
-        ${isAdmin()?`<button class="ta del" onclick="excluirCliente('${c.id}','${esc(c.nome)}')">🗑️</button>`:''}
-      </div>
-    </div>`).join('');
+      ${chips?`<div class="client-chips">${chips}</div>`:''}
+    </div>`;
+  }).join('')}</div>`;
 }
 function abrirModalNovoCliente(){
   ['cli-nome','cli-comercio','cli-tel','cli-email','cli-cpfcnpj','cli-endereco','cli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1822,6 +1884,13 @@ async function salvarCliente(){
       toast('Cliente cadastrado!','success');
     }
     closeModal('modal-cliente');renderCliStats();renderClientes();
+    // Se veio do pedido, preenche o campo cliente
+    if(window._clienteParaPedido){
+      window._clienteParaPedido=false;
+      const campo=document.getElementById('ped-cliente-nome');
+      if(campo){campo.value=nome;preencherDatalistClientes();}
+      setTimeout(()=>openModal('modal-pedido'),100);
+    }
   }catch(e){toast(e.message,'error');}
   finally{btn.disabled=false;document.getElementById('cli-btn-txt').textContent=editId?'Salvar Alterações':'Salvar Cliente';}
 }
@@ -1891,14 +1960,20 @@ function mudarViewPedido(v,btn){
   document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
   document.getElementById('ped-kanban-view').style.display=v==='kanban'?'':'none';
   document.getElementById('ped-lista-view').style.display=v==='lista'?'':'none';
+  const finLabel=document.getElementById('kanban-show-fin');
+  if(finLabel)finLabel.style.display=v==='kanban'?'':'none';
   renderPedidos();
 }
 function filtrarPedidos(){
   const busca=(document.getElementById('ped-busca').value||'').toLowerCase();
   const sflt=document.getElementById('ped-status-flt').value;
+  const showFin=document.getElementById('chk-show-fin')?.checked||false;
   return pedidoList.filter(p=>{
     if(busca&&!p.clienteNome.toLowerCase().includes(busca))return false;
-    if(sflt&&p.status!==sflt)return false;return true;
+    if(sflt&&p.status!==sflt)return false;
+    // No kanban, oculta finalizados por padrão
+    if(viewPedido==='kanban'&&!sflt&&!showFin&&(p.status==='entregue'||p.status==='cancelado'))return false;
+    return true;
   });
 }
 function renderPedidos(){
@@ -2245,23 +2320,50 @@ async function carregarDashboard(){
         <span class="badge ${lbl.cls}">${lbl.label}</span><span style="font-weight:700;font-size:14px">${v}</span></div>`;
     }).join('');
 
-    const ct={};orcs.forEach(o=>{if(!ct[o.nome])ct[o.nome]={nome:o.nome,total:0,qtd:0};ct[o.nome].total+=o.total;ct[o.nome].qtd++;});
+    // Top clientes: consolida orçamentos + pedidos
+    const ct={};
+    orcs.forEach(o=>{if(!ct[o.nome])ct[o.nome]={nome:o.nome,total:0,orcs:0,peds:0};ct[o.nome].total+=o.total;ct[o.nome].orcs++;});
+    pedidos.forEach(p=>{const k=p.clienteNome;if(!ct[k])ct[k]={nome:k,total:0,orcs:0,peds:0};ct[k].total+=p.total;ct[k].peds++;});
     const top=Object.values(ct).sort((a,b)=>b.total-a.total).slice(0,8);
     const maxT=Math.max(...top.map(t=>t.total),1);
     document.getElementById('dash-top-clientes').innerHTML=top.length?top.map(c=>`
-      <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
         <div class="client-avatar" style="width:32px;height:32px;font-size:13px">${c.nome.charAt(0).toUpperCase()}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.nome)}</div>
-          <div style="height:5px;background:var(--border);border-radius:3px;margin-top:4px">
-            <div style="height:5px;background:var(--azul);border-radius:3px;width:${Math.round(c.total/maxT*100)}%"></div>
+          <div style="height:4px;background:var(--border);border-radius:3px;margin-top:4px">
+            <div style="height:4px;background:var(--azul);border-radius:3px;width:${Math.round(c.total/maxT*100)}%"></div>
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0">
           <div style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:700">${fBRL(c.total)}</div>
-          <div style="font-size:10px;color:var(--muted)">${c.qtd} orç.</div>
+          <div style="font-size:10px;color:var(--muted)">${c.orcs?c.orcs+' orç.':''} ${c.peds?c.peds+' ped.':''}</div>
         </div>
-      </div>`).join(''):'<div class="empty">Nenhum orçamento ainda.</div>';
+      </div>`).join(''):'<div class="empty">Nenhum registro ainda.</div>';
+
+    // Top itens mais vendidos
+    const itens={};
+    [...orcs,...pedidos].forEach(r=>(r.items||[]).forEach(i=>{
+      const k=i.desc.trim().toLowerCase();
+      if(!k)return;
+      if(!itens[k])itens[k]={desc:i.desc,qtd:0,total:0,vezes:0};
+      itens[k].qtd+=i.qty||0;itens[k].total+=i.total||0;itens[k].vezes++;
+    }));
+    const topI=Object.values(itens).sort((a,b)=>b.total-a.total).slice(0,8);
+    const maxI=Math.max(...topI.map(i=>i.total),1);
+    document.getElementById('dash-top-itens').innerHTML=topI.length?topI.map(i=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(i.desc)}</div>
+          <div style="height:4px;background:var(--border);border-radius:3px;margin-top:4px">
+            <div style="height:4px;background:#198754;border-radius:3px;width:${Math.round(i.total/maxI*100)}%"></div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-family:var(--mono);font-size:12px;color:#198754;font-weight:700">${fBRL(i.total)}</div>
+          <div style="font-size:10px;color:var(--muted)">${i.vezes}x — qtd: ${i.qtd}</div>
+        </div>
+      </div>`).join(''):'<div class="empty">Sem itens registrados.</div>';
   }catch(e){toast('Erro dashboard: '+e.message,'error');}
 }
 
@@ -2301,6 +2403,12 @@ function selecionarClienteDoModal(id){
 function novoClienteRapido(){
   closeModal('modal-catalogo-clientes');
   setTimeout(()=>abrirModalNovoCliente(),200);
+}
+function novoClienteNoPedido(){
+  // Abre modal de novo cliente; ao salvar, preenche o campo do pedido
+  abrirModalNovoCliente();
+  // Flag para saber que veio do pedido
+  window._clienteParaPedido=true;
 }
 
 // ════ CNPJ / CPF — RECEITA FEDERAL ════════════════════
@@ -2466,7 +2574,9 @@ async function excluirCaixaTransacao(id){
 // ════ MODAIS ══════════════════════════════════════════
 function openModal(id) {document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
+const _noOverlayClose=['modal-cliente','modal-pedido','modal-produto'];
 document.querySelectorAll('.modal-overlay').forEach(el=>{
+  if(_noOverlayClose.includes(el.id))return;
   el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
 });
 </script>
