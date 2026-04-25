@@ -506,9 +506,26 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
   opacity: .75;
   font-weight: 600;
 }
+.laser-final-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.laser-lucro-card {
+  background: #fff;
+  border: 2px solid #198754;
+  border-radius: 18px;
+  padding: 28px 30px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(25,135,84,.15);
+  color: #198754;
+}
+.laser-lucro-card .laser-preco-label { color: #198754; opacity: .75; }
+.laser-lucro-card .laser-preco-val   { color: #198754; }
 @media (max-width: 900px) {
-  .laser-grid { grid-template-columns: 1fr; }
-  .laser-preco-val { font-size: 34px; }
+  .laser-grid       { grid-template-columns: 1fr; }
+  .laser-final-pair { grid-template-columns: 1fr; }
+  .laser-preco-val  { font-size: 34px; }
 }
 
 /* ── CALC TOOLS (Banner, Papel de Parede) ── */
