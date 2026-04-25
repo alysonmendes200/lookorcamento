@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
 :root {
+  color-scheme: light;
   --azul:    #003399;
   --azul2:   #0044bb;
   --azul-lt: #4a7fd4;
