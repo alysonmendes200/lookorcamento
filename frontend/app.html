@@ -184,6 +184,15 @@
     </div>
   </div>
 
+  <button class="nav-btn" id="nav-mensagens" onclick="goPage('mensagens')">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span>Templates de Mensagem</span>
+  </button>
+  <button class="nav-btn" id="nav-integracao-wpp" onclick="goPage('integracao-wpp')">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.8 19.8 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.36 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+    <span>Integração WhatsApp</span>
+  </button>
+
   <div class="nav-section admin-only">Administração</div>
   <button class="nav-btn admin-only" id="nav-logs" onclick="goPage('logs');carregarLogs()">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -1079,6 +1088,189 @@
     </div>
   </div>
 
+  <!-- ══ PÁGINA: TEMPLATES DE MENSAGEM ════════════════ -->
+  <div class="page" id="page-mensagens">
+    <div class="page-header">
+      <div class="page-title">Templates de Mensagem</div>
+      <div class="page-sub">Padronize e agilize os textos enviados via WhatsApp</div>
+    </div>
+
+    <div class="msg-layout">
+
+      <!-- ── PAINEL ESQUERDO: LISTA ── -->
+      <div class="msg-panel-list">
+        <button class="btn btn-primary" style="width:100%;margin-bottom:16px" onclick="novoTemplate()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nova Mensagem
+        </button>
+        <div id="msg-lista"></div>
+      </div>
+
+      <!-- ── PAINEL DIREITO: EDITOR ── -->
+      <div class="msg-panel-editor card">
+        <div class="msg-editor-header">
+          <div class="msg-editor-title" id="msg-editor-title">Novo Template</div>
+          <div class="msg-editor-sub">Edite o título, insira variáveis e salve</div>
+        </div>
+
+        <div class="fg" style="margin-bottom:14px">
+          <label>Título do Template</label>
+          <input id="msg-titulo" type="text" placeholder="Ex: Aviso de Retirada" maxlength="80">
+        </div>
+
+        <!-- Barra de variáveis -->
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">
+            Inserir Variável
+          </div>
+          <div class="msg-vars" id="msg-vars">
+            <button class="msg-var-chip" onclick="inserirVar('{Nome do Cliente}')">👤 Nome do Cliente</button>
+            <button class="msg-var-chip" onclick="inserirVar('{Número do Pedido}')">🔢 Nº do Pedido</button>
+            <button class="msg-var-chip" onclick="inserirVar('{Número do Orçamento}')">📋 Nº do Orçamento</button>
+            <button class="msg-var-chip" onclick="inserirVar('{Valor Total}')">💰 Valor Total</button>
+            <button class="msg-var-chip" onclick="inserirVar('{Prazo de Entrega}')">📅 Prazo de Entrega</button>
+            <button class="msg-var-chip" onclick="inserirVar('{Data}')">🗓️ Data</button>
+            <button class="msg-var-chip" onclick="inserirVar('{Nome da Empresa}')">🏢 Nome da Empresa</button>
+            <button class="msg-var-chip" onclick="inserirVar('{Telefone}')">📞 Telefone</button>
+          </div>
+        </div>
+
+        <!-- Textarea do corpo -->
+        <div class="fg" style="margin-bottom:16px">
+          <label>Corpo da Mensagem</label>
+          <textarea id="msg-corpo" rows="10" placeholder="Olá, {Nome do Cliente}! Seu pedido {Número do Pedido} está pronto para retirada. 😊&#10;&#10;Qualquer dúvida, estamos à disposição!&#10;&#10;Att, {Nome da Empresa}" style="resize:vertical;line-height:1.6;font-family:inherit"></textarea>
+        </div>
+
+        <!-- Preview -->
+        <div class="msg-preview-wrap" id="msg-preview-wrap" style="display:none">
+          <div class="msg-preview-label">Prévia (dados fictícios)</div>
+          <div class="msg-preview-body" id="msg-preview-body"></div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-ghost" style="flex:1" onclick="togglePreview()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Prévia
+          </button>
+          <button class="btn btn-ghost" style="flex:1" onclick="copiarTemplate()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copiar
+          </button>
+          <button class="btn btn-primary" style="flex:2" onclick="salvarTemplate()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Salvar Template
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ PÁGINA: INTEGRAÇÃO WHATSAPP API ══════════════ -->
+  <div class="page" id="page-integracao-wpp">
+    <div class="page-header">
+      <div class="page-title">Integração WhatsApp API</div>
+      <div class="page-sub">Conecte seu sistema para envios automáticos via API oficial</div>
+    </div>
+
+    <div class="wpp-int-wrap">
+
+      <!-- Card central de configuração -->
+      <div class="card wpp-int-card">
+
+        <!-- Ícone + status -->
+        <div class="wpp-int-hero">
+          <div class="wpp-int-icon">
+            <svg width="32" height="32" fill="none" stroke="#25D366" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          </div>
+          <div>
+            <div class="wpp-int-name">WhatsApp Business API</div>
+            <div class="wpp-int-status" id="wpp-status-badge">
+              <span class="wpp-dot" id="wpp-dot"></span>
+              <span id="wpp-status-txt">Não configurado</span>
+            </div>
+          </div>
+        </div>
+
+        <hr class="wpp-divider">
+
+        <!-- Campo: API Token -->
+        <div class="fg wpp-field">
+          <label>
+            API Token do WhatsApp
+            <span class="wpp-required">*</span>
+          </label>
+          <div class="wpp-input-wrap">
+            <input id="wpp-token" type="password" placeholder="Cole aqui o token da API oficial (EAA...)" autocomplete="off" spellcheck="false">
+            <button class="wpp-eye-btn" type="button" onclick="wppToggleToken()" title="Mostrar / ocultar token">
+              <svg id="wpp-eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="input-helper">Encontre o token no painel: Meta for Developers → App → WhatsApp → API Setup</div>
+        </div>
+
+        <!-- Campo: Phone Number ID -->
+        <div class="fg wpp-field">
+          <label>Phone Number ID</label>
+          <input id="wpp-phone-id" type="text" placeholder="Ex: 123456789012345" autocomplete="off">
+          <div class="input-helper">ID do número cadastrado na API (não é o número de telefone)</div>
+        </div>
+
+        <!-- Campo: Webhook URL (readonly + copiar) -->
+        <div class="fg wpp-field">
+          <label>Webhook URL <span style="font-weight:400;color:var(--muted)">(para colar no painel da Meta)</span></label>
+          <div class="wpp-input-wrap">
+            <input id="wpp-webhook" type="text" readonly value="https://meuerp.com.br/api/webhook/whatsapp" style="cursor:default;color:var(--muted)">
+            <button class="wpp-copy-btn" type="button" onclick="wppCopiarWebhook()" title="Copiar URL">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="input-helper">Cole essa URL em: Meta → WhatsApp → Configuration → Webhook → Callback URL</div>
+        </div>
+
+        <!-- Campo: Verify Token -->
+        <div class="fg wpp-field">
+          <label>Verify Token do Webhook</label>
+          <div class="wpp-input-wrap">
+            <input id="wpp-verify" type="text" placeholder="Ex: meu_token_secreto_123" autocomplete="off">
+            <button class="wpp-copy-btn" type="button" onclick="wppCopiarVerify()" title="Copiar">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="input-helper">Defina um texto secreto aqui e use o mesmo no campo "Verify Token" da Meta</div>
+        </div>
+
+        <hr class="wpp-divider">
+
+        <!-- Guia rápido -->
+        <div class="wpp-guide">
+          <div class="wpp-guide-title">Como configurar em 4 passos</div>
+          <div class="wpp-guide-steps">
+            <div class="wpp-step"><span class="wpp-step-n">1</span><span>Acesse <strong>developers.facebook.com</strong> e crie um App do tipo Business</span></div>
+            <div class="wpp-step"><span class="wpp-step-n">2</span><span>Adicione o produto <strong>WhatsApp</strong> e copie o <strong>API Token</strong> e o <strong>Phone Number ID</strong></span></div>
+            <div class="wpp-step"><span class="wpp-step-n">3</span><span>Em <strong>WhatsApp → Configuration → Webhook</strong>, cole a <strong>Webhook URL</strong> e o <strong>Verify Token</strong></span></div>
+            <div class="wpp-step"><span class="wpp-step-n">4</span><span>Cole os dados aqui, clique em <strong>Salvar</strong> e depois em <strong>Testar Conexão</strong></span></div>
+          </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="wpp-actions">
+          <button class="btn btn-ghost" style="flex:1" onclick="wppTestarConexao()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            Testar Conexão
+          </button>
+          <button class="btn btn-primary" style="flex:2" onclick="wppSalvar()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Salvar Configurações
+          </button>
+        </div>
+
+      </div><!-- /card -->
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -1591,6 +1783,8 @@ function goPage(p) {
   if(p==='calc-banner')             calcBanner();
   if(p==='calc-papel')              calcPapel();
   if(p==='calc-laser')              calcLaser();
+  if(p==='mensagens')               goPageMensagens();
+  if(p==='integracao-wpp')          goPageIntegracaoWpp();
 }
 function logout(){localStorage.removeItem('orcToken');localStorage.removeItem('orcUser');location.replace('index.html');}
 
@@ -3857,6 +4051,287 @@ function copiarLaser() {
   navigator.clipboard.writeText(txt).then(()=>toast('Copiado!','success')).catch(()=>{
     prompt('Copie o texto abaixo:', txt);
   });
+}
+
+// ════ INTEGRAÇÃO WHATSAPP API ════════════════════════════
+
+function goPageIntegracaoWpp() {
+  const cfg = _wppCarregarCfg();
+  document.getElementById('wpp-token').value   = cfg.token    || '';
+  document.getElementById('wpp-phone-id').value= cfg.phoneId  || '';
+  document.getElementById('wpp-verify').value  = cfg.verify   || '';
+  _wppAtualizarStatus(!!cfg.token);
+}
+
+function _wppCarregarCfg() {
+  try { return JSON.parse(localStorage.getItem('lookWppConfig') || '{}'); } catch { return {}; }
+}
+
+function _wppAtualizarStatus(configurado) {
+  const dot = document.getElementById('wpp-dot');
+  const txt = document.getElementById('wpp-status-txt');
+  if (!dot || !txt) return;
+  if (configurado) {
+    dot.className = 'wpp-dot'; // reset — testar conexão define online/error
+    txt.textContent = 'Token salvo — clique em Testar Conexão';
+  } else {
+    dot.className = 'wpp-dot';
+    txt.textContent = 'Não configurado';
+  }
+}
+
+function wppToggleToken() {
+  const inp  = document.getElementById('wpp-token');
+  const icon = document.getElementById('wpp-eye-icon');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  icon.innerHTML = show
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+
+function wppCopiarWebhook() {
+  const url = document.getElementById('wpp-webhook').value;
+  navigator.clipboard.writeText(url)
+    .then(() => toast('URL do Webhook copiada!', 'success'))
+    .catch(() => prompt('Copie a URL:', url));
+}
+
+function wppCopiarVerify() {
+  const v = document.getElementById('wpp-verify').value.trim();
+  if (!v) { toast('Informe o Verify Token primeiro.', 'error'); return; }
+  navigator.clipboard.writeText(v)
+    .then(() => toast('Verify Token copiado!', 'success'))
+    .catch(() => prompt('Copie o token:', v));
+}
+
+function wppSalvar() {
+  const token   = document.getElementById('wpp-token').value.trim();
+  const phoneId = document.getElementById('wpp-phone-id').value.trim();
+  const verify  = document.getElementById('wpp-verify').value.trim();
+
+  if (!token)   { toast('Informe o API Token.', 'error');   document.getElementById('wpp-token').focus();   return; }
+  if (!phoneId) { toast('Informe o Phone Number ID.', 'error'); document.getElementById('wpp-phone-id').focus(); return; }
+  if (!verify)  { toast('Defina o Verify Token do Webhook.', 'error'); document.getElementById('wpp-verify').focus(); return; }
+
+  localStorage.setItem('lookWppConfig', JSON.stringify({ token, phoneId, verify }));
+  _wppAtualizarStatus(true);
+  toast('Configurações salvas com sucesso!', 'success');
+}
+
+async function wppTestarConexao() {
+  const token   = document.getElementById('wpp-token').value.trim();
+  const phoneId = document.getElementById('wpp-phone-id').value.trim();
+  const dot = document.getElementById('wpp-dot');
+  const txt = document.getElementById('wpp-status-txt');
+
+  if (!token || !phoneId) {
+    toast('Salve o Token e o Phone Number ID antes de testar.', 'error');
+    return;
+  }
+
+  if (txt) txt.textContent = 'Testando conexão…';
+  if (dot) dot.className = 'wpp-dot';
+
+  try {
+    // Testa chamando o endpoint de perfil do número na API Graph da Meta
+    const res = await fetch(
+      `https://graph.facebook.com/v19.0/${phoneId}?fields=display_phone_number,verified_name&access_token=${token}`
+    );
+    const data = await res.json();
+
+    if (data.error) {
+      if (dot) dot.className = 'wpp-dot error';
+      if (txt) txt.textContent = `Erro: ${data.error.message}`;
+      toast(`Falha: ${data.error.message}`, 'error');
+    } else {
+      if (dot) dot.className = 'wpp-dot online';
+      const nome   = data.verified_name || 'Conta';
+      const numero = data.display_phone_number || phoneId;
+      if (txt) txt.textContent = `Conectado — ${nome} (${numero})`;
+      toast(`Conexão OK! Número: ${numero}`, 'success');
+    }
+  } catch (e) {
+    if (dot) dot.className = 'wpp-dot error';
+    if (txt) txt.textContent = 'Sem resposta da API';
+    toast('Não foi possível conectar. Verifique o token.', 'error');
+  }
+}
+
+// ════ TEMPLATES DE MENSAGEM ══════════════════════════════
+
+// Templates padrão pré-carregados
+const MSG_DEFAULTS = [
+  {
+    id: 'default-1',
+    titulo: 'Envio de Orçamento',
+    corpo: 'Olá, {Nome do Cliente}! 😊\n\nSegue o orçamento Nº {Número do Orçamento} conforme solicitado.\n\n💰 Valor Total: {Valor Total}\n📅 Validade: {Prazo de Entrega}\n\nQualquer dúvida, estamos à disposição!\n\nAtt, {Nome da Empresa}'
+  },
+  {
+    id: 'default-2',
+    titulo: 'Pedido em Produção',
+    corpo: 'Olá, {Nome do Cliente}! 🎨\n\nSeu pedido Nº {Número do Pedido} entrou em produção hoje ({Data}).\n\n📅 Prazo estimado de entrega: {Prazo de Entrega}\n\nVamos avisá-lo assim que estiver pronto!\n\nAtt, {Nome da Empresa}'
+  },
+  {
+    id: 'default-3',
+    titulo: 'Aviso de Retirada',
+    corpo: 'Olá, {Nome do Cliente}! ✅\n\nSeu pedido Nº {Número do Pedido} está *pronto para retirada*!\n\n📍 Venha buscar em nossa loja no horário comercial.\n\nQualquer dúvida, é só chamar! 😊\n\nAtt, {Nome da Empresa}'
+  },
+  {
+    id: 'default-4',
+    titulo: 'Confirmação de Pagamento',
+    corpo: 'Olá, {Nome do Cliente}! 💵\n\nConfirmamos o recebimento do pagamento do pedido Nº {Número do Pedido} no valor de {Valor Total}.\n\nObrigado pela preferência! 🙏\n\nAtt, {Nome da Empresa}'
+  },
+  {
+    id: 'default-5',
+    titulo: 'Pedido Atrasado / Aviso',
+    corpo: 'Olá, {Nome do Cliente}! \n\nGostaríamos de informar que o seu pedido Nº {Número do Pedido} sofreu um pequeno atraso na produção.\n\nNovo prazo estimado: {Prazo de Entrega}\n\nPedimos desculpas pelo transtorno e agradecemos sua compreensão! 🙏\n\nAtt, {Nome da Empresa}'
+  }
+];
+
+// Variáveis fictícias para prévia
+const MSG_PREVIEW_VARS = {
+  '{Nome do Cliente}':      'João Silva',
+  '{Número do Pedido}':     '042',
+  '{Número do Orçamento}':  '327',
+  '{Valor Total}':          'R$ 350,00',
+  '{Prazo de Entrega}':     '3 dias úteis',
+  '{Data}':                 new Date().toLocaleDateString('pt-BR'),
+  '{Nome da Empresa}':      'Look - Imprimindo Ideias',
+  '{Telefone}':             '(11) 99999-9999'
+};
+
+let msgTemplates   = [];
+let msgEditandoId  = null;
+let msgPreviewOn   = false;
+
+function _msgCarregarStorage() {
+  try {
+    const saved = localStorage.getItem('lookMsgTemplates');
+    if (saved) {
+      msgTemplates = JSON.parse(saved);
+    } else {
+      msgTemplates = JSON.parse(JSON.stringify(MSG_DEFAULTS));
+      _msgSalvarStorage();
+    }
+  } catch { msgTemplates = JSON.parse(JSON.stringify(MSG_DEFAULTS)); }
+}
+
+function _msgSalvarStorage() {
+  localStorage.setItem('lookMsgTemplates', JSON.stringify(msgTemplates));
+}
+
+function goPageMensagens() {
+  _msgCarregarStorage();
+  renderMsgLista();
+  novoTemplate();
+}
+
+function renderMsgLista() {
+  const el = document.getElementById('msg-lista');
+  if (!el) return;
+  if (!msgTemplates.length) {
+    el.innerHTML = '<div class="empty" style="padding:20px 0">Nenhum template salvo.</div>';
+    return;
+  }
+  el.innerHTML = msgTemplates.map(t => `
+    <div class="msg-card ${t.id === msgEditandoId ? 'active' : ''}" onclick="editarTemplate('${t.id}')">
+      <div class="msg-card-titulo">${esc(t.titulo)}</div>
+      <div class="msg-card-preview">${esc(t.corpo.replace(/\n/g,' '))}</div>
+      <div class="msg-card-actions">
+        <button class="msg-card-btn" onclick="event.stopPropagation();editarTemplate('${t.id}')">✏️ Editar</button>
+        <button class="msg-card-btn del" onclick="event.stopPropagation();excluirTemplate('${t.id}')">🗑️ Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+function novoTemplate() {
+  msgEditandoId = null;
+  msgPreviewOn  = false;
+  const el = id => document.getElementById(id);
+  el('msg-editor-title').textContent = 'Novo Template';
+  el('msg-titulo').value  = '';
+  el('msg-corpo').value   = '';
+  if (el('msg-preview-wrap')) el('msg-preview-wrap').style.display = 'none';
+  renderMsgLista();
+}
+
+function editarTemplate(id) {
+  const t = msgTemplates.find(x => x.id === id);
+  if (!t) return;
+  msgEditandoId = id;
+  msgPreviewOn  = false;
+  document.getElementById('msg-editor-title').textContent = 'Editando Template';
+  document.getElementById('msg-titulo').value = t.titulo;
+  document.getElementById('msg-corpo').value  = t.corpo;
+  document.getElementById('msg-preview-wrap').style.display = 'none';
+  renderMsgLista();
+  document.getElementById('msg-titulo').focus();
+}
+
+function salvarTemplate() {
+  const titulo = document.getElementById('msg-titulo').value.trim();
+  const corpo  = document.getElementById('msg-corpo').value.trim();
+  if (!titulo) { toast('Informe o título do template.', 'error'); document.getElementById('msg-titulo').focus(); return; }
+  if (!corpo)  { toast('O corpo da mensagem não pode estar vazio.', 'error'); return; }
+
+  if (msgEditandoId) {
+    const idx = msgTemplates.findIndex(x => x.id === msgEditandoId);
+    if (idx !== -1) { msgTemplates[idx].titulo = titulo; msgTemplates[idx].corpo = corpo; }
+  } else {
+    msgTemplates.push({ id: 'msg-' + Date.now(), titulo, corpo });
+    msgEditandoId = msgTemplates[msgTemplates.length - 1].id;
+  }
+  _msgSalvarStorage();
+  renderMsgLista();
+  toast('Template salvo!', 'success');
+}
+
+function excluirTemplate(id) {
+  const t = msgTemplates.find(x => x.id === id);
+  if (!t) return;
+  if (!confirm(`Excluir o template "${t.titulo}"?`)) return;
+  msgTemplates = msgTemplates.filter(x => x.id !== id);
+  _msgSalvarStorage();
+  if (msgEditandoId === id) novoTemplate();
+  else renderMsgLista();
+  toast('Template excluído.', 'success');
+}
+
+function inserirVar(variavel) {
+  const ta = document.getElementById('msg-corpo');
+  if (!ta) return;
+  const start = ta.selectionStart;
+  const end   = ta.selectionEnd;
+  const antes  = ta.value.substring(0, start);
+  const depois = ta.value.substring(end);
+  ta.value = antes + variavel + depois;
+  // Reposiciona cursor após a variável inserida
+  const pos = start + variavel.length;
+  ta.setSelectionRange(pos, pos);
+  ta.focus();
+}
+
+function togglePreview() {
+  msgPreviewOn = !msgPreviewOn;
+  const wrap = document.getElementById('msg-preview-wrap');
+  const body = document.getElementById('msg-preview-body');
+  if (!wrap || !body) return;
+  if (!msgPreviewOn) { wrap.style.display = 'none'; return; }
+  let texto = document.getElementById('msg-corpo').value;
+  Object.entries(MSG_PREVIEW_VARS).forEach(([k, v]) => {
+    texto = texto.replaceAll(k, `<strong>${v}</strong>`);
+  });
+  body.innerHTML = texto.replace(/\n/g, '<br>');
+  wrap.style.display = '';
+}
+
+function copiarTemplate() {
+  const corpo = document.getElementById('msg-corpo').value.trim();
+  if (!corpo) { toast('Corpo da mensagem vazio.', 'error'); return; }
+  navigator.clipboard.writeText(corpo)
+    .then(() => toast('Mensagem copiada!', 'success'))
+    .catch(() => { prompt('Copie o texto:', corpo); });
 }
 
 // ════ CALCULADORA BANNER / ADESIVO ══════════════════════
