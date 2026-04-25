@@ -611,6 +611,186 @@
     <div class="card"><div id="caixa-content"><div class="empty">Carregando…</div></div></div>
   </div>
 
+  <!-- ══ PÁGINA: LOGS DE AUDITORIA ════════════════════ -->
+  <div class="page" id="page-logs">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div><div class="page-title">Logs de Auditoria</div><div class="page-sub">Registro completo de ações no sistema</div></div>
+      <button class="btn btn-primary" onclick="carregarLogs()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        Atualizar
+      </button>
+    </div>
+    <div class="stats-row" id="log-stats-cards"></div>
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div class="fg" style="min-width:220px;max-width:380px;margin-bottom:0">
+          <label>Buscar</label>
+          <input id="log-busca" type="text" placeholder="Usuário, email ou ID…" oninput="renderLogs()">
+        </div>
+        <div class="fg" style="min-width:130px;max-width:180px;margin-bottom:0">
+          <label>Ação</label>
+          <select id="log-flt-acao" onchange="renderLogs()">
+            <option value="">Todas</option>
+            <option value="LOGIN">LOGIN</option>
+            <option value="CREATE">CREATE</option>
+            <option value="UPDATE">UPDATE</option>
+            <option value="DELETE">DELETE</option>
+            <option value="APPROVE">APPROVE</option>
+          </select>
+        </div>
+        <div class="fg" style="min-width:130px;max-width:180px;margin-bottom:0">
+          <label>Tipo</label>
+          <select id="log-flt-entidade" onchange="renderLogs()">
+            <option value="">Todos</option>
+            <option value="orcamento">Orçamento</option>
+            <option value="pedido">Pedido</option>
+            <option value="cliente">Cliente</option>
+            <option value="produto">Produto</option>
+            <option value="caixa">Caixa</option>
+            <option value="auth">Auth</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:14px" onclick="limparFiltrosLog()">Limpar</button>
+        <button class="btn btn-ghost" style="margin-top:14px" onclick="exportLogCSV()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          CSV
+        </button>
+      </div>
+    </div>
+    <div class="card" style="overflow-x:auto;padding:0">
+      <table class="tbl" id="log-table">
+        <thead><tr>
+          <th>DATA/HORA</th><th>USUÁRIO</th><th>AÇÃO</th><th>TIPO</th><th>OBJETO (ALVO)</th><th>AÇÕES</th>
+        </tr></thead>
+        <tbody id="log-tbody"><tr><td colspan="6" class="empty">Carregando…</td></tr></tbody>
+      </table>
+    </div>
+    <div id="log-pagination" class="log-pagination"></div>
+  </div>
+
+  <!-- ══ PÁGINA: CALCULADORA ══════════════════════════ -->
+  <div class="page" id="page-calculadora">
+    <div class="page-header"><div class="page-title">Calculadora de Custos</div><div class="page-sub">Simulação de orçamentos e precificação</div></div>
+
+    <div class="calc-tabs">
+      <button class="calc-tab active" id="ctab-calc"     onclick="calcTab('calc')">📐 Calculadora</button>
+      <button class="calc-tab"        id="ctab-insumos"  onclick="calcTab('insumos')">📦 Insumos</button>
+      <button class="calc-tab"        id="ctab-servicos" onclick="calcTab('servicos')">⚙️ Serviços</button>
+    </div>
+
+    <!-- ABA CALCULADORA -->
+    <div class="calc-pane active" id="cpane-calc">
+      <div class="calc-grid">
+        <!-- Coluna Esquerda -->
+        <div>
+          <div class="calc-block">
+            <div class="calc-block-title">📏 Dimensões Básicas</div>
+            <div class="form-row">
+              <div class="fg"><label>Largura (m)</label><input id="calc-larg" type="number" step="0.01" min="0" value="1" oninput="calcDims()"></div>
+              <div class="fg"><label>Altura (m)</label><input id="calc-alt"  type="number" step="0.01" min="0" value="1" oninput="calcDims()"></div>
+              <div class="fg"><label>Quantidade</label><input id="calc-qty"  type="number" min="1" value="1" oninput="calcDims()"></div>
+            </div>
+            <div class="calc-dim-result" id="calc-dim-result">
+              <span>Área unit.: <strong id="cdr-area-un">1,00 m²</strong></span>
+              <span>Área total: <strong id="cdr-area-tot">1,00 m²</strong></span>
+              <span>Perímetro: <strong id="cdr-perim">4,00 m</strong></span>
+            </div>
+          </div>
+
+          <div class="calc-block">
+            <div class="calc-block-title">📦 Insumos & Materiais</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <select id="calc-ins-sel" style="flex:1">
+                <option value="">Selecione um insumo…</option>
+              </select>
+              <input id="calc-ins-qty" type="number" min="0.01" step="0.01" value="1" placeholder="Qtd" style="width:70px">
+              <button class="btn btn-primary" style="white-space:nowrap" onclick="calcAddInsumo()">+ Adicionar</button>
+            </div>
+            <div id="calc-ins-list"><div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">Nenhum insumo adicionado.</div></div>
+          </div>
+
+          <div class="calc-block">
+            <div class="calc-block-title">⚙️ Serviços de Produção</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <select id="calc-serv-sel" style="flex:1">
+                <option value="">Selecione um serviço…</option>
+              </select>
+              <input id="calc-serv-qty" type="number" min="0.01" step="0.01" value="1" placeholder="Qtd" style="width:70px">
+              <button class="btn btn-primary" style="white-space:nowrap" onclick="calcAddServico()">+ Adicionar</button>
+            </div>
+            <div id="calc-serv-list"><div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">Nenhum serviço adicionado.</div></div>
+          </div>
+        </div>
+
+        <!-- Coluna Direita -->
+        <div class="calc-right">
+          <div class="card-title">💰 Precificação</div>
+          <div class="calc-slider-row">
+            <div class="calc-slider-label"><span>Impostos</span><strong id="sl-imp-val">10%</strong></div>
+            <input type="range" id="sl-imp" min="0" max="50" value="10" step="0.5" oninput="calcPreco()">
+          </div>
+          <div class="calc-slider-row">
+            <div class="calc-slider-label"><span>Taxa Cartão</span><strong id="sl-cart-val">3%</strong></div>
+            <input type="range" id="sl-cart" min="0" max="10" value="3" step="0.5" oninput="calcPreco()">
+          </div>
+          <div class="calc-slider-row">
+            <div class="calc-slider-label"><span>Margem de Lucro</span><strong id="sl-mg-val">30%</strong></div>
+            <input type="range" id="sl-mg" min="0" max="80" value="30" step="1" oninput="calcPreco()">
+          </div>
+
+          <div class="calc-totals">
+            <div class="calc-total-row"><span>Custo Insumos</span><span id="calc-t-ins">R$ 0,00</span></div>
+            <div class="calc-total-row"><span>Custo Serviços</span><span id="calc-t-serv">R$ 0,00</span></div>
+            <div class="calc-total-row destaque"><span>Custo Total</span><span id="calc-t-total">R$ 0,00</span></div>
+          </div>
+
+          <div class="calc-preco-card">
+            <div class="calc-preco-label">Preço de Venda Sugerido</div>
+            <div class="calc-preco-val" id="calc-preco-venda">R$ 0,00</div>
+            <div class="calc-lucro-row">
+              <span>Lucro Líquido</span>
+              <span id="calc-lucro-liq" style="font-weight:700">R$ 0,00</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="usarCalculoNoOrcamento()">
+            Usar no Orçamento ↗
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA INSUMOS -->
+    <div class="calc-pane" id="cpane-insumos">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <input id="ins-busca" type="text" placeholder="Buscar insumo…" style="max-width:280px" oninput="renderInsumos()">
+        <button class="btn btn-primary" onclick="abrirModalInsumo()">+ Insumo</button>
+      </div>
+      <div class="card" style="overflow-x:auto;padding:0">
+        <table class="tbl"><thead><tr>
+          <th>Nome</th><th>Categoria</th><th>Unidade</th><th>Custo Unit.</th><th>Ações</th>
+        </tr></thead>
+        <tbody id="ins-tbody"><tr><td colspan="5" class="empty">Carregando…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ABA SERVIÇOS -->
+    <div class="calc-pane" id="cpane-servicos">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <input id="serv-busca" type="text" placeholder="Buscar serviço…" style="max-width:280px" oninput="renderServicos()">
+        <button class="btn btn-primary" onclick="abrirModalServico()">+ Serviço</button>
+      </div>
+      <div class="card" style="overflow-x:auto;padding:0">
+        <table class="tbl"><thead><tr>
+          <th>Nome</th><th>Tipo de Custo</th><th>Custo Unit.</th><th>Descrição</th><th>Ações</th>
+        </tr></thead>
+        <tbody id="serv-tbody"><tr><td colspan="5" class="empty">Carregando…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -914,63 +1094,6 @@
   </div>
 </div>
 
-<!-- ══ PÁGINA: LOGS DE AUDITORIA ════════════════════ -->
-<div class="page" id="page-logs">
-  <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-    <div><div class="page-title">Logs de Auditoria</div><div class="page-sub">Registro completo de ações no sistema</div></div>
-    <button class="btn btn-primary" onclick="carregarLogs()">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
-      Atualizar
-    </button>
-  </div>
-  <div class="stats-row" id="log-stats-cards"></div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-      <div class="fg" style="min-width:220px;max-width:380px;margin-bottom:0">
-        <label>Buscar</label>
-        <input id="log-busca" type="text" placeholder="Usuário, email ou ID…" oninput="renderLogs()">
-      </div>
-      <div class="fg" style="min-width:130px;max-width:180px;margin-bottom:0">
-        <label>Ação</label>
-        <select id="log-flt-acao" onchange="renderLogs()">
-          <option value="">Todas</option>
-          <option value="LOGIN">LOGIN</option>
-          <option value="CREATE">CREATE</option>
-          <option value="UPDATE">UPDATE</option>
-          <option value="DELETE">DELETE</option>
-          <option value="APPROVE">APPROVE</option>
-        </select>
-      </div>
-      <div class="fg" style="min-width:130px;max-width:180px;margin-bottom:0">
-        <label>Tipo</label>
-        <select id="log-flt-entidade" onchange="renderLogs()">
-          <option value="">Todos</option>
-          <option value="orcamento">Orçamento</option>
-          <option value="pedido">Pedido</option>
-          <option value="cliente">Cliente</option>
-          <option value="produto">Produto</option>
-          <option value="caixa">Caixa</option>
-          <option value="auth">Auth</option>
-        </select>
-      </div>
-      <button class="btn btn-ghost" style="margin-top:14px" onclick="limparFiltrosLog()">Limpar</button>
-      <button class="btn btn-ghost" style="margin-top:14px" onclick="exportLogCSV()">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        CSV
-      </button>
-    </div>
-  </div>
-  <div class="card" style="overflow-x:auto;padding:0">
-    <table class="tbl" id="log-table">
-      <thead><tr>
-        <th>DATA/HORA</th><th>USUÁRIO</th><th>AÇÃO</th><th>TIPO</th><th>OBJETO (ALVO)</th><th>AÇÕES</th>
-      </tr></thead>
-      <tbody id="log-tbody"><tr><td colspan="6" class="empty">Carregando…</td></tr></tbody>
-    </table>
-  </div>
-  <div id="log-pagination" class="log-pagination"></div>
-</div>
-
 <!-- ══ MODAL: DETALHE LOG ════════════════════════════ -->
 <div class="modal-overlay" id="modal-log-detalhe">
   <div class="modal" style="max-width:540px">
@@ -979,132 +1102,6 @@
     <div id="modal-log-content" style="font-size:13px"></div>
     <div class="btn-row" style="margin-top:14px">
       <button class="btn btn-ghost" onclick="closeModal('modal-log-detalhe')">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ PÁGINA: CALCULADORA ══════════════════════════ -->
-<div class="page" id="page-calculadora">
-  <div class="page-header"><div class="page-title">Calculadora de Custos</div><div class="page-sub">Simulação de orçamentos e precificação</div></div>
-
-  <div class="calc-tabs">
-    <button class="calc-tab active" id="ctab-calc"     onclick="calcTab('calc')">📐 Calculadora</button>
-    <button class="calc-tab"        id="ctab-insumos"  onclick="calcTab('insumos')">📦 Insumos</button>
-    <button class="calc-tab"        id="ctab-servicos" onclick="calcTab('servicos')">⚙️ Serviços</button>
-  </div>
-
-  <!-- ABA CALCULADORA -->
-  <div class="calc-pane active" id="cpane-calc">
-    <div class="calc-grid">
-      <!-- Coluna Esquerda -->
-      <div>
-        <!-- Bloco 1: Dimensões -->
-        <div class="calc-block">
-          <div class="calc-block-title">📏 Dimensões Básicas</div>
-          <div class="form-row">
-            <div class="fg"><label>Largura (m)</label><input id="calc-larg" type="number" step="0.01" min="0" value="1" oninput="calcDims()"></div>
-            <div class="fg"><label>Altura (m)</label><input id="calc-alt"  type="number" step="0.01" min="0" value="1" oninput="calcDims()"></div>
-            <div class="fg"><label>Quantidade</label><input id="calc-qty"  type="number" min="1" value="1" oninput="calcDims()"></div>
-          </div>
-          <div class="calc-dim-result" id="calc-dim-result">
-            <span>Área unit.: <strong id="cdr-area-un">1,00 m²</strong></span>
-            <span>Área total: <strong id="cdr-area-tot">1,00 m²</strong></span>
-            <span>Perímetro: <strong id="cdr-perim">4,00 m</strong></span>
-          </div>
-        </div>
-
-        <!-- Bloco 2: Insumos -->
-        <div class="calc-block">
-          <div class="calc-block-title">📦 Insumos & Materiais</div>
-          <div style="display:flex;gap:8px;margin-bottom:10px">
-            <select id="calc-ins-sel" style="flex:1">
-              <option value="">Selecione um insumo…</option>
-            </select>
-            <input id="calc-ins-qty" type="number" min="0.01" step="0.01" value="1" placeholder="Qtd" style="width:70px">
-            <button class="btn btn-primary" style="white-space:nowrap" onclick="calcAddInsumo()">+ Adicionar</button>
-          </div>
-          <div id="calc-ins-list"><div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">Nenhum insumo adicionado.</div></div>
-        </div>
-
-        <!-- Bloco 3: Serviços -->
-        <div class="calc-block">
-          <div class="calc-block-title">⚙️ Serviços de Produção</div>
-          <div style="display:flex;gap:8px;margin-bottom:10px">
-            <select id="calc-serv-sel" style="flex:1">
-              <option value="">Selecione um serviço…</option>
-            </select>
-            <input id="calc-serv-qty" type="number" min="0.01" step="0.01" value="1" placeholder="Qtd" style="width:70px">
-            <button class="btn btn-primary" style="white-space:nowrap" onclick="calcAddServico()">+ Adicionar</button>
-          </div>
-          <div id="calc-serv-list"><div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">Nenhum serviço adicionado.</div></div>
-        </div>
-      </div>
-
-      <!-- Coluna Direita (fixada) -->
-      <div class="calc-right">
-        <div class="card-title">💰 Precificação</div>
-        <div class="calc-slider-row">
-          <div class="calc-slider-label"><span>Impostos</span><strong id="sl-imp-val">10%</strong></div>
-          <input type="range" id="sl-imp" min="0" max="50" value="10" step="0.5" oninput="calcPreco()">
-        </div>
-        <div class="calc-slider-row">
-          <div class="calc-slider-label"><span>Taxa Cartão</span><strong id="sl-cart-val">3%</strong></div>
-          <input type="range" id="sl-cart" min="0" max="10" value="3" step="0.5" oninput="calcPreco()">
-        </div>
-        <div class="calc-slider-row">
-          <div class="calc-slider-label"><span>Margem de Lucro</span><strong id="sl-mg-val">30%</strong></div>
-          <input type="range" id="sl-mg" min="0" max="80" value="30" step="1" oninput="calcPreco()">
-        </div>
-
-        <div class="calc-totals">
-          <div class="calc-total-row"><span>Custo Insumos</span><span id="calc-t-ins">R$ 0,00</span></div>
-          <div class="calc-total-row"><span>Custo Serviços</span><span id="calc-t-serv">R$ 0,00</span></div>
-          <div class="calc-total-row destaque"><span>Custo Total</span><span id="calc-t-total">R$ 0,00</span></div>
-        </div>
-
-        <div class="calc-preco-card">
-          <div class="calc-preco-label">Preço de Venda Sugerido</div>
-          <div class="calc-preco-val" id="calc-preco-venda">R$ 0,00</div>
-          <div class="calc-lucro-row">
-            <span>Lucro Líquido</span>
-            <span id="calc-lucro-liq" style="font-weight:700">R$ 0,00</span>
-          </div>
-        </div>
-
-        <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="usarCalculoNoOrcamento()">
-          Usar no Orçamento ↗
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ABA INSUMOS -->
-  <div class="calc-pane" id="cpane-insumos">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-      <input id="ins-busca" type="text" placeholder="Buscar insumo…" style="max-width:280px" oninput="renderInsumos()">
-      <button class="btn btn-primary" onclick="abrirModalInsumo()">+ Insumo</button>
-    </div>
-    <div class="card" style="overflow-x:auto;padding:0">
-      <table class="tbl"><thead><tr>
-        <th>Nome</th><th>Categoria</th><th>Unidade</th><th>Custo Unit.</th><th>Ações</th>
-      </tr></thead>
-      <tbody id="ins-tbody"><tr><td colspan="5" class="empty">Carregando…</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- ABA SERVIÇOS -->
-  <div class="calc-pane" id="cpane-servicos">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-      <input id="serv-busca" type="text" placeholder="Buscar serviço…" style="max-width:280px" oninput="renderServicos()">
-      <button class="btn btn-primary" onclick="abrirModalServico()">+ Serviço</button>
-    </div>
-    <div class="card" style="overflow-x:auto;padding:0">
-      <table class="tbl"><thead><tr>
-        <th>Nome</th><th>Tipo de Custo</th><th>Custo Unit.</th><th>Descrição</th><th>Ações</th>
-      </tr></thead>
-      <tbody id="serv-tbody"><tr><td colspan="5" class="empty">Carregando…</td></tr></tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -1301,6 +1298,8 @@ function goPage(p) {
   if(p==='produtos')                carregarProdutos();
   if(p==='dashboard'&&isAdmin())    carregarDashboard();
   if(p==='caixa')                   carregarCaixa();
+  if(p==='logs'&&isAdmin())         carregarLogs();
+  if(p==='calculadora')             carregarCalculadora();
 }
 function logout(){localStorage.removeItem('orcToken');localStorage.removeItem('orcUser');location.replace('index.html');}
 
@@ -3077,6 +3076,23 @@ function toggleNavGroup(name){
 // LOGS DE AUDITORIA
 // ═══════════════════════════════════════════════════════
 let logData=[];let logPage=0;const LOG_PER_PAGE=25;
+
+// registrarLog — chame em qualquer ponto do frontend para gravar um log via API
+// Uso: registrarLog('UPDATE', 'cliente', { id: cliente.id, nome: cliente.nome })
+async function registrarLog(acao, entidade, objeto){
+  try{
+    const u=JSON.parse(localStorage.getItem('orcUser')||'{}');
+    await API.post('/logs', {
+      acao: String(acao).toUpperCase(),
+      entidade,
+      entidadeId: String(objeto?.id||objeto?.num||''),
+      label: objeto?.nome||objeto?.label||JSON.stringify(objeto).slice(0,80),
+      detalhes: objeto,
+      userNome: u.nome||'—',
+      userLogin: u.username||'—'
+    });
+  }catch{ /* silencioso */ }
+}
 
 async function carregarLogs(){
   if(!isAdmin())return;
