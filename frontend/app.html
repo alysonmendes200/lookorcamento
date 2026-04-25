@@ -2036,13 +2036,30 @@ function _txtWppPedido(p){
     (p.obs?`\n📝 Obs: ${p.obs}\n`:'')+
     `\nQualquer dúvida estamos à disposição! 😊`;
 }
+function gerarTextoWhatsApp(pedidoId, statusAtual){
+  const p=typeof pedidoId==='object'?pedidoId:pedidoList.find(x=>x.id===pedidoId);
+  if(!p)return '';
+  const empresa=_getNomeEmpresa();
+  const nome=p.clienteNome||'Cliente';
+  const numOrc=p.orcamentoNum?` (Orç. N° ${String(p.orcamentoNum).padStart(3,'0')})`:'';
+  const status=statusAtual||p.status;
+  if(status==='producao'){
+    return `*${empresa}*\n\nOlá, *${nome}*! 👋\n\nSeu pedido${numOrc} acabou de *entrar em produção*! 🔧\n\nAssim que estiver pronto, te avisamos.\n\nQualquer dúvida estamos à disposição! 😊`;
+  }
+  if(status==='pronto'){
+    return `*${empresa}*\n\nOlá, *${nome}*! 👋\n\nSeu pedido${numOrc} está *pronto*! ✅`+
+      (p.prazoEntrega?`\n\n📅 Prazo combinado: ${p.prazoEntrega}`:'')+
+      `\n\nAguardamos sua confirmação para entrega/retirada.\n\nQualquer dúvida estamos à disposição! 😊`;
+  }
+  return _txtWppPedido(p);
+}
 function wppPedido(id){
   const p=typeof id==='object'?id:pedidoList.find(x=>x.id===id);if(!p)return;
-  const txt=_txtWppPedido(p);
-  const cli=clienteList.find(c=>c.nome.toLowerCase()===p.clienteNome.toLowerCase());
-  const tel=cli?.telefone;
-  if(tel){window.open(wppLink(tel,txt),'_blank');}
-  else{navigator.clipboard.writeText(txt).then(()=>toast('Texto copiado! Cole no WhatsApp do cliente.','success')).catch(()=>toast('Não foi possível copiar.','error'));}
+  const txt=gerarTextoWhatsApp(p);
+  document.getElementById('wpp-txt-content').value=txt;
+  document.getElementById('wpp-txt-sub').textContent=p.clienteNome+(p.orcamentoNum?' — Orç. N° '+String(p.orcamentoNum).padStart(3,'0'):'');
+  const b=document.getElementById('wpp-copy-btn');b.textContent='📋 Copiar texto';b.classList.remove('ok');
+  openModal('modal-wpp-txt');
 }
 
 // ════ HISTÓRICO ═══════════════════════════════════════
@@ -2972,6 +2989,15 @@ async function dropKanban(event,newStatus){
   try{
     await API.put('/pedidos/'+id,{status:newStatus,atualizadoEm:new Date().toISOString()});
     toast('Movido para '+PEDIDO_LABELS[newStatus].label,'success');
+    if(['producao','pronto'].includes(newStatus)){
+      setTimeout(()=>{
+        const txt=gerarTextoWhatsApp(id,newStatus);
+        document.getElementById('wpp-txt-content').value=txt;
+        document.getElementById('wpp-txt-sub').textContent=(pedido.clienteNome||'')+(pedido.orcamentoNum?' — Orç. N° '+String(pedido.orcamentoNum).padStart(3,'0'):'');
+        const b=document.getElementById('wpp-copy-btn');b.textContent='📋 Copiar texto';b.classList.remove('ok');
+        openModal('modal-wpp-txt');
+      },400);
+    }
   }catch(e){
     pedido.status=oldStatus; renderPedidos();
     toast('Erro ao mover: '+e.message,'error');
