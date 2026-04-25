@@ -478,6 +478,19 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
 .laser-row-val   { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; }
 .laser-row-total .laser-row-label { color: var(--text); font-weight: 700; }
 .laser-row-total .laser-row-val   { color: var(--azul); font-size: 16px; }
+.laser-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--azul-bg);
+  color: var(--azul);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
 .laser-preco-card {
   background: linear-gradient(135deg, var(--azul) 0%, #5b4cde 100%);
   border-radius: 18px;

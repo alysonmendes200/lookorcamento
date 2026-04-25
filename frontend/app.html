@@ -927,7 +927,7 @@
   <div class="page" id="page-calc-laser">
     <div class="page-header">
       <div class="page-title">Calculadora de Corte a Laser</div>
-      <div class="page-sub">Acrílico e MDF — fórmula exata por perímetro, velocidade e área</div>
+      <div class="page-sub">Acrílico e MDF — formação de preço completa com todos os custos</div>
     </div>
 
     <div class="laser-grid">
@@ -935,59 +935,67 @@
       <!-- ── COLUNA ESQUERDA: INPUTS ── -->
       <div class="laser-inputs">
 
-        <!-- Bloco 1: Corte / Tempo -->
+        <!-- Bloco 1: Cálculo do Corte -->
         <div class="card laser-block">
           <div class="laser-block-title">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Dados do Corte (Tempo)
+            Cálculo do Corte
           </div>
           <div class="form-row">
             <div class="fg">
-              <label>Perímetro da Peça (mm)</label>
+              <label>Perímetro (mm)</label>
               <input id="lsr-perim" type="number" min="0" step="1" placeholder="Ex: 500" oninput="calcLaser()">
             </div>
             <div class="fg">
-              <label>Velocidade de Corte (mm/s)</label>
+              <label>Velocidade (mm/s)</label>
               <input id="lsr-vel" type="number" min="0.1" step="0.1" placeholder="Ex: 10" oninput="calcLaser()">
             </div>
           </div>
           <div class="fg" style="margin-top:4px">
-            <label>Valor do Minuto do Laser (R$)</label>
+            <label>Valor Minuto Laser (R$)</label>
             <input id="lsr-vmin" type="number" min="0" step="0.01" placeholder="Ex: 1,50" oninput="calcLaser()">
           </div>
         </div>
 
-        <!-- Bloco 2: Material / Área -->
+        <!-- Bloco 2: Custo da Chapa -->
         <div class="card laser-block">
           <div class="laser-block-title">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-            Dados do Material (Área)
+            Custo da Chapa (Material)
           </div>
           <div class="form-row">
             <div class="fg">
-              <label>Largura da Peça (cm)</label>
+              <label>Largura (cm)</label>
               <input id="lsr-larg" type="number" min="0" step="0.1" placeholder="Ex: 20" oninput="calcLaser()">
             </div>
             <div class="fg">
-              <label>Altura da Peça (cm)</label>
+              <label>Altura (cm)</label>
               <input id="lsr-alt" type="number" min="0" step="0.1" placeholder="Ex: 15" oninput="calcLaser()">
             </div>
           </div>
           <div class="fg" style="margin-top:4px">
-            <label>Valor do cm² do Material (R$)</label>
+            <label>Valor cm² (R$)</label>
             <input id="lsr-vcm2" type="number" min="0" step="0.001" placeholder="Ex: 0,05" oninput="calcLaser()">
           </div>
         </div>
 
-        <!-- Bloco 3: Precificação -->
+        <!-- Bloco 3: Custos Adicionais -->
         <div class="card laser-block">
           <div class="laser-block-title">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-            Precificação
+            Custos Adicionais
           </div>
           <div class="fg">
-            <label>Margem de Lucro (%)</label>
-            <input id="lsr-mg" type="number" min="0" step="1" placeholder="Ex: 100" oninput="calcLaser()">
+            <label>Custo Instalação / Montagem (R$)</label>
+            <input id="lsr-instal" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcLaser()">
+          </div>
+          <div class="fg" style="margin-top:8px">
+            <label>Custo Molde de Aplicação (R$)</label>
+            <input id="lsr-molde" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcLaser()">
+          </div>
+          <div class="fg" style="margin-top:8px">
+            <label>Custo Fita / Cola (R$)</label>
+            <input id="lsr-fita" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcLaser()">
           </div>
         </div>
 
@@ -998,8 +1006,8 @@
 
         <!-- Resumo Técnico -->
         <div class="card laser-summary">
-          <div class="laser-block-title" style="margin-bottom:14px">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          <div class="laser-block-title" style="margin-bottom:12px">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             Resumo Técnico
           </div>
           <div class="laser-row">
@@ -1007,42 +1015,64 @@
             <span class="laser-row-val" id="lsr-tempo">— seg (— min)</span>
           </div>
           <div class="laser-row">
-            <span class="laser-row-label">Área Total</span>
+            <span class="laser-row-label">Área da Chapa</span>
             <span class="laser-row-val" id="lsr-area">— cm²</span>
           </div>
         </div>
 
-        <!-- Composição de Custos -->
+        <!-- Composição de Custos numerada -->
         <div class="card laser-summary">
-          <div class="laser-block-title" style="margin-bottom:14px">
+          <div class="laser-block-title" style="margin-bottom:12px">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             Composição de Custos
           </div>
           <div class="laser-row">
-            <span class="laser-row-label">Custo do Laser</span>
-            <span class="laser-row-val" id="lsr-custo-laser">R$ 0,00</span>
+            <span class="laser-row-label"><span class="laser-num">1</span> Acrílico / MDF</span>
+            <span class="laser-row-val" id="lsr-c-chapa">R$ 0,00</span>
           </div>
           <div class="laser-row">
-            <span class="laser-row-label">Custo do Material</span>
-            <span class="laser-row-val" id="lsr-custo-mat">R$ 0,00</span>
+            <span class="laser-row-label"><span class="laser-num">2</span> Instalação / Montagem</span>
+            <span class="laser-row-val" id="lsr-c-instal">R$ 0,00</span>
+          </div>
+          <div class="laser-row">
+            <span class="laser-row-label"><span class="laser-num">3</span> Corte (Laser)</span>
+            <span class="laser-row-val" id="lsr-c-corte">R$ 0,00</span>
+          </div>
+          <div class="laser-row">
+            <span class="laser-row-label"><span class="laser-num">4</span> Molde de Aplicação</span>
+            <span class="laser-row-val" id="lsr-c-molde">R$ 0,00</span>
+          </div>
+          <div class="laser-row">
+            <span class="laser-row-label"><span class="laser-num">5</span> Fita / Cola</span>
+            <span class="laser-row-val" id="lsr-c-fita">R$ 0,00</span>
           </div>
           <div class="laser-row laser-row-total">
-            <span class="laser-row-label">Custo de Produção</span>
-            <span class="laser-row-val" id="lsr-custo-prod">R$ 0,00</span>
+            <span class="laser-row-label">Total de Custos</span>
+            <span class="laser-row-val" id="lsr-custo-total">R$ 0,00</span>
+          </div>
+          <div style="text-align:right;font-size:11px;color:var(--muted);margin-top:4px">
+            Imposto (10%): <span id="lsr-imposto">R$ 0,00</span>
           </div>
         </div>
 
         <!-- Cards finais lado a lado -->
         <div class="laser-final-pair">
           <div class="laser-preco-card">
-            <div class="laser-preco-label">Preço de Venda</div>
-            <div class="laser-preco-val" id="lsr-preco-venda">R$ 0,00</div>
+            <div class="laser-preco-label">Valor à Vista</div>
+            <div class="laser-preco-val" id="lsr-avista">R$ 0,00</div>
           </div>
           <div class="laser-lucro-card">
-            <div class="laser-preco-label">Lucro Líquido</div>
-            <div class="laser-preco-val" id="lsr-lucro-liq">R$ 0,00</div>
+            <div class="laser-preco-label">Valor no Cartão</div>
+            <div class="laser-preco-val" id="lsr-cartao">R$ 0,00</div>
+            <div style="font-size:11px;margin-top:8px;opacity:.7;font-weight:600">3× sem juros</div>
           </div>
         </div>
+
+        <!-- Botão copiar -->
+        <button class="btn btn-ghost" style="width:100%;margin-top:4px;gap:8px" onclick="copiarLaser()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copiar Valores
+        </button>
 
       </div>
     </div>
@@ -3780,43 +3810,52 @@ async function excluirServico(id,nome){
 
 // ════ CALCULADORA CORTE A LASER ═════════════════════════
 
-// ── Variáveis de custo — ajuste conforme necessário ──
 // ════ CALCULADORA CORTE A LASER ═════════════════════════
 function calcLaser() {
-  // ── Leitura dos inputs ──
   const perim  = parseFloat(document.getElementById('lsr-perim')?.value)  || 0;
   const vel    = parseFloat(document.getElementById('lsr-vel')?.value)    || 0;
   const vmin   = parseFloat(document.getElementById('lsr-vmin')?.value)   || 0;
   const larg   = parseFloat(document.getElementById('lsr-larg')?.value)   || 0;
   const alt    = parseFloat(document.getElementById('lsr-alt')?.value)    || 0;
   const vcm2   = parseFloat(document.getElementById('lsr-vcm2')?.value)   || 0;
-  const margem = parseFloat(document.getElementById('lsr-mg')?.value)     || 0;
+  const instal = parseFloat(document.getElementById('lsr-instal')?.value) || 0;
+  const molde  = parseFloat(document.getElementById('lsr-molde')?.value)  || 0;
+  const fita   = parseFloat(document.getElementById('lsr-fita')?.value)   || 0;
 
-  // ── Fórmulas exatas da planilha ──
-  const tempo_segundos  = vel > 0 ? Math.round(perim / vel) : 0;
-  const tempo_minutos   = tempo_segundos / 60;
-  const custo_laser     = tempo_minutos * vmin;
-  const area_cm2        = larg * alt;
-  const custo_material  = area_cm2 * vcm2;
-  const custo_producao  = custo_laser + custo_material;
-  const preco_venda     = custo_producao * (1 + margem / 100);
-  const lucro_liquido   = preco_venda - custo_producao;
+  // Fórmulas exatas
+  const tempo_seg          = vel > 0 ? Math.round(perim / vel) : 0;
+  const tempo_min          = tempo_seg / 60;
+  const custo_corte        = tempo_min * vmin;                              // item 3
+  const custo_chapa        = larg * alt * vcm2;                            // item 1
+  const custo_total        = custo_chapa + instal + custo_corte + molde + fita;
+  const imposto            = custo_total * 0.10;
+  const valor_final_vista  = (custo_total * 2) - imposto;
+  const valor_final_cartao = valor_final_vista * 1.08;
 
-  // ── Helpers de formatação ──
   const fmt  = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const fmtN = (v, d=2) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
   const set  = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
 
-  // ── Atualização dos outputs ──
-  set('lsr-tempo',        tempo_segundos > 0
-    ? `${tempo_segundos} seg  (${fmtN(tempo_minutos)} min)`
-    : '— seg (— min)');
-  set('lsr-area',         area_cm2 > 0  ? fmtN(area_cm2) + ' cm²' : '— cm²');
-  set('lsr-custo-laser',  fmt(custo_laser));
-  set('lsr-custo-mat',    fmt(custo_material));
-  set('lsr-custo-prod',   fmt(custo_producao));
-  set('lsr-preco-venda',  fmt(preco_venda));
-  set('lsr-lucro-liq',    fmt(lucro_liquido));
+  set('lsr-tempo',       tempo_seg > 0 ? `${tempo_seg} seg  (${fmtN(tempo_min)} min)` : '— seg (— min)');
+  set('lsr-area',        larg && alt ? fmtN(larg * alt) + ' cm²' : '— cm²');
+  set('lsr-c-chapa',     fmt(custo_chapa));
+  set('lsr-c-instal',    fmt(instal));
+  set('lsr-c-corte',     fmt(custo_corte));
+  set('lsr-c-molde',     fmt(molde));
+  set('lsr-c-fita',      fmt(fita));
+  set('lsr-custo-total', fmt(custo_total));
+  set('lsr-imposto',     fmt(imposto));
+  set('lsr-avista',      fmt(valor_final_vista));
+  set('lsr-cartao',      fmt(valor_final_cartao));
+}
+
+function copiarLaser() {
+  const avista  = document.getElementById('lsr-avista')?.textContent  || 'R$ 0,00';
+  const cartao  = document.getElementById('lsr-cartao')?.textContent  || 'R$ 0,00';
+  const txt = `✂️ *Corte a Laser*\n\n💵 À Vista: *${avista}*\n💳 Cartão (3× sem juros): *${cartao}*`;
+  navigator.clipboard.writeText(txt).then(()=>toast('Copiado!','success')).catch(()=>{
+    prompt('Copie o texto abaixo:', txt);
+  });
 }
 
 // ════ CALCULADORA BANNER / ADESIVO ══════════════════════
