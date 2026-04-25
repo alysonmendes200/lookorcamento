@@ -167,7 +167,15 @@
     <div class="nav-sub-group" id="nav-ferramentas-group">
       <button class="nav-btn nav-sub-item" id="nav-calculadora" onclick="goPage('calculadora');carregarCalculadora()">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/></svg>
-        <span>Calculadora</span>
+        <span>Calculadora de Custos</span>
+      </button>
+      <button class="nav-btn nav-sub-item" id="nav-calc-banner" onclick="goPage('calc-banner')">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span>Banner / Adesivo</span>
+      </button>
+      <button class="nav-btn nav-sub-item" id="nav-calc-papel" onclick="goPage('calc-papel')">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg>
+        <span>Papel de Parede</span>
       </button>
     </div>
   </div>
@@ -791,6 +799,126 @@
     </div>
   </div>
 
+  <!-- ══ PÁGINA: CALCULADORA BANNER / ADESIVO ══════════ -->
+  <div class="page" id="page-calc-banner">
+    <div class="page-header">
+      <div class="page-title">Calculadora de Banner / Adesivo</div>
+      <div class="page-sub">Calcule o valor pelo m² com ou sem taxa de cartão</div>
+    </div>
+
+    <div class="calc-tool-wrap">
+      <!-- Card de Inputs -->
+      <div class="card calc-tool-inputs">
+        <div class="calc-block-title">Medidas e Preço</div>
+        <div class="form-row">
+          <div class="fg">
+            <label>Largura (m)</label>
+            <input id="bn-larg" type="number" min="0" step="0.01" placeholder="Ex: 2,50" oninput="calcBanner()">
+          </div>
+          <div class="fg">
+            <label>Altura (m)</label>
+            <input id="bn-alt" type="number" min="0" step="0.01" placeholder="Ex: 1,00" oninput="calcBanner()">
+          </div>
+        </div>
+        <div class="fg" style="margin-top:4px">
+          <label>Valor do m² (R$)</label>
+          <input id="bn-preco" type="number" min="0" step="0.01" placeholder="Ex: 45,00" oninput="calcBanner()">
+        </div>
+
+        <div class="calc-toggle-wrap">
+          <label class="calc-toggle-label">
+            <input type="checkbox" id="bn-cartao" onchange="calcBanner()">
+            <span class="calc-toggle-switch"></span>
+            <span class="calc-toggle-text">Incluir Taxa de Máquina de Cartão (5%)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Resultado -->
+      <div class="calc-tool-results">
+        <div class="calc-info-row" style="margin-bottom:16px">
+          <div class="calc-info-card" style="flex:1">
+            <div class="calc-info-label">Área Total</div>
+            <div class="calc-info-val" id="bn-area">— m²</div>
+          </div>
+        </div>
+
+        <div class="calc-result-card azul">
+          <div class="calc-result-label">Valor à Vista</div>
+          <div class="calc-result-val" id="bn-avista">R$ 0,00</div>
+        </div>
+
+        <div class="calc-result-card verde" id="bn-cartao-card" style="display:none;margin-top:14px">
+          <div class="calc-result-label">Valor no Cartão (+5%)</div>
+          <div class="calc-result-val" id="bn-vcartao">R$ 0,00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PÁGINA: CALCULADORA PAPEL DE PAREDE ═══════════ -->
+  <div class="page" id="page-calc-papel">
+    <div class="page-header">
+      <div class="page-title">Calculadora de Papel de Parede</div>
+      <div class="page-sub">A largura é arredondada para o próximo metro inteiro acima</div>
+    </div>
+
+    <div class="calc-tool-wrap">
+      <!-- Card de Inputs -->
+      <div class="card calc-tool-inputs">
+        <div class="calc-block-title">Medidas</div>
+        <div class="form-row">
+          <div class="fg">
+            <label>Largura (m)</label>
+            <input id="pp-larg" type="number" min="0" step="0.01" placeholder="Ex: 2,30" oninput="calcPapel()">
+            <div class="input-helper">Arredondada para o metro inteiro acima</div>
+          </div>
+          <div class="fg">
+            <label>Altura (m)</label>
+            <input id="pp-alt" type="number" min="0" step="0.01" placeholder="Ex: 2,80" oninput="calcPapel()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultado -->
+      <div class="calc-tool-results">
+        <!-- Cards informativos -->
+        <div class="calc-info-row" style="margin-bottom:16px">
+          <div class="calc-info-card">
+            <div class="calc-info-label">Largura Informada</div>
+            <div class="calc-info-val" id="pp-larg-inf">—</div>
+          </div>
+          <div class="calc-info-card destaque">
+            <div class="calc-info-label">Largura Arredondada</div>
+            <div class="calc-info-val" id="pp-larg-arr">—</div>
+          </div>
+          <div class="calc-info-card">
+            <div class="calc-info-label">Altura</div>
+            <div class="calc-info-val" id="pp-alt-inf">—</div>
+          </div>
+          <div class="calc-info-card">
+            <div class="calc-info-label">Área Total</div>
+            <div class="calc-info-val" id="pp-area">—</div>
+          </div>
+        </div>
+
+        <!-- Cards de preço lado a lado -->
+        <div class="calc-result-pair">
+          <div class="calc-result-card normal">
+            <div class="calc-result-label">Valor Normal</div>
+            <div class="calc-result-val" id="pp-normal">R$ 0,00</div>
+            <div class="calc-result-preco">R$ 75,00 por m²</div>
+          </div>
+          <div class="calc-result-card verde">
+            <div class="calc-result-label">Com Desconto</div>
+            <div class="calc-result-val" id="pp-desconto">R$ 0,00</div>
+            <div class="calc-result-preco">R$ 65,00 por m²</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -1300,6 +1428,8 @@ function goPage(p) {
   if(p==='caixa')                   carregarCaixa();
   if(p==='logs'&&isAdmin())         carregarLogs();
   if(p==='calculadora')             carregarCalculadora();
+  if(p==='calc-banner')             calcBanner();
+  if(p==='calc-papel')              calcPapel();
 }
 function logout(){localStorage.removeItem('orcToken');localStorage.removeItem('orcUser');location.replace('index.html');}
 
@@ -3516,6 +3646,54 @@ async function excluirServico(id,nome){
     renderServicos();preencherSelectsCalc();
     toast('Excluído.','success');
   }catch(e){toast(e.message,'error');}
+}
+
+// ════ CALCULADORA BANNER / ADESIVO ══════════════════════
+function calcBanner(){
+  const larg  = parseFloat(document.getElementById('bn-larg')?.value)  || 0;
+  const alt   = parseFloat(document.getElementById('bn-alt')?.value)   || 0;
+  const preco = parseFloat(document.getElementById('bn-preco')?.value) || 0;
+  const cartao= document.getElementById('bn-cartao')?.checked;
+
+  const area   = larg * alt;
+  const avista = area * preco;
+  const vcartao= avista * 1.05;
+
+  const fmt = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const fmtN= v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  const elArea  = document.getElementById('bn-area');
+  const elAvist = document.getElementById('bn-avista');
+  const elVCart = document.getElementById('bn-vcartao');
+  const elCard  = document.getElementById('bn-cartao-card');
+
+  if(elArea)  elArea.textContent  = area > 0 ? fmtN(area)+' m²' : '— m²';
+  if(elAvist) elAvist.textContent = fmt(avista);
+  if(elVCart) elVCart.textContent = fmt(vcartao);
+  if(elCard)  elCard.style.display= cartao ? '' : 'none';
+}
+
+// ════ CALCULADORA PAPEL DE PAREDE ═══════════════════════
+function calcPapel(){
+  const larg = parseFloat(document.getElementById('pp-larg')?.value) || 0;
+  const alt  = parseFloat(document.getElementById('pp-alt')?.value)  || 0;
+
+  const largArr = larg > 0 ? Math.ceil(larg) : 0;
+  const area    = largArr * alt;
+  const normal  = area * 75;
+  const desconto= area * 65;
+
+  const fmt = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const fmtN= v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  const set = (id, txt) => { const el=document.getElementById(id); if(el) el.textContent=txt; };
+
+  set('pp-larg-inf', larg    > 0 ? fmtN(larg)+'m'    : '—');
+  set('pp-larg-arr', largArr > 0 ? largArr+',00m'     : '—');
+  set('pp-alt-inf',  alt     > 0 ? fmtN(alt)+'m'     : '—');
+  set('pp-area',     area    > 0 ? fmtN(area)+' m²'  : '—');
+  set('pp-normal',   fmt(normal));
+  set('pp-desconto', fmt(desconto));
 }
 </script>
 </body>

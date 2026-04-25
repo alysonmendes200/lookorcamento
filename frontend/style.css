@@ -432,7 +432,143 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
 .badge-orc-cancelado { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
 .badge-orc-ativo     { background:var(--azul-bg); color:var(--azul); border:1px solid var(--border); }
 
+/* ── CALC TOOLS (Banner, Papel de Parede) ── */
+.calc-tool-wrap {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.calc-tool-inputs { padding: 22px 24px; }
+.calc-tool-results { display: flex; flex-direction: column; gap: 0; }
+
+/* Info cards row */
+.calc-info-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.calc-info-card {
+  flex: 1;
+  min-width: 110px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.calc-info-card.destaque {
+  background: var(--azul-bg);
+  border-color: var(--azul);
+}
+.calc-info-card.destaque .calc-info-val { color: var(--azul); }
+.calc-info-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 6px;
+}
+.calc-info-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Big result cards */
+.calc-result-card {
+  border-radius: 16px;
+  padding: 24px 28px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+.calc-result-card.azul {
+  background: var(--azul);
+  color: #fff;
+}
+.calc-result-card.azul .calc-result-label { color: rgba(255,255,255,.8); }
+.calc-result-card.verde {
+  background: #fff;
+  border: 2px solid #198754;
+  color: #198754;
+}
+.calc-result-card.verde .calc-result-label { color: #198754; opacity: .75; }
+.calc-result-card.verde .calc-result-val { color: #198754; }
+.calc-result-card.normal {
+  background: #f4f6f8;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.calc-result-card.normal .calc-result-label { color: var(--muted); }
+.calc-result-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 10px;
+}
+.calc-result-val {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.5px;
+}
+.calc-result-preco {
+  font-size: 12px;
+  margin-top: 8px;
+  opacity: .7;
+  font-weight: 600;
+}
+
+/* Side-by-side result pair */
+.calc-result-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Toggle switch */
+.calc-toggle-wrap { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+.calc-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.calc-toggle-label input[type=checkbox] { display: none; }
+.calc-toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+  background: var(--border);
+  border-radius: 24px;
+  transition: background .2s;
+}
+.calc-toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  transition: transform .2s;
+}
+.calc-toggle-label input:checked + .calc-toggle-switch { background: var(--azul); }
+.calc-toggle-label input:checked + .calc-toggle-switch::after { transform: translateX(20px); }
+.calc-toggle-text { font-size: 13px; font-weight: 600; color: var(--text); }
+
+/* Input helper text */
+.input-helper { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
 /* ── RESPONSIVE ── */
+@media (max-width:900px) {
+  .calc-tool-wrap { grid-template-columns: 1fr; }
+  .calc-result-val { font-size: 28px; }
+}
 @media (max-width:680px) {
   .sidebar { width:52px; padding:12px 6px; }
   .sidebar-logo-text, .nav-section, .nav-btn span, .sb-name, .sb-role { display:none; }
@@ -440,4 +576,5 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
   .nav-btn { justify-content:center; }
   .main { padding:12px; }
   .items-head, .item-row { grid-template-columns:1fr 52px 88px 88px 64px; }
+  .calc-result-pair { grid-template-columns: 1fr; }
 }
