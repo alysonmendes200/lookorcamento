@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { authMiddleware, adminOnly } = require('../auth');
-const { Orcamentos, Seq } = require('../db');
+const { Orcamentos, Seq, Pedidos, logAudit } = require('../db');
 
 const router = express.Router();
 
@@ -172,6 +172,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
 
     await Orcamentos.create(orc);
     await Seq.setNext(num + 1);
+    logAudit(req, 'CREATE', 'orcamento', String(num), `Orçamento N° ${String(num).padStart(3,'0')} — ${orc.nome}`, { id: orc.id });
     res.status(201).json(orc);
   } catch(e) { next(e); }
 });
@@ -210,9 +211,51 @@ router.put('/:id', authMiddleware, async (req, res, next) => {
     patch.editedAt = new Date().toLocaleDateString('pt-BR');
     patch.editedBy = req.user.username;
 
+    if (req.body.status !== undefined) patch.status = req.body.status;
     await Orcamentos.update(orc.id, patch);
     const updated = await Orcamentos.find(orc.id);
+    logAudit(req, 'UPDATE', 'orcamento', String(orc.num), `Orçamento N° ${String(orc.num).padStart(3,'0')} — ${orc.nome}`, patch);
     res.json(updated);
+  } catch(e) { next(e); }
+});
+
+// ══════════════════════════════════════════════
+// APROVAR ORÇAMENTO → gera pedido
+// ══════════════════════════════════════════════
+router.post('/:id/aprovar', authMiddleware, async (req, res, next) => {
+  try {
+    const orc = await Orcamentos.find(req.params.id);
+    if (!orc) return res.status(404).json({ error: 'Não encontrado' });
+    if (!canAccess(req.user, orc)) return res.status(403).json({ error: 'Sem permissão' });
+
+    await Orcamentos.update(orc.id, { status: 'aprovado', editedAt: new Date().toLocaleDateString('pt-BR'), editedBy: req.user.username });
+
+    const pedido = await Pedidos.create({
+      id: uuidv4(),
+      clienteId:    '',
+      clienteNome:  orc.nome,
+      items:        orc.items,
+      total:        orc.total,
+      totalBruto:   orc.total,
+      desconto:     0,
+      descontoTipo: 'pct',
+      prazoEntrega: orc.prazo || '',
+      obs:          orc.obs  || '',
+      orcamentoId:  orc.id,
+      orcamentoNum: orc.num,
+      status:       'pendente',
+      pago:         false,
+      valorRecebido:0,
+      owner:        req.user.username,
+      ownerNome:    req.user.nome,
+      criadoEm:     new Date().toISOString()
+    });
+
+    logAudit(req, 'APPROVE', 'orcamento', String(orc.num),
+      `Orçamento N° ${String(orc.num).padStart(3,'0')} aprovado → Pedido criado`, { pedidoId: pedido.id });
+
+    const updatedOrc = await Orcamentos.find(orc.id);
+    res.json({ orcamento: updatedOrc, pedido });
   } catch(e) { next(e); }
 });
 
@@ -225,12 +268,12 @@ router.delete('/:id', authMiddleware, async (req, res, next) => {
     if (!orc) return res.status(404).json({ error: 'Não encontrado' });
     if (!canAccess(req.user, orc)) return res.status(403).json({ error: 'Sem permissão' });
 
-    // Remove arquivo NF
     if (orc.nfFile) {
       const fp = path.join(UPLOADS_DIR, orc.nfFile);
       if (fs.existsSync(fp)) fs.unlinkSync(fp);
     }
 
+    logAudit(req, 'DELETE', 'orcamento', String(orc.num), `Orçamento N° ${String(orc.num).padStart(3,'0')} — ${orc.nome}`, {});
     await Orcamentos.delete(req.params.id);
     await Seq.recalcAfterDelete();
 

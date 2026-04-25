@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-const { Users } = require('../db');
+const { Users, logAudit } = require('../db');
 const { authMiddleware, adminOnly } = require('../auth');
 
 const router = express.Router();
@@ -25,6 +25,8 @@ router.post('/login', async (req, res, next) => {
       { expiresIn: '8h' }
     );
 
+    logAudit({ user: { id: user.id, nome: user.nome, username: user.username } },
+      'LOGIN', 'auth', user.id, `Login: ${user.username}`, { ip: req.ip });
     res.json({
       token,
       user: { id: user.id, nome: user.nome, username: user.username, role: user.role }
