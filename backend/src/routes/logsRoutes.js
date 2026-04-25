@@ -1,9 +1,30 @@
 const express = require('express');
+const { v4: uuidv4 } = require('uuid');
 const router  = express.Router();
 const { authMiddleware, adminOnly } = require('../auth');
 const { AuditLogs } = require('../db');
 
 router.use(authMiddleware, adminOnly);
+
+// POST — grava log via frontend (registrarLog())
+router.post('/', async (req, res, next) => {
+  try {
+    const { acao, entidade, entidadeId, label, detalhes } = req.body;
+    const u = req.user;
+    await AuditLogs.create({
+      id: uuidv4(),
+      userId:    u.id,
+      userNome:  u.nome,
+      userLogin: u.username,
+      acao:      String(acao || 'INFO').toUpperCase(),
+      entidade:  entidade || 'frontend',
+      entidadeId: String(entidadeId || ''),
+      label:     String(label || ''),
+      detalhes:  detalhes || {}
+    });
+    res.json({ ok: true });
+  } catch(e) { next(e); }
+});
 
 router.get('/', async (req, res, next) => {
   try {
