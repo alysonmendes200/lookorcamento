@@ -346,10 +346,20 @@
   <div class="page" id="page-clientes">
     <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
       <div><div class="page-title">Clientes</div><div class="page-sub">Gerencie sua base de clientes</div></div>
-      <button class="btn btn-primary" onclick="abrirModalNovoCliente()">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        Novo Cliente
-      </button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="view-tabs" style="margin:0">
+          <button class="view-tab active" id="cli-view-cards" onclick="setViewClientes('cards')" title="Cards">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </button>
+          <button class="view-tab" id="cli-view-lista" onclick="setViewClientes('lista')" title="Lista">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+        </div>
+        <button class="btn btn-primary" onclick="abrirModalNovoCliente()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Novo Cliente
+        </button>
+      </div>
     </div>
     <div class="filter-bar">
       <div class="fg" style="min-width:200px;max-width:340px"><label>Buscar</label>
@@ -431,15 +441,17 @@
         <div style="display:flex;align-items:flex-end"><button class="btn btn-primary" onclick="carregarRelatorio()">Filtrar</button></div>
       </div>
     </div>
-    <div class="rel-tabs">
-      <button class="rel-tab active" onclick="relTab('resumo',this)">📊 Resumo</button>
-      <button class="rel-tab" onclick="relTab('dre',this)">💰 Financeiro / DRE</button>
-      <button class="rel-tab" onclick="relTab('caixa-rel',this)">💵 Caixa</button>
-      <button class="rel-tab" onclick="relTab('pedidos-rel',this)">📦 Pedidos</button>
-      <button class="rel-tab" onclick="relTab('mensal',this)">📅 Por Mês</button>
-      <button class="rel-tab" onclick="relTab('operador',this)">👤 Por Operador</button>
-      <button class="rel-tab" onclick="relTab('nf',this)">🧾 Com NF</button>
-      <button class="rel-tab" onclick="relTab('lista',this)">📋 Lista</button>
+    <div style="margin-bottom:14px">
+      <select id="rel-tab-select" onchange="relTabSelect(this.value)" style="width:100%;max-width:320px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--white);font-size:14px;color:var(--text);cursor:pointer;appearance:auto">
+        <option value="resumo">📊 Resumo</option>
+        <option value="dre">💰 Financeiro / DRE</option>
+        <option value="caixa-rel">💵 Caixa</option>
+        <option value="pedidos-rel">📦 Pedidos</option>
+        <option value="mensal">📅 Por Mês</option>
+        <option value="operador">👤 Por Operador</option>
+        <option value="nf">🧾 Com NF</option>
+        <option value="lista">📋 Lista</option>
+      </select>
     </div>
     <div class="rel-section active" id="rel-resumo">
       <div class="stats-row" id="rel-stats-cards"></div>
@@ -772,12 +784,12 @@
 
     <div class="form-row">
       <div class="fg">
-        <label>Cliente *</label>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input id="ped-cliente-nome" list="ped-clientes-list" placeholder="Digite o nome do cliente…" style="flex:1">
-          <datalist id="ped-clientes-list"></datalist>
-          <button type="button" class="btn btn-ghost" style="white-space:nowrap;font-size:12px;padding:6px 10px" onclick="novoClienteNoPedido()" title="Cadastrar novo cliente">+ Novo</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <label style="margin:0">Cliente *</label>
+          <button type="button" class="btn btn-ghost" style="font-size:11px;padding:3px 8px;height:auto" onclick="novoClienteNoPedido()" title="Cadastrar novo cliente">+ Novo Cliente</button>
         </div>
+        <input id="ped-cliente-nome" list="ped-clientes-list" placeholder="Digite o nome do cliente…">
+        <datalist id="ped-clientes-list"></datalist>
       </div>
       <div class="fg"><label>Prazo de Entrega</label><input id="ped-prazo" placeholder="Ex: 5 dias úteis"></div>
     </div>
@@ -899,6 +911,7 @@ let pedidoList   = [];
 let produtoList  = [];
 let pedItemCount = 0;
 let viewPedido   = 'kanban';
+let viewClientes = 'cards';
 let catalogoAlvo = 'orc'; // 'orc' ou 'ped'
 
 const PEDIDO_STATUS_ORDER = ['pendente','producao','pronto','entregue','cancelado'];
@@ -1158,6 +1171,16 @@ async function salvar(){
           toast('Recebimento registrado no Caixa!','success');
         }catch(ce){toast('Orç. atualizado, mas erro no Caixa: '+ce.message,'error');}
       }
+      // Sincroniza pagamento com pedido vinculado
+      if(novoPago){
+        try{
+          const pv=pedidoList.find(p=>p.orcamentoId===editingId&&!p.pago);
+          if(pv){
+            const updP=await API.put('/pedidos/'+pv.id,{pago:true,valorRecebido:payload.valorRecebido||0});
+            const pi=pedidoList.findIndex(p=>p.id===pv.id);if(pi>=0)pedidoList[pi]={...pedidoList[pi],...updP};
+          }
+        }catch(se){console.warn('Sync pedido pagamento:',se.message);}
+      }
       toast('Orçamento atualizado!','success');cancelEdit();
     }else{
       const orc=await API.post('/orcamentos',payload);
@@ -1337,11 +1360,12 @@ async function carregarRelatorio(){
     renderRelatorios();
   }catch(e){toast(e.message,'error');}
 }
-function relTab(tab,btn){
+function relTab(tab){
   document.querySelectorAll('.rel-section').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.rel-tab').forEach(el=>el.classList.remove('active'));
-  document.getElementById('rel-'+tab).classList.add('active');btn.classList.add('active');
+  document.getElementById('rel-'+tab).classList.add('active');
+  const sel=document.getElementById('rel-tab-select');if(sel)sel.value=tab;
 }
+function relTabSelect(tab){relTab(tab);}
 function renderRelatorios(){
   if(!relData)return;
   const{resumo,porMes,porOperador,comNF,lista}=relData;
@@ -1805,11 +1829,37 @@ function renderCliStats(){
     <div class="stat-card"><div class="stat-label">Com E-mail</div><div class="stat-val">${clienteList.filter(c=>c.email).length}</div></div>
     <div class="stat-card"><div class="stat-label">Com Telefone</div><div class="stat-val">${clienteList.filter(c=>c.telefone).length}</div></div>`;
 }
+function setViewClientes(v){
+  viewClientes=v;
+  document.getElementById('cli-view-cards').classList.toggle('active',v==='cards');
+  document.getElementById('cli-view-lista').classList.toggle('active',v==='lista');
+  renderClientes();
+}
 function renderClientes(){
   const busca=(document.getElementById('cli-busca').value||'').toLowerCase();
   const list=clienteList.filter(c=>!busca||c.nome.toLowerCase().includes(busca)||(c.comercio||'').toLowerCase().includes(busca)||(c.email||'').toLowerCase().includes(busca)||(c.telefone||'').includes(busca)||(c.cpfCnpj||'').includes(busca));
   const cont=document.getElementById('cli-list');
   if(!list.length){cont.innerHTML='<div class="empty" style="padding:32px">'+(clienteList.length?'Nenhum cliente encontrado.':'Clique em "Novo Cliente" para cadastrar.')+'</div>';return;}
+  if(viewClientes==='lista'){
+    cont.innerHTML=`<div class="card" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="border-bottom:2px solid var(--border);text-align:left">
+        <th style="padding:8px 10px">Nome</th><th style="padding:8px 10px">Comércio</th>
+        <th style="padding:8px 10px">Telefone</th><th style="padding:8px 10px">E-mail</th>
+        <th style="padding:8px 10px">CPF/CNPJ</th><th style="padding:8px 10px;text-align:center">Ações</th>
+      </tr></thead>
+      <tbody>${list.map(c=>`<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 10px;font-weight:600">${esc(c.nome)}</td>
+        <td style="padding:8px 10px;color:var(--muted)">${esc(c.comercio||'—')}</td>
+        <td style="padding:8px 10px">${esc(c.telefone||'—')}</td>
+        <td style="padding:8px 10px">${esc(c.email||'—')}</td>
+        <td style="padding:8px 10px">${esc(c.cpfCnpj||'—')}</td>
+        <td style="padding:8px 10px;text-align:center;white-space:nowrap">
+          <button class="ta edit" onclick="editarCliente('${c.id}')" title="Editar">✏️</button>
+          ${isAdmin()?`<button class="ta del" onclick="excluirCliente('${c.id}','${esc(c.nome)}')" title="Excluir">🗑️</button>`:''}
+        </td></tr>`).join('')}
+      </tbody></table></div>`;
+    return;
+  }
   cont.innerHTML=`<div class="cli-grid">${list.map(c=>{
     const ini=c.nome.trim().split(' ').filter(Boolean);
     const av=(ini[0]?.[0]||'').toUpperCase()+(ini[1]?.[0]||'').toUpperCase()||c.nome.charAt(0).toUpperCase();
@@ -2251,6 +2301,16 @@ async function salvarPedido(){
         toast('Entrada registrada no Caixa!','success');
       }catch(ce){toast('Pedido salvo, mas erro no Caixa: '+ce.message,'error');}
     }
+    // Sincroniza pagamento com orçamento vinculado
+    if(pago&&orcId){
+      try{
+        const ov=orcList.find(o=>o.id===orcId);
+        if(ov&&!ov.pago){
+          const updO=await API.put('/orcamentos/'+orcId,{pago:true,valorRecebido});
+          const oi=orcList.findIndex(o=>o.id===orcId);if(oi>=0)orcList[oi]={...orcList[oi],...updO};
+        }
+      }catch(se){console.warn('Sync orç pagamento:',se.message);}
+    }
     closeModal('modal-pedido');renderPedidos();
   }catch(e){toast(e.message,'error');}
   finally{btn.disabled=false;document.getElementById('ped-btn-txt').textContent=editId?'Salvar Alterações':'Salvar Pedido';}
@@ -2320,10 +2380,10 @@ async function carregarDashboard(){
         <span class="badge ${lbl.cls}">${lbl.label}</span><span style="font-weight:700;font-size:14px">${v}</span></div>`;
     }).join('');
 
-    // Top clientes: consolida orçamentos + pedidos
+    // Top clientes: orçamentos + pedidos sem orçamento vinculado (evita duplicação)
     const ct={};
     orcs.forEach(o=>{if(!ct[o.nome])ct[o.nome]={nome:o.nome,total:0,orcs:0,peds:0};ct[o.nome].total+=o.total;ct[o.nome].orcs++;});
-    pedidos.forEach(p=>{const k=p.clienteNome;if(!ct[k])ct[k]={nome:k,total:0,orcs:0,peds:0};ct[k].total+=p.total;ct[k].peds++;});
+    pedidos.forEach(p=>{if(p.orcamentoId)return;const k=p.clienteNome;if(!ct[k])ct[k]={nome:k,total:0,orcs:0,peds:0};ct[k].total+=p.total;ct[k].peds++;});
     const top=Object.values(ct).sort((a,b)=>b.total-a.total).slice(0,8);
     const maxT=Math.max(...top.map(t=>t.total),1);
     document.getElementById('dash-top-clientes').innerHTML=top.length?top.map(c=>`
@@ -2341,9 +2401,9 @@ async function carregarDashboard(){
         </div>
       </div>`).join(''):'<div class="empty">Nenhum registro ainda.</div>';
 
-    // Top itens mais vendidos
+    // Top itens mais vendidos: orçamentos + pedidos sem orçamento vinculado (evita duplicação)
     const itens={};
-    [...orcs,...pedidos].forEach(r=>(r.items||[]).forEach(i=>{
+    [...orcs,...pedidos.filter(p=>!p.orcamentoId)].forEach(r=>(r.items||[]).forEach(i=>{
       const k=i.desc.trim().toLowerCase();
       if(!k)return;
       if(!itens[k])itens[k]={desc:i.desc,qtd:0,total:0,vezes:0};
