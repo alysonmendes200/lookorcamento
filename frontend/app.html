@@ -284,6 +284,9 @@
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/></svg>
         Texto para NF
       </button>
+      <button class="btn" style="background:#25D366;color:#fff;border-color:#25D366" onclick="wppOrcamento(null)">
+        💬 WhatsApp
+      </button>
       <button class="btn btn-ghost" onclick="novoForm()">Limpar</button>
     </div>
   </div>
@@ -880,6 +883,7 @@
     <div id="mpd-obs" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
     <div class="btn-row" style="margin-top:14px">
       <button class="btn btn-primary" id="mpd-btn-editar">✏️ Editar</button>
+      <button class="btn btn-ghost" id="mpd-btn-wpp" onclick="" style="background:#25D366;color:#fff;border-color:#25D366">💬 WhatsApp</button>
       <button class="btn btn-ghost" onclick="closeModal('modal-ped-detalhe')">Fechar</button>
     </div>
   </div>
@@ -1223,6 +1227,52 @@ function copiarNFTxt(){
     setTimeout(()=>{b.textContent='📋 Copiar texto';b.classList.remove('ok');},2500);
   });
 }
+function _getNomeEmpresa(){try{return JSON.parse(localStorage.getItem('lookEmpresaConfig')||'{}').nomeEmpresa||'Look - Imprimindo Ideias';}catch{return'Look - Imprimindo Ideias';}}
+function _txtWppOrcamento(o){
+  const empresa=_getNomeEmpresa();
+  const linhas=o.items.map(i=>`  • ${i.qty}x ${i.desc} — ${fBRL(i.total)}`).join('\n');
+  return `*${empresa}*\n*Orçamento N° ${String(o.num).padStart(3,'0')}*\n\n`+
+    `👤 Cliente: ${o.nome}\n`+
+    `📅 Data: ${o.date||new Date().toLocaleDateString('pt-BR')}\n`+
+    (o.validade?`⏳ Validade: ${o.validade}\n`:'')+
+    (o.prazo?`🚚 Prazo de entrega: ${o.prazo}\n`:'')+
+    (o.pagamento?`💳 Pagamento: ${o.pagamento}\n`:'')+
+    `\n*Itens:*\n${linhas}\n\n`+
+    `*Total: ${fBRL(o.total)}*\n\n`+
+    `Qualquer dúvida estamos à disposição! 😊`;
+}
+function wppOrcamento(orc){
+  const o=orc||getOrcAtual();if(!o)return;
+  const txt=_txtWppOrcamento(o);
+  const cli=clienteList.find(c=>c.nome.toLowerCase()===o.nome.toLowerCase());
+  const tel=cli?.telefone;
+  if(tel){window.open(wppLink(tel,txt),'_blank');}
+  else{navigator.clipboard.writeText(txt).then(()=>toast('Texto copiado! Cole no WhatsApp do cliente.','success')).catch(()=>toast('Não foi possível copiar.','error'));}
+}
+function _txtWppPedido(p){
+  const empresa=_getNomeEmpresa();
+  const LABELS={pendente:'⏳ Pendente',producao:'🔧 Em Produção',pronto:'✅ Pronto',entregue:'📦 Entregue',cancelado:'❌ Cancelado'};
+  const linhas=(p.items||[]).map(i=>`  • ${i.qty}x ${i.desc} — ${fBRL(i.total)}`).join('\n');
+  const data=p.criadoEm?new Date(p.criadoEm).toLocaleDateString('pt-BR'):new Date().toLocaleDateString('pt-BR');
+  return `*${empresa}*\n*Pedido — ${p.clienteNome}*\n\n`+
+    `📅 Data: ${data}\n`+
+    `📋 Status: ${LABELS[p.status]||p.status}\n`+
+    (p.prazoEntrega?`🚚 Prazo de entrega: ${p.prazoEntrega}\n`:'')+
+    (p.orcamentoNum?`📄 Orçamento N° ${String(p.orcamentoNum).padStart(3,'0')}\n`:'')+
+    `\n*Itens:*\n${linhas}\n\n`+
+    (p.desconto>0?`Subtotal: ${fBRL(p.totalBruto||p.total)}\nDesconto: — ${fBRL(p.desconto)}\n`:'')+
+    `*Total: ${fBRL(p.total)}*\n`+
+    (p.obs?`\n📝 Obs: ${p.obs}\n`:'')+
+    `\nQualquer dúvida estamos à disposição! 😊`;
+}
+function wppPedido(id){
+  const p=typeof id==='object'?id:pedidoList.find(x=>x.id===id);if(!p)return;
+  const txt=_txtWppPedido(p);
+  const cli=clienteList.find(c=>c.nome.toLowerCase()===p.clienteNome.toLowerCase());
+  const tel=cli?.telefone;
+  if(tel){window.open(wppLink(tel,txt),'_blank');}
+  else{navigator.clipboard.writeText(txt).then(()=>toast('Texto copiado! Cole no WhatsApp do cliente.','success')).catch(()=>toast('Não foi possível copiar.','error'));}
+}
 
 // ════ HISTÓRICO ═══════════════════════════════════════
 async function carregarHist(){
@@ -1278,6 +1328,7 @@ function renderHist(){
         <button class="ta pdf" title="PDF" data-idx="${list.indexOf(orc)}">📄</button>
         <button class="ta docx" title="DOCX" data-idx="${list.indexOf(orc)}">📝</button>
         <button class="ta nota" title="Texto NF" data-idx="${list.indexOf(orc)}">📋</button>
+        <button class="ta wpp" title="Enviar WhatsApp" data-idx="${list.indexOf(orc)}">💬</button>
         <button class="ta pedido" title="Criar Pedido" data-idx="${list.indexOf(orc)}">📦</button>
         ${canEdit?`<button class="ta nf" title="Arquivo NF" data-idx="${list.indexOf(orc)}">🧾</button>`:''}
         ${isAdmin()?`<button class="ta del" title="Excluir" data-id="${orc.id}">🗑️</button>`:''}
@@ -1291,6 +1342,7 @@ function renderHist(){
     if(btn.classList.contains('pdf'))   acaoPDF(orc);
     if(btn.classList.contains('docx'))  acaoDOCX(orc);
     if(btn.classList.contains('nota'))  abrirNota(orc);
+    if(btn.classList.contains('wpp'))   wppOrcamento(orc);
     if(btn.classList.contains('pedido'))criarPedidoDeOrcamento(orc);
     if(btn.classList.contains('nf'))    abrirUploadNF(orc);
     if(btn.classList.contains('del'))   excluir(btn.dataset.id);
@@ -1835,6 +1887,8 @@ function setViewClientes(v){
   document.getElementById('cli-view-lista').classList.toggle('active',v==='lista');
   renderClientes();
 }
+function foneWpp(tel){return tel?tel.replace(/\D/g,''):''}
+function wppLink(tel,txt){const n=foneWpp(tel);return n?`https://wa.me/55${n}${txt?'?text='+encodeURIComponent(txt):''}`:'';}
 function renderClientes(){
   const busca=(document.getElementById('cli-busca').value||'').toLowerCase();
   const list=clienteList.filter(c=>!busca||c.nome.toLowerCase().includes(busca)||(c.comercio||'').toLowerCase().includes(busca)||(c.email||'').toLowerCase().includes(busca)||(c.telefone||'').includes(busca)||(c.cpfCnpj||'').includes(busca));
@@ -1844,27 +1898,30 @@ function renderClientes(){
     cont.innerHTML=`<div class="card" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
       <thead><tr style="border-bottom:2px solid var(--border);text-align:left">
         <th style="padding:8px 10px">Nome</th><th style="padding:8px 10px">Comércio</th>
-        <th style="padding:8px 10px">Telefone</th><th style="padding:8px 10px">E-mail</th>
+        <th style="padding:8px 10px">Telefone / WhatsApp</th><th style="padding:8px 10px">E-mail</th>
         <th style="padding:8px 10px">CPF/CNPJ</th><th style="padding:8px 10px;text-align:center">Ações</th>
       </tr></thead>
-      <tbody>${list.map(c=>`<tr style="border-bottom:1px solid var(--border)">
+      <tbody>${list.map(c=>{
+        const wl=wppLink(c.telefone);
+        return `<tr style="border-bottom:1px solid var(--border)">
         <td style="padding:8px 10px;font-weight:600">${esc(c.nome)}</td>
         <td style="padding:8px 10px;color:var(--muted)">${esc(c.comercio||'—')}</td>
-        <td style="padding:8px 10px">${esc(c.telefone||'—')}</td>
+        <td style="padding:8px 10px">${c.telefone?(wl?`<a href="${wl}" target="_blank" class="wpp-chip">💬 ${esc(c.telefone)}</a>`:esc(c.telefone)):'—'}</td>
         <td style="padding:8px 10px">${esc(c.email||'—')}</td>
         <td style="padding:8px 10px">${esc(c.cpfCnpj||'—')}</td>
         <td style="padding:8px 10px;text-align:center;white-space:nowrap">
           <button class="ta edit" onclick="editarCliente('${c.id}')" title="Editar">✏️</button>
           ${isAdmin()?`<button class="ta del" onclick="excluirCliente('${c.id}','${esc(c.nome)}')" title="Excluir">🗑️</button>`:''}
-        </td></tr>`).join('')}
+        </td></tr>`;}).join('')}
       </tbody></table></div>`;
     return;
   }
   cont.innerHTML=`<div class="cli-grid">${list.map(c=>{
     const ini=c.nome.trim().split(' ').filter(Boolean);
     const av=(ini[0]?.[0]||'').toUpperCase()+(ini[1]?.[0]||'').toUpperCase()||c.nome.charAt(0).toUpperCase();
+    const wl=wppLink(c.telefone);
     const chips=[
-      c.telefone?`<span class="client-chip">📞 ${esc(c.telefone)}</span>`:'',
+      c.telefone?(wl?`<a href="${wl}" target="_blank" class="wpp-chip">💬 ${esc(c.telefone)}</a>`:`<span class="client-chip">📞 ${esc(c.telefone)}</span>`):'',
       c.email?`<span class="client-chip">✉️ ${esc(c.email)}</span>`:'',
       c.cpfCnpj?`<span class="client-chip">🪪 ${esc(c.cpfCnpj)}</span>`:'',
       c.endereco?`<span class="client-chip">📍 ${esc(c.endereco.substring(0,30))}${c.endereco.length>30?'…':''}</span>`:'',
@@ -2044,7 +2101,10 @@ function renderKanban(list){
           ondragstart="dragKanban(event,'${p.id}')"
           ondragend="document.querySelectorAll('.kanban-card').forEach(c=>c.classList.remove('dragging'));document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));setTimeout(()=>{_dragPedidoId=null;},120)"
           onclick="if(!_dragPedidoId)verPedido('${p.id}')">
-          <div class="kanban-card-title">${esc(p.clienteNome)}</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="kanban-card-title" style="flex:1">${esc(p.clienteNome)}</div>
+            <button onclick="event.stopPropagation();wppPedido('${p.id}')" title="WhatsApp" style="border:none;background:none;cursor:pointer;font-size:14px;padding:0 0 0 4px;color:#25D366">💬</button>
+          </div>
           <div class="kanban-card-sub">${p.prazoEntrega?'📅 '+esc(p.prazoEntrega):'Sem prazo'}</div>
           ${p.orcamentoNum?`<div class="kanban-card-sub">🔗 Orç. N° ${String(p.orcamentoNum).padStart(3,'0')}</div>`:''}
           <div class="kanban-card-val">${fBRL(p.total||0)}</div>
@@ -2091,6 +2151,7 @@ function renderListaPedidos(list){
       <td>${p.orcamentoNum?`<span class="badge badge-orc">${String(p.orcamentoNum).padStart(3,'0')}</span>`:'—'}</td>
       <td><div class="tbl-actions">
         <button class="ta" onclick="verPedido('${p.id}')">👁️</button>
+        <button class="ta wpp" onclick="wppPedido('${p.id}')" title="Enviar WhatsApp">💬</button>
         <button class="ta edit" onclick="editarPedido('${p.id}')">✏️</button>
         ${isAdmin()?`<button class="ta del" onclick="excluirPedido('${p.id}')">🗑️</button>`:''}
       </div></td>
@@ -2117,6 +2178,7 @@ function verPedido(id){
   document.getElementById('mpd-total').innerHTML=`${descExibe}<span>${fBRL(p.total||0)}</span>`;
   document.getElementById('mpd-obs').innerHTML=(p.obs?'📝 '+esc(p.obs)+'<br>':'')+(p.pago&&p.valorRecebido?`<span style="color:#198754">💰 Recebido: ${fBRL(p.valorRecebido)}</span>`:'')||'';
   document.getElementById('mpd-btn-editar').onclick=()=>{closeModal('modal-ped-detalhe');editarPedido(p.id);};
+  document.getElementById('mpd-btn-wpp').onclick=()=>wppPedido(p);
   openModal('modal-ped-detalhe');
 }
 function abrirModalNovoPedido(){

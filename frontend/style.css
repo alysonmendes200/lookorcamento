@@ -233,6 +233,9 @@ select option { background:#fff; }
 .ta.nota:hover { color:var(--info); border-color:var(--info); }
 .ta.nf:hover   { color:var(--warning); border-color:var(--warning); }
 .ta.del:hover  { color:var(--danger); border-color:var(--danger); }
+.ta.wpp:hover  { color:#25D366; border-color:#25D366; }
+.wpp-chip { display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:2px 8px;color:var(--text);text-decoration:none;transition:background .15s,border-color .15s; }
+.wpp-chip:hover { background:#e6fdf0;border-color:#25D366;color:#128C7E; }
 
 /* ── MODAL ── */
 .modal-overlay {
@@ -240,6 +243,7 @@ select option { background:#fff; }
   z-index:1050; align-items:center; justify-content:center; padding:14px;
 }
 #modal-catalogo, #modal-catalogo-clientes { z-index:1200; }
+#modal-cliente { z-index:1300; }
 .modal-overlay.open { display:flex; }
 .modal {
   background:var(--surface); border:1px solid var(--border);
