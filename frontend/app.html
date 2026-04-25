@@ -994,8 +994,9 @@
             <input id="lsr-molde" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcLaser()">
           </div>
           <div class="fg" style="margin-top:8px">
-            <label>Custo Fita / Cola (R$)</label>
-            <input id="lsr-fita" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcLaser()">
+            <label>Fita / Cola (metros lineares)</label>
+            <input id="lsr-fita" type="number" min="0" step="0.1" placeholder="Ex: 2,5" oninput="calcLaser()">
+            <div class="input-helper">R$ 9,00 por metro linear</div>
           </div>
         </div>
 
@@ -3820,7 +3821,7 @@ function calcLaser() {
   const vcm2   = parseFloat(document.getElementById('lsr-vcm2')?.value)   || 0;
   const instal = parseFloat(document.getElementById('lsr-instal')?.value) || 0;
   const molde  = parseFloat(document.getElementById('lsr-molde')?.value)  || 0;
-  const fita   = parseFloat(document.getElementById('lsr-fita')?.value)   || 0;
+  const fita   = (parseFloat(document.getElementById('lsr-fita')?.value)   || 0) * 9.00;
 
   // Fórmulas exatas
   const tempo_seg          = vel > 0 ? Math.round(perim / vel) : 0;
