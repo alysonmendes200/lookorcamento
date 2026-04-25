@@ -116,6 +116,49 @@ async function init() {
   await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS pago BOOLEAN DEFAULT FALSE`);
   await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS valor_recebido NUMERIC(12,2) DEFAULT 0`);
 
+  /* status do orçamento: ativo | aprovado | cancelado */
+  await query(`ALTER TABLE orcamentos ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'ativo'`);
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS audit_logs (
+      id           TEXT PRIMARY KEY,
+      created_at   TIMESTAMP DEFAULT NOW(),
+      user_id      TEXT,
+      user_nome    TEXT,
+      user_login   TEXT,
+      acao         TEXT NOT NULL,
+      entidade     TEXT NOT NULL,
+      entidade_id  TEXT DEFAULT '',
+      label        TEXT DEFAULT '',
+      detalhes     JSONB DEFAULT '{}'
+    )
+  `);
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS insumos (
+      id            TEXT PRIMARY KEY,
+      nome          TEXT NOT NULL,
+      unidade       TEXT DEFAULT 'un',
+      custo         NUMERIC(12,4) DEFAULT 0,
+      categoria     TEXT DEFAULT '',
+      descricao     TEXT DEFAULT '',
+      criado_em     TEXT DEFAULT '',
+      atualizado_em TEXT DEFAULT ''
+    )
+  `);
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS servicos_prod (
+      id            TEXT PRIMARY KEY,
+      nome          TEXT NOT NULL,
+      tipo_custo    TEXT DEFAULT 'hora',
+      custo         NUMERIC(12,4) DEFAULT 0,
+      descricao     TEXT DEFAULT '',
+      criado_em     TEXT DEFAULT '',
+      atualizado_em TEXT DEFAULT ''
+    )
+  `);
+
   await query(`
     CREATE TABLE IF NOT EXISTS produtos (
       id            TEXT PRIMARY KEY,
@@ -229,7 +272,7 @@ const Orcamentos = {
       pagamento: 'pagamento', obs: 'obs', items: 'items', total: 'total',
       nfStatus: 'nf_status', nfFile: 'nf_file', nfOriginalName: 'nf_original_name',
       nfUploadedAt: 'nf_uploaded_at', pago: 'pago', valorRecebido: 'valor_recebido',
-      editedAt: 'edited_at', editedBy: 'edited_by'
+      editedAt: 'edited_at', editedBy: 'edited_by', status: 'status'
     };
     const fields = []; const values = []; let idx = 1;
     for (const [k, col] of Object.entries(map)) {
@@ -267,7 +310,8 @@ function fromDbOrc(r) {
     nfStatus: r.nf_status, nfFile: r.nf_file,
     nfOriginalName: r.nf_original_name, nfUploadedAt: r.nf_uploaded_at,
     pago: r.pago, valorRecebido: parseFloat(r.valor_recebido || 0),
-    editedAt: r.edited_at, editedBy: r.edited_by
+    editedAt: r.edited_at, editedBy: r.edited_by,
+    status: r.status || 'ativo'
   };
 }
 
@@ -509,4 +553,138 @@ function fromDbCaixa(r) {
   };
 }
 
-module.exports = { pool, query, init, Users, Orcamentos, Clientes, Pedidos, Produtos, Seq, Caixa };
+// ══════════════════════════════════════════════
+// AUDIT LOGS
+// ══════════════════════════════════════════════
+const AuditLogs = {
+  create: async (log) => {
+    await query(
+      `INSERT INTO audit_logs (id, user_id, user_nome, user_login, acao, entidade, entidade_id, label, detalhes)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [log.id, log.userId||'', log.userNome||'', log.userLogin||'',
+       log.acao, log.entidade, log.entidadeId||'', log.label||'',
+       JSON.stringify(log.detalhes||{})]
+    );
+  },
+  all: async ({ limit=200, offset=0, busca, acao, entidade } = {}) => {
+    const params = []; const where = [];
+    if (busca) {
+      params.push(`%${busca}%`);
+      where.push(`(user_nome ILIKE $${params.length} OR user_login ILIKE $${params.length} OR label ILIKE $${params.length} OR entidade_id ILIKE $${params.length})`);
+    }
+    if (acao)     { params.push(acao);     where.push(`acao = $${params.length}`); }
+    if (entidade) { params.push(entidade); where.push(`entidade = $${params.length}`); }
+    const cntRes = await query(
+      `SELECT COUNT(*) FROM audit_logs${where.length ? ' WHERE '+where.join(' AND ') : ''}`, params
+    );
+    params.push(parseInt(limit)||200, parseInt(offset)||0);
+    const { rows } = await query(
+      `SELECT * FROM audit_logs${where.length ? ' WHERE '+where.join(' AND ') : ''}
+       ORDER BY created_at DESC LIMIT $${params.length-1} OFFSET $${params.length}`, params
+    );
+    return { rows: rows.map(fromDbLog), total: parseInt(cntRes.rows[0].count) };
+  },
+  find: async (id) => {
+    const { rows } = await query('SELECT * FROM audit_logs WHERE id = $1', [id]);
+    return rows[0] ? fromDbLog(rows[0]) : null;
+  }
+};
+
+function fromDbLog(r) {
+  return {
+    id: r.id, createdAt: r.created_at,
+    userId: r.user_id, userNome: r.user_nome, userLogin: r.user_login,
+    acao: r.acao, entidade: r.entidade, entidadeId: r.entidade_id,
+    label: r.label,
+    detalhes: typeof r.detalhes === 'string' ? JSON.parse(r.detalhes) : (r.detalhes || {})
+  };
+}
+
+async function logAudit(req, acao, entidade, entidadeId, label, detalhes) {
+  const { v4: uuidv4 } = require('uuid');
+  try {
+    await AuditLogs.create({
+      id: uuidv4(),
+      userId:    req.user?.id       || '',
+      userNome:  req.user?.nome     || '',
+      userLogin: req.user?.username || '',
+      acao, entidade, entidadeId: String(entidadeId||''), label: String(label||''),
+      detalhes: detalhes || {}
+    });
+  } catch(e) { console.error('logAudit error:', e.message); }
+}
+
+// ══════════════════════════════════════════════
+// INSUMOS
+// ══════════════════════════════════════════════
+const Insumos = {
+  all: async () => {
+    const { rows } = await query('SELECT * FROM insumos ORDER BY categoria, nome');
+    return rows.map(fromDbInsumo);
+  },
+  find: async (id) => {
+    const { rows } = await query('SELECT * FROM insumos WHERE id = $1', [id]);
+    return rows[0] ? fromDbInsumo(rows[0]) : null;
+  },
+  create: async (d) => {
+    const { rows } = await query(
+      `INSERT INTO insumos (id, nome, unidade, custo, categoria, descricao, criado_em)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+      [d.id, d.nome, d.unidade||'un', d.custo||0, d.categoria||'', d.descricao||'', d.criadoEm||new Date().toISOString()]
+    );
+    return fromDbInsumo(rows[0]);
+  },
+  update: async (id, d) => {
+    const { rows } = await query(
+      `UPDATE insumos SET nome=$2, unidade=$3, custo=$4, categoria=$5, descricao=$6, atualizado_em=$7
+       WHERE id=$1 RETURNING *`,
+      [id, d.nome, d.unidade||'un', d.custo||0, d.categoria||'', d.descricao||'', new Date().toISOString()]
+    );
+    return fromDbInsumo(rows[0]);
+  },
+  delete: async (id) => { await query('DELETE FROM insumos WHERE id = $1', [id]); }
+};
+
+function fromDbInsumo(r) {
+  return { id: r.id, nome: r.nome, unidade: r.unidade, custo: parseFloat(r.custo)||0,
+           categoria: r.categoria||'', descricao: r.descricao||'',
+           criadoEm: r.criado_em, atualizadoEm: r.atualizado_em };
+}
+
+// ══════════════════════════════════════════════
+// SERVIÇOS DE PRODUÇÃO
+// ══════════════════════════════════════════════
+const ServicosProd = {
+  all: async () => {
+    const { rows } = await query('SELECT * FROM servicos_prod ORDER BY nome');
+    return rows.map(fromDbServico);
+  },
+  find: async (id) => {
+    const { rows } = await query('SELECT * FROM servicos_prod WHERE id = $1', [id]);
+    return rows[0] ? fromDbServico(rows[0]) : null;
+  },
+  create: async (d) => {
+    const { rows } = await query(
+      `INSERT INTO servicos_prod (id, nome, tipo_custo, custo, descricao, criado_em)
+       VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+      [d.id, d.nome, d.tipoCusto||'hora', d.custo||0, d.descricao||'', d.criadoEm||new Date().toISOString()]
+    );
+    return fromDbServico(rows[0]);
+  },
+  update: async (id, d) => {
+    const { rows } = await query(
+      `UPDATE servicos_prod SET nome=$2, tipo_custo=$3, custo=$4, descricao=$5, atualizado_em=$6
+       WHERE id=$1 RETURNING *`,
+      [id, d.nome, d.tipoCusto||'hora', d.custo||0, d.descricao||'', new Date().toISOString()]
+    );
+    return fromDbServico(rows[0]);
+  },
+  delete: async (id) => { await query('DELETE FROM servicos_prod WHERE id = $1', [id]); }
+};
+
+function fromDbServico(r) {
+  return { id: r.id, nome: r.nome, tipoCusto: r.tipo_custo, custo: parseFloat(r.custo)||0,
+           descricao: r.descricao||'', criadoEm: r.criado_em, atualizadoEm: r.atualizado_em };
+}
+
+module.exports = { pool, query, init, Users, Orcamentos, Clientes, Pedidos, Produtos, Seq, Caixa, AuditLogs, logAudit, Insumos, ServicosProd };
