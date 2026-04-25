@@ -432,6 +432,85 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
 .badge-orc-cancelado { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
 .badge-orc-ativo     { background:var(--azul-bg); color:var(--azul); border:1px solid var(--border); }
 
+/* ── CALCULADORA LASER ── */
+.laser-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.laser-inputs { display: flex; flex-direction: column; gap: 14px; }
+.laser-block  { padding: 20px 22px; }
+.laser-block-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--azul);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 16px;
+}
+.laser-hint {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  line-height: 1.5;
+}
+.laser-hint code { font-family: monospace; color: var(--azul); }
+.laser-results { display: flex; flex-direction: column; gap: 14px; }
+.laser-summary { padding: 22px 24px; }
+.laser-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.laser-row:last-child { border-bottom: none; }
+.laser-row-label { font-size: 13px; color: var(--muted); }
+.laser-row-val   { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.laser-row-total .laser-row-label { color: var(--text); font-weight: 700; }
+.laser-row-total .laser-row-val   { color: var(--azul); font-size: 16px; }
+.laser-preco-card {
+  background: linear-gradient(135deg, var(--azul) 0%, #5b4cde 100%);
+  border-radius: 18px;
+  padding: 28px 30px;
+  text-align: center;
+  box-shadow: 0 6px 24px rgba(58,110,255,.28);
+  color: #fff;
+}
+.laser-preco-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  opacity: .85;
+  margin-bottom: 10px;
+}
+.laser-preco-val {
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.laser-preco-sub {
+  font-size: 13px;
+  margin-top: 10px;
+  opacity: .75;
+  font-weight: 600;
+}
+@media (max-width: 900px) {
+  .laser-grid { grid-template-columns: 1fr; }
+  .laser-preco-val { font-size: 34px; }
+}
+
 /* ── CALC TOOLS (Banner, Papel de Parede) ── */
 .calc-tool-wrap {
   display: grid;
