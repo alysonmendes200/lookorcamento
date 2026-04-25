@@ -1170,104 +1170,102 @@
   <div class="page" id="page-integracao-wpp">
     <div class="page-header">
       <div class="page-title">Integração WhatsApp API</div>
-      <div class="page-sub">Conecte seu sistema para envios automáticos via API oficial</div>
+      <div class="page-sub">Conexão via QR Code — Evolution API, Z-API ou similar</div>
     </div>
 
-    <div class="wpp-int-wrap">
+    <div class="wpp-qr-layout">
 
-      <!-- Card central de configuração -->
-      <div class="card wpp-int-card">
-
-        <!-- Ícone + status -->
-        <div class="wpp-int-hero">
+      <!-- ── CARD ESQUERDO: CREDENCIAIS ── -->
+      <div class="card wpp-qr-config">
+        <div class="wpp-card-head">
           <div class="wpp-int-icon">
-            <svg width="32" height="32" fill="none" stroke="#25D366" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            <svg width="22" height="22" fill="none" stroke="#25D366" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
           </div>
           <div>
-            <div class="wpp-int-name">WhatsApp Business API</div>
-            <div class="wpp-int-status" id="wpp-status-badge">
+            <div class="wpp-int-name">Credenciais da API</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Evolution API · Z-API · WPPConnect</div>
+          </div>
+        </div>
+
+        <hr class="wpp-divider">
+
+        <div class="fg wpp-field">
+          <label>URL da API <span class="wpp-required">*</span></label>
+          <input id="wpp-url" type="text" placeholder="Ex: https://api.seuservidor.com.br" autocomplete="off" spellcheck="false">
+          <div class="input-helper">Endereço onde sua instância está hospedada</div>
+        </div>
+
+        <div class="fg wpp-field">
+          <label>Nome da Instância <span class="wpp-required">*</span></label>
+          <input id="wpp-instancia" type="text" placeholder="Ex: look-principal" autocomplete="off">
+          <div class="input-helper">Nome da instância criada no painel da API</div>
+        </div>
+
+        <div class="fg wpp-field" style="margin-bottom:0">
+          <label>Token da Instância (API Key) <span class="wpp-required">*</span></label>
+          <div class="wpp-input-wrap">
+            <input id="wpp-apikey" type="password" placeholder="Cole a API Key da instância" autocomplete="off" spellcheck="false">
+            <button class="wpp-eye-btn" type="button" onclick="wppToggleToken()" title="Mostrar / ocultar token">
+              <svg id="wpp-eye-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="input-helper">Chave de autenticação gerada no painel da API</div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:20px" onclick="wppSalvar()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Salvar Configurações
+        </button>
+      </div>
+
+      <!-- ── CARD DIREITO: QR CODE ── -->
+      <div class="card wpp-qr-conn">
+        <div class="wpp-card-head">
+          <div class="wpp-int-icon" id="wpp-icon-conn">
+            <svg width="22" height="22" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><path d="M21 16h-3v3m0-3v3M16 16h.01M21 21h.01"/><path d="M3 10h3M3 14h3M10 3v3M14 3v3M10 21v-3M14 21v-3M10 10h4v4h-4z"/></svg>
+          </div>
+          <div>
+            <div class="wpp-int-name">Status da Conexão</div>
+            <div id="wpp-status-badge" class="wpp-status-badge wpp-status-desconectado">
               <span class="wpp-dot" id="wpp-dot"></span>
-              <span id="wpp-status-txt">Não configurado</span>
+              <span id="wpp-status-txt">Desconectado</span>
             </div>
           </div>
         </div>
 
         <hr class="wpp-divider">
 
-        <!-- Campo: API Token -->
-        <div class="fg wpp-field">
-          <label>
-            API Token do WhatsApp
-            <span class="wpp-required">*</span>
-          </label>
-          <div class="wpp-input-wrap">
-            <input id="wpp-token" type="password" placeholder="Cole aqui o token da API oficial (EAA...)" autocomplete="off" spellcheck="false">
-            <button class="wpp-eye-btn" type="button" onclick="wppToggleToken()" title="Mostrar / ocultar token">
-              <svg id="wpp-eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
+        <!-- Área do QR Code -->
+        <div class="wpp-qr-area" id="wpp-qr-area">
+          <div id="wpp-qr-placeholder">
+            <svg width="56" height="56" fill="none" stroke="var(--border)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><path d="M21 16h-3v3m0-3v3M16 16h.01M21 21h.01"/><path d="M3 10h3M3 14h3M10 3v3M14 3v3M10 21v-3M14 21v-3M10 10h4v4h-4z"/></svg>
+            <p>Clique em <strong>Conectar</strong><br>para gerar o QR Code</p>
           </div>
-          <div class="input-helper">Encontre o token no painel: Meta for Developers → App → WhatsApp → API Setup</div>
-        </div>
-
-        <!-- Campo: Phone Number ID -->
-        <div class="fg wpp-field">
-          <label>Phone Number ID</label>
-          <input id="wpp-phone-id" type="text" placeholder="Ex: 123456789012345" autocomplete="off">
-          <div class="input-helper">ID do número cadastrado na API (não é o número de telefone)</div>
-        </div>
-
-        <!-- Campo: Webhook URL (readonly + copiar) -->
-        <div class="fg wpp-field">
-          <label>Webhook URL <span style="font-weight:400;color:var(--muted)">(para colar no painel da Meta)</span></label>
-          <div class="wpp-input-wrap">
-            <input id="wpp-webhook" type="text" readonly value="https://meuerp.com.br/api/webhook/whatsapp" style="cursor:default;color:var(--muted)">
-            <button class="wpp-copy-btn" type="button" onclick="wppCopiarWebhook()" title="Copiar URL">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              Copiar
-            </button>
+          <div id="wpp-qr-lendo" style="display:none;text-align:center">
+            <div class="wpp-spinner"></div>
+            <p style="margin-top:14px;font-size:13px;color:var(--muted)">Gerando QR Code…</p>
           </div>
-          <div class="input-helper">Cole essa URL em: Meta → WhatsApp → Configuration → Webhook → Callback URL</div>
-        </div>
-
-        <!-- Campo: Verify Token -->
-        <div class="fg wpp-field">
-          <label>Verify Token do Webhook</label>
-          <div class="wpp-input-wrap">
-            <input id="wpp-verify" type="text" placeholder="Ex: meu_token_secreto_123" autocomplete="off">
-            <button class="wpp-copy-btn" type="button" onclick="wppCopiarVerify()" title="Copiar">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              Copiar
-            </button>
-          </div>
-          <div class="input-helper">Defina um texto secreto aqui e use o mesmo no campo "Verify Token" da Meta</div>
-        </div>
-
-        <hr class="wpp-divider">
-
-        <!-- Guia rápido -->
-        <div class="wpp-guide">
-          <div class="wpp-guide-title">Como configurar em 4 passos</div>
-          <div class="wpp-guide-steps">
-            <div class="wpp-step"><span class="wpp-step-n">1</span><span>Acesse <strong>developers.facebook.com</strong> e crie um App do tipo Business</span></div>
-            <div class="wpp-step"><span class="wpp-step-n">2</span><span>Adicione o produto <strong>WhatsApp</strong> e copie o <strong>API Token</strong> e o <strong>Phone Number ID</strong></span></div>
-            <div class="wpp-step"><span class="wpp-step-n">3</span><span>Em <strong>WhatsApp → Configuration → Webhook</strong>, cole a <strong>Webhook URL</strong> e o <strong>Verify Token</strong></span></div>
-            <div class="wpp-step"><span class="wpp-step-n">4</span><span>Cole os dados aqui, clique em <strong>Salvar</strong> e depois em <strong>Testar Conexão</strong></span></div>
+          <img id="wpp-qr-img" src="" alt="QR Code" style="display:none;max-width:220px;border-radius:8px">
+          <div id="wpp-qr-conectado" style="display:none;text-align:center">
+            <div style="font-size:48px">✅</div>
+            <p style="font-size:15px;font-weight:700;color:#198754;margin-top:8px">WhatsApp Conectado!</p>
+            <p style="font-size:12px;color:var(--muted);margin-top:4px" id="wpp-numero-conectado"></p>
           </div>
         </div>
 
-        <!-- Botões -->
-        <div class="wpp-actions">
-          <button class="btn btn-ghost" style="flex:1" onclick="wppTestarConexao()">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
-            Testar Conexão
+        <!-- Botões de ação -->
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn wpp-btn-conectar" id="wpp-btn-conectar" onclick="wppGerarQR()" style="flex:1">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
+            Gerar QR Code / Conectar
           </button>
-          <button class="btn btn-primary" style="flex:2" onclick="wppSalvar()">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            Salvar Configurações
+          <button class="btn wpp-btn-desconectar" id="wpp-btn-desconectar" onclick="wppDesconectar()" style="flex:1">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Desconectar
           </button>
         </div>
+      </div>
 
-      </div><!-- /card -->
     </div>
   </div>
 
@@ -4057,31 +4055,65 @@ function copiarLaser() {
 
 function goPageIntegracaoWpp() {
   const cfg = _wppCarregarCfg();
-  document.getElementById('wpp-token').value   = cfg.token    || '';
-  document.getElementById('wpp-phone-id').value= cfg.phoneId  || '';
-  document.getElementById('wpp-verify').value  = cfg.verify   || '';
-  _wppAtualizarStatus(!!cfg.token);
+  document.getElementById('wpp-url').value       = cfg.url       || '';
+  document.getElementById('wpp-instancia').value = cfg.instancia || '';
+  document.getElementById('wpp-apikey').value    = cfg.apikey    || '';
+  // Restaura estado visual salvo
+  if (cfg.conectado) _wppSetStatus('conectado', cfg.numero || '');
+  else               _wppSetStatus('desconectado');
 }
 
 function _wppCarregarCfg() {
-  try { return JSON.parse(localStorage.getItem('lookWppConfig') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem('lookWppQRConfig') || '{}'); } catch { return {}; }
 }
 
-function _wppAtualizarStatus(configurado) {
-  const dot = document.getElementById('wpp-dot');
-  const txt = document.getElementById('wpp-status-txt');
-  if (!dot || !txt) return;
-  if (configurado) {
-    dot.className = 'wpp-dot'; // reset — testar conexão define online/error
-    txt.textContent = 'Token salvo — clique em Testar Conexão';
-  } else {
-    dot.className = 'wpp-dot';
-    txt.textContent = 'Não configurado';
+function _wppSetStatus(estado, extra) {
+  const badge = document.getElementById('wpp-status-badge');
+  const dot   = document.getElementById('wpp-dot');
+  const txt   = document.getElementById('wpp-status-txt');
+  const ph    = document.getElementById('wpp-qr-placeholder');
+  const lendo = document.getElementById('wpp-qr-lendo');
+  const img   = document.getElementById('wpp-qr-img');
+  const ok    = document.getElementById('wpp-qr-conectado');
+  const num   = document.getElementById('wpp-numero-conectado');
+  const icon  = document.getElementById('wpp-icon-conn');
+
+  const esconder = (...els) => els.forEach(e => e && (e.style.display='none'));
+  const mostrar  = (...els) => els.forEach(e => e && (e.style.display=''));
+
+  // Zera tudo
+  esconder(lendo, img, ok);
+  if (badge) badge.className = 'wpp-status-badge';
+
+  if (estado === 'aguardando') {
+    mostrar(lendo); esconder(ph);
+    if (badge) badge.classList.add('wpp-status-aguardando');
+    if (dot)   dot.className = 'wpp-dot amarelo';
+    if (txt)   txt.textContent = 'Aguardando leitura…';
+    if (icon)  icon.style.background = '#fff8e1';
+    if (icon)  icon.querySelector('svg').setAttribute('stroke','#f59e0b');
+
+  } else if (estado === 'conectado') {
+    mostrar(ok); esconder(ph);
+    if (badge) badge.classList.add('wpp-status-conectado');
+    if (dot)   dot.className = 'wpp-dot online';
+    if (txt)   txt.textContent = 'Conectado';
+    if (num)   num.textContent = extra || '';
+    if (icon)  icon.style.background = '#e8fdf0';
+    if (icon)  icon.querySelector('svg').setAttribute('stroke','#25D366');
+
+  } else { // desconectado
+    mostrar(ph);
+    if (badge) badge.classList.add('wpp-status-desconectado');
+    if (dot)   dot.className = 'wpp-dot';
+    if (txt)   txt.textContent = 'Desconectado';
+    if (icon)  icon.style.background = 'var(--surface)';
+    if (icon)  icon.querySelector('svg').setAttribute('stroke','var(--muted)');
   }
 }
 
 function wppToggleToken() {
-  const inp  = document.getElementById('wpp-token');
+  const inp  = document.getElementById('wpp-apikey');
   const icon = document.getElementById('wpp-eye-icon');
   const show = inp.type === 'password';
   inp.type = show ? 'text' : 'password';
@@ -4090,72 +4122,57 @@ function wppToggleToken() {
     : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
 }
 
-function wppCopiarWebhook() {
-  const url = document.getElementById('wpp-webhook').value;
-  navigator.clipboard.writeText(url)
-    .then(() => toast('URL do Webhook copiada!', 'success'))
-    .catch(() => prompt('Copie a URL:', url));
-}
-
-function wppCopiarVerify() {
-  const v = document.getElementById('wpp-verify').value.trim();
-  if (!v) { toast('Informe o Verify Token primeiro.', 'error'); return; }
-  navigator.clipboard.writeText(v)
-    .then(() => toast('Verify Token copiado!', 'success'))
-    .catch(() => prompt('Copie o token:', v));
-}
-
 function wppSalvar() {
-  const token   = document.getElementById('wpp-token').value.trim();
-  const phoneId = document.getElementById('wpp-phone-id').value.trim();
-  const verify  = document.getElementById('wpp-verify').value.trim();
+  const url      = document.getElementById('wpp-url').value.trim();
+  const instancia= document.getElementById('wpp-instancia').value.trim();
+  const apikey   = document.getElementById('wpp-apikey').value.trim();
 
-  if (!token)   { toast('Informe o API Token.', 'error');   document.getElementById('wpp-token').focus();   return; }
-  if (!phoneId) { toast('Informe o Phone Number ID.', 'error'); document.getElementById('wpp-phone-id').focus(); return; }
-  if (!verify)  { toast('Defina o Verify Token do Webhook.', 'error'); document.getElementById('wpp-verify').focus(); return; }
+  if (!url)      { toast('Informe a URL da API.', 'error');          document.getElementById('wpp-url').focus();      return; }
+  if (!instancia){ toast('Informe o nome da instância.', 'error');   document.getElementById('wpp-instancia').focus();return; }
+  if (!apikey)   { toast('Informe o Token da instância.', 'error'); document.getElementById('wpp-apikey').focus();   return; }
 
-  localStorage.setItem('lookWppConfig', JSON.stringify({ token, phoneId, verify }));
-  _wppAtualizarStatus(true);
-  toast('Configurações salvas com sucesso!', 'success');
+  const cfg = _wppCarregarCfg();
+  localStorage.setItem('lookWppQRConfig', JSON.stringify({ url, instancia, apikey, conectado: cfg.conectado||false, numero: cfg.numero||'' }));
+  toast('Configurações salvas!', 'success');
 }
 
-async function wppTestarConexao() {
-  const token   = document.getElementById('wpp-token').value.trim();
-  const phoneId = document.getElementById('wpp-phone-id').value.trim();
-  const dot = document.getElementById('wpp-dot');
-  const txt = document.getElementById('wpp-status-txt');
-
-  if (!token || !phoneId) {
-    toast('Salve o Token e o Phone Number ID antes de testar.', 'error');
+function wppGerarQR() {
+  const url      = document.getElementById('wpp-url')?.value.trim();
+  const instancia= document.getElementById('wpp-instancia')?.value.trim();
+  if (!url || !instancia) {
+    toast('Salve as credenciais antes de conectar.', 'error');
     return;
   }
 
-  if (txt) txt.textContent = 'Testando conexão…';
-  if (dot) dot.className = 'wpp-dot';
+  _wppSetStatus('aguardando');
+  document.getElementById('wpp-btn-conectar').disabled = true;
 
-  try {
-    // Testa chamando o endpoint de perfil do número na API Graph da Meta
-    const res = await fetch(
-      `https://graph.facebook.com/v19.0/${phoneId}?fields=display_phone_number,verified_name&access_token=${token}`
-    );
-    const data = await res.json();
+  // Simulação: em produção, chame sua API aqui para buscar o QR Code Base64
+  // Ex (Evolution API): GET {url}/instance/connect/{instancia}
+  // A resposta traz { base64: "data:image/png;base64,..." }
+  setTimeout(() => {
+    // Simula conexão bem-sucedida após leitura
+    _wppSetStatus('conectado', instancia + ' · Número fictício');
+    document.getElementById('wpp-btn-conectar').disabled = false;
 
-    if (data.error) {
-      if (dot) dot.className = 'wpp-dot error';
-      if (txt) txt.textContent = `Erro: ${data.error.message}`;
-      toast(`Falha: ${data.error.message}`, 'error');
-    } else {
-      if (dot) dot.className = 'wpp-dot online';
-      const nome   = data.verified_name || 'Conta';
-      const numero = data.display_phone_number || phoneId;
-      if (txt) txt.textContent = `Conectado — ${nome} (${numero})`;
-      toast(`Conexão OK! Número: ${numero}`, 'success');
-    }
-  } catch (e) {
-    if (dot) dot.className = 'wpp-dot error';
-    if (txt) txt.textContent = 'Sem resposta da API';
-    toast('Não foi possível conectar. Verifique o token.', 'error');
-  }
+    // Persiste estado
+    const cfg = _wppCarregarCfg();
+    cfg.conectado = true;
+    cfg.numero = instancia;
+    localStorage.setItem('lookWppQRConfig', JSON.stringify(cfg));
+    toast('WhatsApp conectado com sucesso!', 'success');
+  }, 3000);
+}
+
+function wppDesconectar() {
+  if (!confirm('Deseja mesmo desconectar o WhatsApp?')) return;
+  _wppSetStatus('desconectado');
+  document.getElementById('wpp-btn-conectar').disabled = false;
+
+  const cfg = _wppCarregarCfg();
+  cfg.conectado = false; cfg.numero = '';
+  localStorage.setItem('lookWppQRConfig', JSON.stringify(cfg));
+  toast('WhatsApp desconectado.', 'success');
 }
 
 // ════ TEMPLATES DE MENSAGEM ══════════════════════════════
