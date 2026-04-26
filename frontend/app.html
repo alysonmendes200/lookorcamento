@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Look — Sistema de Orçamentos</title>
+<link rel="icon" href="assets/look.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <style>
 /* ══ MÓDULOS EXTRAS ══════════════════════════════════════ */
@@ -22,6 +23,30 @@
 .roi-canal-bar{height:8px;background:var(--azul);border-radius:4px;transition:width .4s;}
 .roi-canal-val{min-width:90px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:700;}
 .roi-canal-qtd{min-width:36px;text-align:right;font-size:11px;color:var(--muted);}
+
+/* ══ DASHBOARD HERO ══════════════════════════════════ */
+.dash-hero{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.dash-hero-card{background:linear-gradient(135deg,#001433 0%,#003399 100%);border-radius:14px;padding:22px 24px;color:#fff;position:relative;overflow:hidden;}
+.dash-hero-card::after{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:rgba(255,255,255,.06);border-radius:50%;}
+.dash-hero-card::before{content:'';position:absolute;right:20px;bottom:-30px;width:70px;height:70px;background:rgba(255,255,255,.04);border-radius:50%;}
+.dash-hero-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.7;margin-bottom:6px;}
+.dash-hero-val{font-size:28px;font-weight:800;font-family:var(--mono);letter-spacing:-.01em;}
+.dash-hero-sub{font-size:12px;opacity:.65;margin-top:4px;}
+.dash-hero-card.verde{background:linear-gradient(135deg,#0a4a28 0%,#198754 100%);}
+.dash-hero-card.vermelho{background:linear-gradient(135deg,#4a0a0a 0%,#dc3545 100%);}
+.dash-hero-card.laranja{background:linear-gradient(135deg,#4a2800 0%,#e8a020 100%);}
+
+/* KPI mini cards (linha secundária) */
+.dash-mini-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;}
+.dash-mini{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.dash-mini-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.dash-mini-icon.azul{background:#e8eeff;}
+.dash-mini-icon.verde{background:#d4edda;}
+.dash-mini-icon.laranja{background:#fff3cd;}
+.dash-mini-icon.roxo{background:#ede7f6;}
+.dash-mini-body{flex:1;min-width:0;}
+.dash-mini-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+.dash-mini-val{font-size:18px;font-weight:700;color:var(--text);margin-top:1px;}
 
 /* Número do pedido badge */
 .ped-num-badge{display:inline-block;background:#003399;color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;font-family:var(--mono);letter-spacing:.04em;}
@@ -109,7 +134,7 @@
 .prod-item-preco{font-size:12px;color:var(--azul);font-weight:700;margin-top:4px;font-family:var(--mono);}
 .prod-cat-badge{display:inline-block;padding:1px 7px;border-radius:10px;background:var(--border);color:var(--muted);font-size:10px;font-weight:600;margin-bottom:3px;}
 
-/* Tabela produtos */
+/* Tabela produtos — legado (mantido para catálogo no modal) */
 .prod-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
 .prod-row:last-child{border-bottom:none;}
 .prod-row-icon{width:36px;height:36px;border-radius:8px;background:var(--azul-bg);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
@@ -120,6 +145,25 @@
 .prod-row-actions{display:flex;gap:6px;flex-shrink:0;}
 .badge-ativo{background:#d4edda;color:#155724;border:1px solid #c3e6cb;font-size:10px;padding:1px 6px;border-radius:8px;}
 .badge-inativo{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;font-size:10px;padding:1px 6px;border-radius:8px;}
+
+/* Cards de produto (aba Produtos) */
+.prod-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.prod-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:0;overflow:hidden;transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column;}
+.prod-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.09);transform:translateY(-2px);}
+.prod-card-header{background:var(--azul-bg);padding:16px;display:flex;align-items:center;gap:12px;}
+.prod-card-avatar{width:44px;height:44px;background:var(--azul);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;color:#fff;}
+.prod-card-titulo{flex:1;min-width:0;}
+.prod-card-nome{font-weight:700;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prod-card-cat{font-size:11px;color:var(--azul);font-weight:600;margin-top:2px;}
+.prod-card-body{padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:6px;}
+.prod-card-desc{font-size:12px;color:var(--muted);line-height:1.4;flex:1;}
+.prod-card-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);background:var(--bg);}
+.prod-card-preco{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--azul);}
+.prod-card-actions{display:flex;gap:6px;}
+
+/* Cabeçalho de categoria na aba Produtos */
+.prod-cat-header{display:flex;align-items:center;gap:8px;margin:20px 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.prod-cat-header::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* ── KANBAN DRAG-DROP ──────────────────────────── */
 .kanban-card{cursor:grab;user-select:none;}
@@ -156,9 +200,10 @@
 
 <!-- ══ SIDEBAR ══════════════════════════════════════ -->
 <nav class="sidebar">
-  <div class="sidebar-logo">
-    <img src="assets/look.svg" alt="Look">
-    <span class="sidebar-logo-text">Orçamentos</span>
+  <div class="sidebar-logo" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:16px">
+    <img src="assets/look.svg" alt="Look Imprimindo Ideias" style="height:36px;filter:brightness(0) invert(1)">
+    <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.55;margin-top:1px">Imprimindo Ideias</div>
+    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;opacity:.8;background:rgba(255,255,255,.12);border-radius:4px;padding:2px 8px;margin-top:2px">Sistema ERP</div>
   </div>
   <div class="sidebar-user">
     <div class="avatar" id="sb-av">A</div>
@@ -493,14 +538,48 @@
     </div>
     <!-- Cada div#dash-s-* é uma seção reordenável pelo config -->
     <div id="dash-s-kpis">
-      <div class="dash-grid">
-        <div class="dash-card azul"><div class="dash-card-icon">📋</div><div class="dash-card-label">Total Orçamentos</div><div class="dash-card-val" id="dash-tot-orc">—</div></div>
-        <div class="dash-card verde"><div class="dash-card-icon">💰</div><div class="dash-card-label">Recebido (Orç.)</div><div class="dash-card-val sm" id="dash-recebido">—</div></div>
-        <div class="dash-card laranja"><div class="dash-card-icon">⏳</div><div class="dash-card-label">A Receber (Orç.)</div><div class="dash-card-val sm" id="dash-areceber">—</div></div>
-        <div class="dash-card azul"><div class="dash-card-icon">👥</div><div class="dash-card-label">Clientes</div><div class="dash-card-val" id="dash-clientes">—</div></div>
-        <div class="dash-card verde"><div class="dash-card-icon">📦</div><div class="dash-card-label">Pedidos Abertos</div><div class="dash-card-val" id="dash-pedidos-abertos">—</div></div>
-        <div class="dash-card laranja"><div class="dash-card-icon">🛒</div><div class="dash-card-label">Pedidos Pagos</div><div class="dash-card-val sm" id="dash-pedidos-pagos">—</div></div>
+      <!-- Hero row: métricas principais em destaque -->
+      <div class="dash-hero">
+        <div class="dash-hero-card">
+          <div class="dash-hero-label">💰 Faturamento Total</div>
+          <div class="dash-hero-val" id="dash-fat-hero">—</div>
+          <div class="dash-hero-sub" id="dash-fat-hero-sub">Orçamentos + Pedidos</div>
+        </div>
+        <div class="dash-hero-card verde">
+          <div class="dash-hero-label">✅ Total Recebido</div>
+          <div class="dash-hero-val" id="dash-recebido-hero">—</div>
+          <div class="dash-hero-sub" id="dash-recebido-hero-sub">Confirmados e pagos</div>
+        </div>
       </div>
+      <!-- Mini cards: métricas secundárias -->
+      <div class="dash-mini-grid">
+        <div class="dash-mini">
+          <div class="dash-mini-icon azul">📋</div>
+          <div class="dash-mini-body"><div class="dash-mini-label">Orçamentos</div><div class="dash-mini-val" id="dash-tot-orc">—</div></div>
+        </div>
+        <div class="dash-mini">
+          <div class="dash-mini-icon laranja">⏳</div>
+          <div class="dash-mini-body"><div class="dash-mini-label">A Receber</div><div class="dash-mini-val" id="dash-areceber">—</div></div>
+        </div>
+        <div class="dash-mini">
+          <div class="dash-mini-icon verde">👥</div>
+          <div class="dash-mini-body"><div class="dash-mini-label">Clientes</div><div class="dash-mini-val" id="dash-clientes">—</div></div>
+        </div>
+        <div class="dash-mini">
+          <div class="dash-mini-icon azul">📦</div>
+          <div class="dash-mini-body"><div class="dash-mini-label">Pedidos Abertos</div><div class="dash-mini-val" id="dash-pedidos-abertos">—</div></div>
+        </div>
+        <div class="dash-mini">
+          <div class="dash-mini-icon verde">🛒</div>
+          <div class="dash-mini-body"><div class="dash-mini-label">Pedidos Pagos</div><div class="dash-mini-val" id="dash-pedidos-pagos">—</div></div>
+        </div>
+        <div class="dash-mini">
+          <div class="dash-mini-icon roxo">🎨</div>
+          <div class="dash-mini-body"><div class="dash-mini-label">Ag. Aprovação</div><div class="dash-mini-val" id="dash-ag-aprov">—</div></div>
+        </div>
+      </div>
+      <!-- Recebido (Orçamentos) — mantido para compatibilidade com JS existente, oculto -->
+      <span id="dash-recebido" style="display:none"></span>
     </div>
     <div id="dash-s-financeiro">
       <div class="card" style="margin-bottom:14px">
@@ -2879,22 +2958,31 @@ function renderProdutos(){
   });
   const cont=document.getElementById('prod-list');
   if(!list.length){cont.innerHTML='<div class="empty">'+(produtoList.length?'Nenhum encontrado.':'Clique em "Novo Produto" para cadastrar.')+'</div>';return;}
-  // Agrupa por categoria
+  // Ícone por categoria
+  const catIcon=c=>{const m={'Impressão':'🖨️','Banner':'🏳️','Adesivo':'🏷️','Camiseta':'👕','Caneca':'☕','Papel':'📄','Placa':'🪧','Cartão':'💳','Frente e Verso':'↕️','Digital':'💻','Brinde':'🎁','Serviço':'⚙️'};return m[c]||'📦';};
   const cats={};list.forEach(p=>{const c=p.categoria||'Sem categoria';if(!cats[c])cats[c]=[];cats[c].push(p);});
   cont.innerHTML=Object.entries(cats).map(([cat,itens])=>`
-    <div style="margin-bottom:16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">${esc(cat)}</div>
+    <div class="prod-cat-header">${catIcon(cat)} ${esc(cat)} <span style="background:var(--border);border-radius:10px;padding:1px 7px;font-size:10px">${itens.length}</span></div>
+    <div class="prod-card-grid">
       ${itens.map(p=>`
-        <div class="prod-row">
-          <div class="prod-row-icon">📦</div>
-          <div class="prod-row-info">
-            <div class="prod-row-nome">${esc(p.nome)} <span class="${p.ativo?'badge-ativo':'badge-inativo'}">${p.ativo?'Ativo':'Inativo'}</span></div>
-            <div class="prod-row-sub">${esc(p.descricao||'')}${p.unidade?` · ${esc(p.unidade)}`:''}</div>
+        <div class="prod-card">
+          <div class="prod-card-header">
+            <div class="prod-card-avatar">${catIcon(cat)}</div>
+            <div class="prod-card-titulo">
+              <div class="prod-card-nome" title="${esc(p.nome)}">${esc(p.nome)}</div>
+              <div class="prod-card-cat">${esc(p.categoria||'Sem categoria')} · ${esc(p.unidade||'un')}</div>
+            </div>
+            <span class="${p.ativo?'badge-ativo':'badge-inativo'}">${p.ativo?'Ativo':'Inativo'}</span>
           </div>
-          <div class="prod-row-preco">${fBRL(p.preco)}</div>
-          <div class="prod-row-actions">
-            <button class="ta edit" title="Editar" onclick="editarProduto('${p.id}')">✏️</button>
-            ${isAdmin()?`<button class="ta del" title="Excluir" onclick="excluirProduto('${p.id}','${esc(p.nome)}')">🗑️</button>`:''}
+          <div class="prod-card-body">
+            <div class="prod-card-desc">${esc(p.descricao||'Sem descrição')}</div>
+          </div>
+          <div class="prod-card-footer">
+            <div class="prod-card-preco">${fBRL(p.preco)}</div>
+            <div class="prod-card-actions">
+              <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="editarProduto('${p.id}')">✏️ Editar</button>
+              ${isAdmin()?`<button class="btn btn-ghost" style="padding:5px 10px;font-size:12px;color:#dc3545;border-color:#dc3545" onclick="excluirProduto('${p.id}','${esc(p.nome)}')">🗑️</button>`:''}
+            </div>
           </div>
         </div>`).join('')}
     </div>`).join('');
@@ -3871,9 +3959,24 @@ async function salvarPedido(){
   finally{btn.disabled=false;document.getElementById('ped-btn-txt').textContent=editId?'Salvar Alterações':'Salvar Pedido';}
 }
 async function excluirPedido(id){
-  if(!confirm('Excluir este pedido?'))return;
-  try{await API.delete('/pedidos/'+id);pedidoList=pedidoList.filter(p=>p.id!==id);toast('Excluído.','success');renderPedidos();}
-  catch(e){toast(e.message,'error');}
+  const p=pedidoList.find(x=>x.id===id);
+  const nome=p?p.clienteNome:'este pedido';
+  if(!confirm(`Excluir pedido de "${nome}"?\nOs lançamentos financeiros vinculados também serão removidos.`))return;
+  try{
+    await API.delete('/pedidos/'+id);
+    pedidoList=pedidoList.filter(p=>p.id!==id);
+    // Remove lançamentos financeiros vinculados a este pedido
+    try{
+      lancamentosFinanceiros=JSON.parse(localStorage.getItem('lookLancamentos')||'[]');
+    }catch{lancamentosFinanceiros=[];}
+    const antes=lancamentosFinanceiros.length;
+    lancamentosFinanceiros=lancamentosFinanceiros.filter(l=>l.pedidoId!==id);
+    if(lancamentosFinanceiros.length<antes){
+      localStorage.setItem('lookLancamentos',JSON.stringify(lancamentosFinanceiros));
+    }
+    toast('Pedido excluído e lançamentos removidos.','success');
+    renderPedidos();
+  }catch(e){toast(e.message,'error');}
 }
 
 // ════ DASHBOARD ═══════════════════════════════════════
@@ -3898,14 +4001,22 @@ async function carregarDashboard(){
     const recTotal=orcRecebido+pedRecebido+cxEntradas;
     const resultado=orcRecebido+pedRecebido+cxEntradas-cxSaidas;
 
+    // Hero cards
+    document.getElementById('dash-fat-hero').textContent=fBRL(fatTotal);
+    document.getElementById('dash-fat-hero-sub').textContent=`${orcs.length} orç. + ${pedidos.length} pedidos`;
+    document.getElementById('dash-recebido-hero').textContent=fBRL(recTotal);
+    document.getElementById('dash-recebido-hero-sub').textContent=`Saldo caixa: ${fBRL(cxSaldo)}`;
+    // Mini cards
     document.getElementById('dash-tot-orc').textContent=orcs.length;
     document.getElementById('dash-recebido').textContent=fBRL(orcRecebido);
     document.getElementById('dash-areceber').textContent=fBRL(orcARec);
     document.getElementById('dash-clientes').textContent=clientes.length;
     document.getElementById('dash-pedidos-abertos').textContent=pedidos.filter(p=>!['entregue','cancelado'].includes(p.status)).length;
     document.getElementById('dash-pedidos-pagos').textContent=fBRL(pedRecebido);
-
-    // Financeiro consolidado
+    const agAprov=pedidos.filter(p=>p.status==='aguardando_aprovacao').length;
+    document.getElementById('dash-ag-aprov').textContent=agAprov;
+    document.getElementById('dash-ag-aprov').style.color=agAprov>0?'#4527a0':'var(--text)';
+    // Financeiro consolidado (card existente)
     document.getElementById('dash-fat-total').textContent=fBRL(fatTotal);
     document.getElementById('dash-total-recebido').textContent=fBRL(recTotal);
     document.getElementById('dash-saidas-cx').textContent=fBRL(cxSaidas);

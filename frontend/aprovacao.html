@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aprovação de Arte — Look</title>
+<link rel="icon" href="assets/look.svg" type="image/svg+xml">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f7ff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -48,6 +49,53 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 <script>
 const API_BASE = CONFIG.API_BASE + '/api';
 
+// Converte links de nuvem em HTML renderizável
+function resolverMockup(url) {
+  if (!url) return '';
+  const u = url.trim();
+
+  // Google Drive: /file/d/FILE_ID/view → thumbnail direto
+  const driveMatch = u.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (driveMatch) {
+    const fileId = driveMatch[1];
+    const thumb = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+    return `<div class="mockup-wrap">
+      <img src="${esc(thumb)}" alt="Arte" onerror="this.parentElement.innerHTML=linkFallback('${esc(u)}')">
+    </div>`;
+  }
+
+  // Google Drive: open?id=FILE_ID
+  const driveOpen = u.match(/drive\.google\.com\/open\?id=([^&]+)/);
+  if (driveOpen) {
+    const fileId = driveOpen[1];
+    const thumb = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+    return `<div class="mockup-wrap">
+      <img src="${esc(thumb)}" alt="Arte" onerror="this.parentElement.innerHTML=linkFallback('${esc(u)}')">
+    </div>`;
+  }
+
+  // URL de imagem direta (jpg, png, gif, webp, svg)
+  if (/\.(jpe?g|png|gif|webp|svg)(\?|$)/i.test(u)) {
+    return `<div class="mockup-wrap">
+      <img src="${esc(u)}" alt="Arte" onerror="this.parentElement.innerHTML=linkFallback('${esc(u)}')">
+    </div>`;
+  }
+
+  // Canva, Dropbox, outros — exibe botão de abertura
+  return linkFallback(u);
+}
+
+function linkFallback(url) {
+  return `<div class="mockup-wrap"><div class="mockup-placeholder">
+    🖼️ <span style="font-weight:600">Arte disponível no link abaixo</span>
+    <a href="${esc(url)}" target="_blank" rel="noopener"
+       style="display:inline-block;margin-top:8px;padding:10px 20px;background:#003399;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">
+      🔗 Abrir arte / mockup
+    </a>
+    <span style="font-size:11px;margin-top:4px">Abre em nova aba</span>
+  </div></div>`;
+}
+
 function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -86,9 +134,8 @@ function renderPedido(p) {
     `• ${esc(i.desc)} &nbsp;<span style="color:#6c757d;font-size:12px">${i.qty}× ${fBRL(i.unit)}</span>`
   ).join('<br>') || '—';
 
-  // Mockup: image or placeholder
-  const mockupHtml = p.mockupUrl
-    ? `<div class="mockup-wrap"><img src="${esc(p.mockupUrl)}" alt="Arte / Mockup"></div>`
+  // Mockup: resolve URL e decide como mostrar
+  const mockupHtml = p.mockupUrl ? resolverMockup(p.mockupUrl)
     : `<div class="mockup-wrap"><div class="mockup-placeholder">
         🖼️ <span>Arte será enviada pelo WhatsApp</span>
         <span style="font-size:11px">(confirme com o atendente)</span>
