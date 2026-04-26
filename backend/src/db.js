@@ -115,6 +115,7 @@ async function init() {
   await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS total_bruto NUMERIC(12,2) DEFAULT 0`);
   await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS pago BOOLEAN DEFAULT FALSE`);
   await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS valor_recebido NUMERIC(12,2) DEFAULT 0`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS origem TEXT DEFAULT ''`);
 
   /* status do orçamento: ativo | aprovado | cancelado */
   await query(`ALTER TABLE orcamentos ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'ativo'`);
@@ -399,8 +400,8 @@ const Pedidos = {
       INSERT INTO pedidos
         (id, cliente_id, cliente_nome, items, total, total_bruto, desconto_tipo, desconto,
          prazo_entrega, obs, orcamento_id, orcamento_num, status, owner, owner_nome,
-         criado_em, pago, valor_recebido)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) RETURNING *
+         criado_em, pago, valor_recebido, origem)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *
     `, [
       data.id, data.clienteId || '', data.clienteNome,
       JSON.stringify(data.items || []), data.total || 0,
@@ -410,7 +411,7 @@ const Pedidos = {
       data.prazoEntrega || '', data.obs || '',
       data.orcamentoId || '', data.orcamentoNum || null,
       data.status || 'pendente', data.owner, data.ownerNome, data.criadoEm,
-      data.pago || false, data.valorRecebido || 0
+      data.pago || false, data.valorRecebido || 0, data.origem || ''
     ]);
     return fromDbPedido(rows[0]);
   },
@@ -431,7 +432,8 @@ const Pedidos = {
       items: 'items', total: 'total', totalBruto: 'total_bruto',
       descontoTipo: 'desconto_tipo', desconto: 'desconto',
       pago: 'pago', valorRecebido: 'valor_recebido',
-      clienteNome: 'cliente_nome', atualizadoEm: 'atualizado_em'
+      clienteNome: 'cliente_nome', atualizadoEm: 'atualizado_em',
+      origem: 'origem'
     };
     const fields = []; const values = [id]; let idx = 2;
     for (const [k, col] of Object.entries(map)) {
@@ -462,7 +464,8 @@ function fromDbPedido(r) {
     prazoEntrega: r.prazo_entrega, obs: r.obs,
     orcamentoId: r.orcamento_id, orcamentoNum: r.orcamento_num,
     status: r.status, owner: r.owner, ownerNome: r.owner_nome,
-    criadoEm: r.criado_em, atualizadoEm: r.atualizado_em
+    criadoEm: r.criado_em, atualizadoEm: r.atualizado_em,
+    origem: r.origem || ''
   };
 }
 
