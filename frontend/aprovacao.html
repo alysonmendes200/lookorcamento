@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aprovação de Arte — Look</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans; background: #f4f7ff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.box { background: #fff; border-radius: 16px; padding: 36px 32px; box-shadow: 0 8px 40px rgba(0,0,60,.12); max-width: 500px; width: 100%; }
+.brand { text-align: center; margin-bottom: 24px; }
+.brand img { height: 40px; filter: brightness(0) saturate(100%) invert(14%) sepia(98%) saturate(2000%) hue-rotate(213deg) brightness(92%) contrast(108%); }
+.brand-sub { font-size: 11px; color: #6c757d; margin-top: 6px; }
+h2 { font-size: 20px; color: #1a1a2e; margin-bottom: 4px; }
+.sub { font-size: 13px; color: #6c757d; margin-bottom: 20px; }
+.info { background: #f4f7ff; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.7; color: #333; }
+.mockup { width: 100%; min-height: 160px; border: 2px dashed #d0d8f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 13px; margin-bottom: 20px; background: #f9faff; text-align: center; padding: 20px; }
+.btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn-ok  { padding: 16px; background: #198754; border: none; border-radius: 10px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; }
+.btn-ok:hover { background: #157347; }
+.btn-alt { padding: 16px; background: #dc3545; border: none; border-radius: 10px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; }
+.btn-alt:hover { background: #bb2d3b; }
+.msg { text-align: center; padding: 20px; font-size: 15px; font-weight: 600; border-radius: 10px; margin-top: 16px; display: none; }
+.loading { text-align: center; color: #6c757d; padding: 40px 0; }
+button:disabled { opacity: .6; cursor: not-allowed; }
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="brand">
+    <img src="assets/look.svg" alt="Look Imprimindo Ideias">
+    <div class="brand-sub">Look — Imprimindo Ideias</div>
+  </div>
+  <div id="conteudo" class="loading">Carregando pedido…</div>
+</div>
+
+<script src="js/config.js"></script>
+<script>
+const API_BASE = CONFIG.API_BASE + '/api';
+
+async function carregar() {
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if (!id) { document.getElementById('conteudo').innerHTML = '<p style="color:#dc3545">Link inválido — nenhum pedido informado.</p>'; return; }
+
+  try {
+    const res = await fetch(`${API_BASE}/pedidos/publico/${id}`);
+    if (!res.ok) throw new Error('Pedido não encontrado.');
+    const p = await res.json();
+
+    const statusLabel = {
+      pendente: '⏳ Pendente', aguardando_aprovacao: '🎨 Aguardando Aprovação',
+      producao: '🔧 Em Produção', pronto: '✅ Pronto', entregue: '📦 Entregue', cancelado: '❌ Cancelado'
+    };
+
+    const itens = (p.items || []).map(i => `• ${i.desc} (${i.qty}× R$ ${Number(i.unit||0).toFixed(2).replace('.',',')})`).join('<br>') || '—';
+    const totalFmt = 'R$ ' + Number(p.total || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    document.getElementById('conteudo').innerHTML = `
+      <h2 id="titulo">Pedido — ${esc(p.clienteNome)}</h2>
+      <div class="sub" id="sub">${p.criadoEm ? new Date(p.criadoEm).toLocaleDateString('pt-BR') : ''}${p.prazoEntrega ? ' | Prazo: ' + p.prazoEntrega : ''}</div>
+      <div class="info">
+        <b>Cliente:</b> ${esc(p.clienteNome)}<br>
+        <b>Status:</b> ${statusLabel[p.status] || p.status}<br>
+        <b>Itens:</b><br>${itens}<br>
+        <b>Total:</b> ${totalFmt}
+        ${p.obs ? '<br><b>Obs:</b> ' + esc(p.obs) : ''}
+      </div>
+      <div class="mockup">
+        🖼️ Área de visualização da arte<br>
+        <span style="font-size:11px;margin-top:6px;display:block">O arquivo da arte será enviado separadamente via WhatsApp</span>
+      </div>
+      ${p.status === 'aguardando_aprovacao' || p.status === 'pendente' ? `
+      <div class="btns" id="btns">
+        <button class="btn-ok" onclick="aprovar('${id}')">✅ Aprovar Arte</button>
+        <button class="btn-alt" onclick="solicitarAlteracao('${id}')">✏️ Solicitar Alteração</button>
+      </div>` : `<div class="msg" style="display:block;background:#d4edda;color:#155724">Este pedido já foi processado (${statusLabel[p.status] || p.status}).</div>`}
+      <div id="msg" class="msg"></div>
+    `;
+  } catch (e) {
+    document.getElementById('conteudo').innerHTML = `<p style="color:#dc3545">${e.message}</p>`;
+  }
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function aprovar(id) {
+  const btns = document.getElementById('btns');
+  if (btns) { btns.querySelectorAll('button').forEach(b=>b.disabled=true); }
+  try {
+    const res = await fetch(`${API_BASE}/pedidos/publico/${id}/aprovar`, { method: 'POST' });
+    if (!res.ok) throw new Error('Erro ao processar.');
+    if (btns) btns.style.display = 'none';
+    const msg = document.getElementById('msg');
+    msg.style.display = 'block'; msg.style.background = '#d4edda'; msg.style.color = '#155724';
+    msg.textContent = '✅ Arte aprovada! Seu pedido entrou em produção. Obrigado!';
+  } catch (e) {
+    alert('Erro: ' + e.message);
+    if (btns) { btns.querySelectorAll('button').forEach(b=>b.disabled=false); }
+  }
+}
+
+async function solicitarAlteracao(id) {
+  const btns = document.getElementById('btns');
+  if (btns) { btns.querySelectorAll('button').forEach(b=>b.disabled=true); }
+  try {
+    const res = await fetch(`${API_BASE}/pedidos/publico/${id}/alteracao`, { method: 'POST' });
+    if (!res.ok) throw new Error('Erro ao processar.');
+    if (btns) btns.style.display = 'none';
+    const msg = document.getElementById('msg');
+    msg.style.display = 'block'; msg.style.background = '#f8d7da'; msg.style.color = '#721c24';
+    msg.textContent = '✏️ Alteração solicitada! Nossa equipe entrará em contato em breve.';
+  } catch (e) {
+    alert('Erro: ' + e.message);
+    if (btns) { btns.querySelectorAll('button').forEach(b=>b.disabled=false); }
+  }
+}
+
+carregar();
+</script>
+</body>
+</html>

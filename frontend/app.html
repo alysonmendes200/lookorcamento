@@ -12,6 +12,32 @@
 .badge-status-pronto    {background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb;}
 .badge-status-entregue  {background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
 .badge-status-cancelado {background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
+.badge-status-aguardando{background:#ede7f6;color:#4527a0;border:1px solid #b39ddb;}
+
+/* ROI por Canal */
+.roi-canal-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.roi-canal-item:last-child{border-bottom:none;}
+.roi-canal-nome{min-width:120px;font-size:12px;font-weight:600;color:var(--text);}
+.roi-canal-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.roi-canal-bar{height:8px;background:var(--azul);border-radius:4px;transition:width .4s;}
+.roi-canal-val{min-width:90px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:700;}
+.roi-canal-qtd{min-width:36px;text-align:right;font-size:11px;color:var(--muted);}
+
+/* Página pública de aprovação de arte */
+.aprov-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f7ff;padding:20px;}
+.aprov-box{background:#fff;border-radius:16px;padding:36px 32px;box-shadow:0 8px 40px rgba(0,0,60,.12);max-width:500px;width:100%;}
+.aprov-brand{text-align:center;margin-bottom:24px;}
+.aprov-brand img{height:40px;filter:brightness(0) saturate(100%) invert(14%) sepia(98%) saturate(2000%) hue-rotate(213deg) brightness(92%) contrast(108%);}
+.aprov-title{font-size:20px;font-weight:700;color:#1a1a2e;margin-bottom:4px;}
+.aprov-sub{font-size:13px;color:#6c757d;margin-bottom:20px;}
+.aprov-info{background:#f4f7ff;border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;line-height:1.7;}
+.aprov-mockup{width:100%;min-height:200px;border:2px dashed #d0d8f0;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#6c757d;font-size:13px;margin-bottom:20px;background:#f9faff;}
+.aprov-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.aprov-btn-ok{padding:16px;background:#198754;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;}
+.aprov-btn-ok:hover{background:#157347;}
+.aprov-btn-alt{padding:16px;background:#dc3545;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;}
+.aprov-btn-alt:hover{background:#bb2d3b;}
+.aprov-msg{text-align:center;padding:20px;font-size:15px;font-weight:600;border-radius:10px;margin-top:16px;}
 
 .kanban-board    {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px;}
 .kanban-col      {background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:80px;}
@@ -372,6 +398,7 @@
           <select id="ped-status-flt" onchange="renderPedidos()">
             <option value="">Todos</option>
             <option value="pendente">⏳ Pendente</option>
+            <option value="aguardando_aprovacao">🎨 Ag. Aprovação</option>
             <option value="producao">🔧 Em Produção</option>
             <option value="pronto">✅ Pronto</option>
             <option value="entregue">📦 Entregue</option>
@@ -490,6 +517,12 @@
       <div class="card" style="margin-bottom:14px">
         <div class="card-title">🚨 Pedidos Críticos e Prazos</div>
         <div id="dash-prazos" style="margin-top:8px"><div class="empty" style="font-size:12px">Carregando…</div></div>
+      </div>
+    </div>
+    <div id="dash-s-roi">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">📈 Retorno por Canal (ROI) — últimos 30 dias</div>
+        <div id="dash-roi" style="margin-top:8px"><div class="empty" style="font-size:12px">Carregando…</div></div>
       </div>
     </div>
   </div>
@@ -1653,6 +1686,7 @@
     <div class="fg" style="margin-bottom:14px"><label>Status</label>
       <select id="ped-status">
         <option value="pendente">⏳ Pendente</option>
+        <option value="aguardando_aprovacao">🎨 Ag. Aprovação</option>
         <option value="producao">🔧 Em Produção</option>
         <option value="pronto">✅ Pronto</option>
         <option value="entregue">📦 Entregue</option>
@@ -1710,6 +1744,16 @@
 
     <div class="fg" style="margin:14px 0 4px"><label>Observações</label>
       <textarea id="ped-obs" rows="2" style="width:100%;resize:vertical;min-height:52px;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;box-sizing:border-box"></textarea></div>
+    <div class="fg" style="margin:10px 0 4px"><label>Origem da Venda</label>
+      <select id="ped-origem">
+        <option value="">— Não informado —</option>
+        <option value="Instagram">📸 Instagram</option>
+        <option value="Google Ads">🔍 Google Ads</option>
+        <option value="WhatsApp/Direto">💬 WhatsApp / Direto</option>
+        <option value="Indicação">🤝 Indicação</option>
+        <option value="Passou na Porta">🚶 Passou na Porta</option>
+      </select>
+    </div>
     <input type="hidden" id="ped-edit-id">
     <div class="btn-row" style="margin-top:14px">
       <button class="btn btn-primary" id="btn-salvar-ped" onclick="salvarPedido()">
@@ -1738,6 +1782,7 @@
     <div class="btn-row" style="margin-top:14px">
       <button class="btn btn-primary" id="mpd-btn-editar">✏️ Editar</button>
       <button class="btn btn-ghost" id="mpd-btn-wpp" onclick="" style="background:#25D366;color:#fff;border-color:#25D366">💬 WhatsApp</button>
+      <button class="btn btn-ghost" id="mpd-btn-link" onclick="" style="background:#4527a0;color:#fff;border-color:#4527a0">🔗 Gerar Link</button>
       <button class="btn btn-ghost" onclick="closeModal('modal-ped-detalhe')">Fechar</button>
     </div>
   </div>
@@ -1824,6 +1869,29 @@
   </div>
 </div>
 
+<!-- ══ PÁGINA PÚBLICA: APROVAÇÃO DE ARTE ══════════════ -->
+<div id="page-aprovacao-publica" style="display:none;position:fixed;inset:0;z-index:9999;overflow-y:auto;">
+  <div class="aprov-wrap">
+    <div class="aprov-box">
+      <div class="aprov-brand">
+        <img src="assets/look.svg" alt="Look">
+        <div style="font-size:11px;color:#6c757d;margin-top:6px">Aprovação de Arte</div>
+      </div>
+      <div class="aprov-title" id="aprov-titulo">Pedido</div>
+      <div class="aprov-sub" id="aprov-sub"></div>
+      <div class="aprov-info" id="aprov-info"></div>
+      <div class="aprov-mockup" id="aprov-mockup">
+        🖼️ Área de visualização da arte<br><span style="font-size:11px">(o arquivo será enviado separadamente)</span>
+      </div>
+      <div class="aprov-btns" id="aprov-btns">
+        <button class="aprov-btn-ok" id="aprov-btn-ok">✅ Aprovar Arte</button>
+        <button class="aprov-btn-alt" id="aprov-btn-alt">✏️ Solicitar Alteração</button>
+      </div>
+      <div id="aprov-msg" class="aprov-msg" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
 <div id="_toast" style="display:none"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1854,10 +1922,11 @@ let viewClientes = 'cards';
 let catalogoAlvo = 'orc'; // 'orc' ou 'ped'
 let lancamentosFinanceiros = []; // módulo financeiro — persiste em localStorage
 
-const PEDIDO_STATUS_ORDER = ['pendente','producao','pronto','entregue','cancelado'];
+const PEDIDO_STATUS_ORDER = ['pendente','aguardando_aprovacao','producao','pronto','entregue','cancelado'];
 const PEDIDO_LABELS_DEFAULT = {
-  pendente:  {label:'⏳ Pendente',    cls:'badge-status-pendente' },
-  producao:  {label:'🔧 Em Produção', cls:'badge-status-producao' },
+  pendente:              {label:'⏳ Pendente',       cls:'badge-status-pendente'   },
+  aguardando_aprovacao:  {label:'🎨 Ag. Aprovação',  cls:'badge-status-aguardando' },
+  producao:              {label:'🔧 Em Produção',    cls:'badge-status-producao'   },
   pronto:    {label:'✅ Pronto',      cls:'badge-status-pronto'   },
   entregue:  {label:'📦 Entregue',    cls:'badge-status-entregue' },
   cancelado: {label:'❌ Cancelado',   cls:'badge-status-cancelado'}
@@ -2623,6 +2692,7 @@ const DASH_SECTIONS_DEF = [
   { key:'graficos',   label:'📅 Gráficos — Orçamentos e Pedidos' },
   { key:'ranking',    label:'🏆 Rankings — Clientes e Itens' },
   { key:'prazos',     label:'🚨 Pedidos Críticos e Prazos' },
+  { key:'roi',        label:'📈 Retorno por Canal (ROI)' },
 ];
 const DASH_ORDER_KEY = 'lookDashOrder';
 
@@ -3497,6 +3567,7 @@ function renderListaPedidos(list){
       <td><div class="tbl-actions">
         <button class="ta" onclick="verPedido('${p.id}')">👁️</button>
         <button class="ta wpp" onclick="wppPedido('${p.id}')" title="Enviar WhatsApp">💬</button>
+        <button class="ta" onclick="gerarLinkAprovacao('${p.id}')" title="Copiar link de aprovação" style="color:#4527a0">🔗</button>
         <button class="ta edit" onclick="editarPedido('${p.id}')">✏️</button>
         ${isAdmin()?`<button class="ta del" onclick="excluirPedido('${p.id}')">🗑️</button>`:''}
       </div></td>
@@ -3512,7 +3583,8 @@ function verPedido(id){
     <span class="badge ${lbl.cls}">${lbl.label}</span>
     <span class="badge ${p.pago?'badge-pago':'badge-nao-pago'}">${p.pago?'✅ Pago':'⏳ Pendente'}</span>
     ${p.prazoEntrega?`<span class="badge badge-orc">📅 ${esc(p.prazoEntrega)}</span>`:''}
-    ${p.orcamentoNum?`<span class="badge badge-orc">🔗 Orç. N° ${String(p.orcamentoNum).padStart(3,'0')}</span>`:''}`;
+    ${p.orcamentoNum?`<span class="badge badge-orc">🔗 Orç. N° ${String(p.orcamentoNum).padStart(3,'0')}</span>`:''}
+    ${p.origem?`<span class="badge" style="background:#e8eaf6;color:#3949ab;border:1px solid #9fa8da">📣 ${esc(p.origem)}</span>`:''}`;
   document.getElementById('mpd-items').innerHTML=(p.items||[]).map(i=>`
     <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px">
       <span>${esc(i.desc)}</span>
@@ -3524,11 +3596,13 @@ function verPedido(id){
   document.getElementById('mpd-obs').innerHTML=(p.obs?'📝 '+esc(p.obs)+'<br>':'')+(p.pago&&p.valorRecebido?`<span style="color:#198754">💰 Recebido: ${fBRL(p.valorRecebido)}</span>`:'')||'';
   document.getElementById('mpd-btn-editar').onclick=()=>{closeModal('modal-ped-detalhe');editarPedido(p.id);};
   document.getElementById('mpd-btn-wpp').onclick=()=>wppPedido(p);
+  document.getElementById('mpd-btn-link').onclick=()=>gerarLinkAprovacao(p.id);
   openModal('modal-ped-detalhe');
 }
 function abrirModalNovoPedido(){
   pedItemCount=0;
   ['ped-cliente-nome','ped-prazo','ped-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ped-origem').value='';
   document.getElementById('ped-orc-num').value='';
   document.getElementById('ped-orc-status').textContent='';
   document.getElementById('ped-orc-preview').style.display='none';
@@ -3575,6 +3649,7 @@ function editarPedido(id){
   document.getElementById('ped-pago-extra').style.display=p.pago?'':'none';
   document.getElementById('ped-valor-recebido').value=p.valorRecebido||'';
   document.getElementById('ped-reg-caixa').checked=false;
+  document.getElementById('ped-origem').value=p.origem||'';
   (p.items||[]).forEach(i=>addPedItem(i.desc,i.qty,i.unit));
   if(!(p.items||[]).length)addPedItem();
   calcPedGrand();
@@ -3671,6 +3746,7 @@ async function salvarPedido(){
     valorRecebido,
     prazoEntrega:document.getElementById('ped-prazo').value.trim(),
     obs:         document.getElementById('ped-obs').value.trim(),
+    origem:      document.getElementById('ped-origem').value,
     status:      document.getElementById('ped-status').value,
     orcamentoId: orcId,
     orcamentoNum:orcNum
@@ -3835,8 +3911,9 @@ async function carregarDashboard(){
           <div style="font-size:10px;color:var(--muted)">${i.vezes}x — qtd: ${i.qtd}</div>
         </div>
       </div>`).join(''):'<div class="empty">Sem itens registrados.</div>';
-    // Renderiza semáforo de prazos com os pedidos carregados
+    // Renderiza semáforo de prazos e ROI
     renderPrazosDashboard(pedidos);
+    renderROIDashboard(pedidos);
   }catch(e){toast('Erro dashboard: '+e.message,'error');}
 }
 
@@ -3913,6 +3990,99 @@ function renderPrazosDashboard(pedidos) {
       <span class="badge ${badgeCls}">${badgeTxt}</span>
     </div>`;
   }).join('');
+}
+
+// ════ ROI POR CANAL ═══════════════════════════════════
+function renderROIDashboard(pedidos) {
+  const cont = document.getElementById('dash-roi');
+  if (!cont) return;
+  const limite = new Date();
+  limite.setDate(limite.getDate() - 30);
+  const recentes = (pedidos || []).filter(p =>
+    p.status !== 'cancelado' && p.criadoEm && new Date(p.criadoEm) >= limite
+  );
+  const canais = {};
+  recentes.forEach(p => {
+    const k = p.origem || '— Não informado';
+    if (!canais[k]) canais[k] = { total: 0, qtd: 0 };
+    canais[k].total += p.total || 0;
+    canais[k].qtd++;
+  });
+  const lista = Object.entries(canais).sort((a, b) => b[1].total - a[1].total);
+  if (!lista.length) {
+    cont.innerHTML = '<div class="empty" style="font-size:12px">Nenhum pedido nos últimos 30 dias.</div>';
+    return;
+  }
+  const maxVal = Math.max(...lista.map(([, v]) => v.total), 1);
+  cont.innerHTML = lista.map(([canal, v]) => `
+    <div class="roi-canal-item">
+      <div class="roi-canal-nome">${esc(canal)}</div>
+      <div class="roi-canal-bar-wrap">
+        <div class="roi-canal-bar" style="width:${Math.round(v.total/maxVal*100)}%"></div>
+      </div>
+      <div class="roi-canal-val">${fBRL(v.total)}</div>
+      <div class="roi-canal-qtd">${v.qtd}×</div>
+    </div>`).join('');
+}
+
+// ════ APROVAÇÃO DE ARTES ══════════════════════════════
+function gerarLinkAprovacao(pedidoId) {
+  const base = window.location.href.replace(/\/[^/]*$/, '');
+  const url  = `${base}/aprovacao.html?id=${pedidoId}`;
+  navigator.clipboard.writeText(url).then(() => {
+    toast('Link copiado! Cole no WhatsApp para o cliente aprovar.', 'success');
+  }).catch(() => {
+    prompt('Copie o link de aprovação:', url);
+  });
+}
+
+function abrirPaginaAprovacao(pedidoId) {
+  const p = pedidoList.find(x => x.id === pedidoId);
+  if (!p) return;
+  const page = document.getElementById('page-aprovacao-publica');
+  document.getElementById('aprov-titulo').textContent = 'Pedido — ' + p.clienteNome;
+  document.getElementById('aprov-sub').textContent =
+    (p.criadoEm ? new Date(p.criadoEm).toLocaleDateString('pt-BR') : '') +
+    (p.prazoEntrega ? ' | Prazo: ' + p.prazoEntrega : '');
+  document.getElementById('aprov-info').innerHTML =
+    `<b>Cliente:</b> ${esc(p.clienteNome)}<br>` +
+    `<b>Itens:</b> ${(p.items||[]).map(i=>esc(i.desc)).join(', ')||'—'}<br>` +
+    `<b>Total:</b> ${fBRL(p.total||0)}` +
+    (p.obs ? `<br><b>Obs:</b> ${esc(p.obs)}` : '');
+  document.getElementById('aprov-btns').style.display = 'grid';
+  document.getElementById('aprov-msg').style.display  = 'none';
+  document.getElementById('aprov-btn-ok').onclick  = () => aprovarArte(pedidoId);
+  document.getElementById('aprov-btn-alt').onclick = () => solicitarAlteracao(pedidoId);
+  page.style.display = 'block';
+}
+
+async function aprovarArte(pedidoId) {
+  try {
+    await API.put('/pedidos/' + pedidoId, { status: 'producao', atualizadoEm: new Date().toISOString() });
+    const idx = pedidoList.findIndex(p => p.id === pedidoId);
+    if (idx >= 0) pedidoList[idx].status = 'producao';
+    document.getElementById('aprov-btns').style.display = 'none';
+    const msg = document.getElementById('aprov-msg');
+    msg.style.display = 'block';
+    msg.style.background = '#d4edda';
+    msg.style.color = '#155724';
+    msg.textContent = '✅ Arte aprovada! Seu pedido entrou em produção.';
+    toast('Arte aprovada — pedido movido para Em Produção!', 'success');
+  } catch (e) { toast('Erro ao aprovar: ' + e.message, 'error'); }
+}
+
+async function solicitarAlteracao(pedidoId) {
+  try {
+    await API.put('/pedidos/' + pedidoId, { status: 'aguardando_aprovacao', atualizadoEm: new Date().toISOString() });
+    const idx = pedidoList.findIndex(p => p.id === pedidoId);
+    if (idx >= 0) pedidoList[idx].status = 'aguardando_aprovacao';
+    document.getElementById('aprov-btns').style.display = 'none';
+    const msg = document.getElementById('aprov-msg');
+    msg.style.display = 'block';
+    msg.style.background = '#f8d7da';
+    msg.style.color = '#721c24';
+    msg.textContent = '✏️ Alteração solicitada! Nossa equipe entrará em contato.';
+  } catch (e) { toast('Erro: ' + e.message, 'error'); }
 }
 
 // ════ MÓDULO FINANCEIRO ═══════════════════════════════
