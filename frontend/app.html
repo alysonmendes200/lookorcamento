@@ -23,6 +23,19 @@
 .roi-canal-val{min-width:90px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:700;}
 .roi-canal-qtd{min-width:36px;text-align:right;font-size:11px;color:var(--muted);}
 
+/* Número do pedido badge */
+.ped-num-badge{display:inline-block;background:#003399;color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;font-family:var(--mono);letter-spacing:.04em;}
+
+/* Notificações */
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.notif-item:last-child{border-bottom:none;}
+.notif-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.notif-dot.aprov{background:#198754;}
+.notif-dot.rejeit{background:#dc3545;}
+.notif-txt{flex:1;font-size:12px;line-height:1.5;}
+.notif-time{font-size:10px;color:var(--muted);white-space:nowrap;}
+.notif-badge{display:inline-block;background:#dc3545;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle;}
+
 /* Página pública de aprovação de arte */
 .aprov-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f7ff;padding:20px;}
 .aprov-box{background:#fff;border-radius:16px;padding:36px 32px;box-shadow:0 8px 40px rgba(0,0,60,.12);max-width:500px;width:100%;}
@@ -525,6 +538,16 @@
         <div id="dash-roi" style="margin-top:8px"><div class="empty" style="font-size:12px">Carregando…</div></div>
       </div>
     </div>
+    <div id="dash-s-notificacoes">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title" style="display:flex;align-items:center;gap:8px">
+          🔔 Notificações de Aprovação
+          <span id="dash-notif-badge" class="notif-badge" style="display:none">0</span>
+          <button onclick="marcarTodasNotifVistas()" style="margin-left:auto;font-size:11px;padding:3px 10px;border-radius:6px;border:1px solid var(--border);background:var(--white);cursor:pointer;color:var(--muted)">Marcar todas como lidas</button>
+        </div>
+        <div id="dash-notificacoes" style="margin-top:8px"><div class="empty" style="font-size:12px">Sem notificações.</div></div>
+      </div>
+    </div>
   </div>
 
   <!-- RELATÓRIOS -->
@@ -550,6 +573,7 @@
         <option value="operador">👤 Por Operador</option>
         <option value="nf">🧾 Com NF</option>
         <option value="lista">📋 Lista</option>
+        <option value="origem">📣 Origem de Vendas</option>
       </select>
     </div>
     <div class="rel-section active" id="rel-resumo">
@@ -597,6 +621,16 @@
     <div class="rel-section" id="rel-operador"><div class="card"><div class="card-title">Por Operador</div><div id="rel-op-content"></div></div></div>
     <div class="rel-section" id="rel-nf"><div class="card"><div class="card-title">Com NF Emitida</div><div id="rel-nf-content"></div></div></div>
     <div class="rel-section" id="rel-lista"><div class="card"><div class="card-title">Lista Completa de Orçamentos</div><div id="rel-lista-content"></div></div></div>
+    <div class="rel-section" id="rel-origem">
+      <div class="card">
+        <div class="card-title">📣 Origem de Vendas — Todos os Pedidos</div>
+        <div id="rel-origem-content" style="margin-top:12px"><div class="empty">Clique em "Filtrar" para carregar.</div></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="card-title">📋 Pedidos por Canal</div>
+        <div id="rel-origem-lista" style="margin-top:8px"></div>
+      </div>
+    </div>
   </div>
 
   <!-- USUÁRIOS -->
@@ -1754,6 +1788,13 @@
         <option value="Passou na Porta">🚶 Passou na Porta</option>
       </select>
     </div>
+    <div class="fg" style="margin:10px 0 4px">
+      <label>🖼️ URL da Arte / Mockup <span style="font-weight:400;font-size:11px;color:var(--muted)">(link da imagem para enviar ao cliente)</span></label>
+      <input type="url" id="ped-mockup-url" placeholder="https://drive.google.com/… ou https://…/arte.jpg" style="width:100%;box-sizing:border-box" oninput="pedMockupPreview(this.value)">
+      <div id="ped-mockup-preview" style="display:none;margin-top:6px">
+        <img id="ped-mockup-img" src="" alt="Preview" style="max-width:100%;max-height:120px;border-radius:8px;border:1px solid var(--border);object-fit:contain">
+      </div>
+    </div>
     <input type="hidden" id="ped-edit-id">
     <div class="btn-row" style="margin-top:14px">
       <button class="btn btn-primary" id="btn-salvar-ped" onclick="salvarPedido()">
@@ -2453,7 +2494,13 @@ function relTab(tab){
   document.getElementById('rel-'+tab).classList.add('active');
   const sel=document.getElementById('rel-tab-select');if(sel)sel.value=tab;
 }
-function relTabSelect(tab){relTab(tab);}
+function relTabSelect(tab){
+  relTab(tab);
+  if(tab==='origem'){
+    const pedidos=relPedData?.lista||[];
+    renderRelOrigem(pedidos);
+  }
+}
 function renderRelatorios(){
   if(!relData)return;
   const{resumo,porMes,porOperador,comNF,lista}=relData;
@@ -2687,12 +2734,13 @@ async function excluirUser(id,nome){
 // ════ CONFIGURAÇÕES ═══════════════════════════════════
 // ════ ORDEM DO DASHBOARD ══════════════════════════════
 const DASH_SECTIONS_DEF = [
-  { key:'kpis',       label:'📊 KPIs Gerais (cards de topo)' },
-  { key:'financeiro', label:'💼 Visão Financeira Consolidada' },
-  { key:'graficos',   label:'📅 Gráficos — Orçamentos e Pedidos' },
-  { key:'ranking',    label:'🏆 Rankings — Clientes e Itens' },
-  { key:'prazos',     label:'🚨 Pedidos Críticos e Prazos' },
-  { key:'roi',        label:'📈 Retorno por Canal (ROI)' },
+  { key:'kpis',          label:'📊 KPIs Gerais (cards de topo)' },
+  { key:'financeiro',    label:'💼 Visão Financeira Consolidada' },
+  { key:'graficos',      label:'📅 Gráficos — Orçamentos e Pedidos' },
+  { key:'ranking',       label:'🏆 Rankings — Clientes e Itens' },
+  { key:'prazos',        label:'🚨 Pedidos Críticos e Prazos' },
+  { key:'roi',           label:'📈 Retorno por Canal (ROI)' },
+  { key:'notificacoes',  label:'🔔 Notificações de Aprovação' },
 ];
 const DASH_ORDER_KEY = 'lookDashOrder';
 
@@ -3508,7 +3556,10 @@ function renderKanban(list){
           ondragend="document.querySelectorAll('.kanban-card').forEach(c=>c.classList.remove('dragging'));document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));setTimeout(()=>{_dragPedidoId=null;},120)"
           onclick="if(!_dragPedidoId)verPedido('${p.id}')">
           <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div class="kanban-card-title" style="flex:1">${esc(p.clienteNome)}</div>
+            <div style="flex:1">
+              ${p.num?`<div style="font-size:10px;font-weight:700;color:var(--azul);font-family:var(--mono);margin-bottom:2px">#${p.num}</div>`:''}
+              <div class="kanban-card-title">${esc(p.clienteNome)}</div>
+            </div>
             <button onclick="event.stopPropagation();wppPedido('${p.id}')" title="WhatsApp" style="border:none;background:none;cursor:pointer;font-size:14px;padding:0 0 0 4px;color:#25D366">💬</button>
           </div>
           <div class="kanban-card-sub">${p.prazoEntrega?'📅 '+esc(p.prazoEntrega):'Sem prazo'}</div>
@@ -3554,10 +3605,11 @@ function renderListaPedidos(list){
   const cont=document.getElementById('ped-lista-content');
   if(!list.length){cont.innerHTML='<div class="empty">'+(pedidoList.length?'Nenhum encontrado.':'Clique em "Novo Pedido".')+'</div>';return;}
   cont.innerHTML=`<div style="overflow-x:auto"><table class="tbl"><thead><tr>
-    <th>Cliente</th><th>Status</th><th>Prazo</th><th>Total</th><th>Pgto.</th><th>Orç.</th><th>Ações</th>
+    <th>#</th><th>Cliente</th><th>Status</th><th>Prazo</th><th>Total</th><th>Pgto.</th><th>Orç.</th><th>Ações</th>
   </tr></thead><tbody>${list.map(p=>{
     const lbl=PEDIDO_LABELS[p.status]||PEDIDO_LABELS.pendente;
     return `<tr>
+      <td><span class="ped-num-badge">${p.num?'#'+p.num:'—'}</span></td>
       <td><div style="font-weight:600">${esc(p.clienteNome)}</div><div style="font-size:11px;color:var(--muted)">${esc(p.ownerNome||'')}</div></td>
       <td><span class="badge ${lbl.cls}">${lbl.label}</span></td>
       <td style="font-size:12px;color:var(--muted)">${esc(p.prazoEntrega||'—')}</td>
@@ -3577,7 +3629,8 @@ function renderListaPedidos(list){
 function verPedido(id){
   const p=pedidoList.find(x=>x.id===id);if(!p)return;
   const lbl=PEDIDO_LABELS[p.status]||PEDIDO_LABELS.pendente;
-  document.getElementById('mpd-titulo').textContent='Pedido — '+esc(p.clienteNome);
+  document.getElementById('mpd-titulo').innerHTML=
+    (p.num?`<span class="ped-num-badge" style="font-size:13px;margin-right:8px">#${p.num}</span>`:'')+'Pedido — '+esc(p.clienteNome);
   document.getElementById('mpd-sub').textContent=(p.criadoEm?new Date(p.criadoEm).toLocaleDateString('pt-BR'):'')+' | '+(p.ownerNome||p.owner||'—');
   document.getElementById('mpd-badges').innerHTML=`
     <span class="badge ${lbl.cls}">${lbl.label}</span>
@@ -3593,7 +3646,15 @@ function verPedido(id){
     </div>`).join('')||'<div class="empty" style="font-size:12px">Sem itens</div>';
   const descExibe=p.desconto>0?`<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:#dc3545"><span>Desconto</span><span>— ${fBRL(p.desconto)}</span></div>`:'';
   document.getElementById('mpd-total').innerHTML=`${descExibe}<span>${fBRL(p.total||0)}</span>`;
-  document.getElementById('mpd-obs').innerHTML=(p.obs?'📝 '+esc(p.obs)+'<br>':'')+(p.pago&&p.valorRecebido?`<span style="color:#198754">💰 Recebido: ${fBRL(p.valorRecebido)}</span>`:'')||'';
+  // Obs + mockup + feedback de aprovação
+  let obsHtml=(p.obs?'📝 '+esc(p.obs)+'<br>':'');
+  if(p.pago&&p.valorRecebido) obsHtml+=`<span style="color:#198754">💰 Recebido: ${fBRL(p.valorRecebido)}</span><br>`;
+  if(p.aprovacaoFeedback&&p.aprovacaoFeedback!=='APROVADO')
+    obsHtml+=`<div style="margin-top:6px;background:#fff3cd;border:1px solid #ffd971;border-radius:6px;padding:6px 10px;font-size:12px">✏️ <b>Motivo da rejeição:</b> ${esc(p.aprovacaoFeedback)}</div>`;
+  else if(p.aprovacaoFeedback==='APROVADO')
+    obsHtml+=`<div style="margin-top:6px;background:#d4edda;border:1px solid #c3e6cb;border-radius:6px;padding:6px 10px;font-size:12px">✅ <b>Arte aprovada pelo cliente</b>${p.aprovacaoEm?' em '+new Date(p.aprovacaoEm).toLocaleDateString('pt-BR'):''}</div>`;
+  if(p.mockupUrl) obsHtml+=`<div style="margin-top:8px"><img src="${esc(p.mockupUrl)}" alt="Mockup" style="max-width:100%;max-height:180px;border-radius:8px;border:1px solid var(--border);object-fit:contain"></div>`;
+  document.getElementById('mpd-obs').innerHTML=obsHtml||'';
   document.getElementById('mpd-btn-editar').onclick=()=>{closeModal('modal-ped-detalhe');editarPedido(p.id);};
   document.getElementById('mpd-btn-wpp').onclick=()=>wppPedido(p);
   document.getElementById('mpd-btn-link').onclick=()=>gerarLinkAprovacao(p.id);
@@ -3603,6 +3664,8 @@ function abrirModalNovoPedido(){
   pedItemCount=0;
   ['ped-cliente-nome','ped-prazo','ped-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('ped-origem').value='';
+  document.getElementById('ped-mockup-url').value='';
+  document.getElementById('ped-mockup-preview').style.display='none';
   document.getElementById('ped-orc-num').value='';
   document.getElementById('ped-orc-status').textContent='';
   document.getElementById('ped-orc-preview').style.display='none';
@@ -3650,6 +3713,11 @@ function editarPedido(id){
   document.getElementById('ped-valor-recebido').value=p.valorRecebido||'';
   document.getElementById('ped-reg-caixa').checked=false;
   document.getElementById('ped-origem').value=p.origem||'';
+  const mockupEl=document.getElementById('ped-mockup-url');
+  mockupEl.value=p.mockupUrl||'';
+  const prev=document.getElementById('ped-mockup-preview');
+  if(p.mockupUrl){prev.style.display='';document.getElementById('ped-mockup-img').src=p.mockupUrl;}
+  else prev.style.display='none';
   (p.items||[]).forEach(i=>addPedItem(i.desc,i.qty,i.unit));
   if(!(p.items||[]).length)addPedItem();
   calcPedGrand();
@@ -3747,6 +3815,7 @@ async function salvarPedido(){
     prazoEntrega:document.getElementById('ped-prazo').value.trim(),
     obs:         document.getElementById('ped-obs').value.trim(),
     origem:      document.getElementById('ped-origem').value,
+    mockupUrl:   document.getElementById('ped-mockup-url').value.trim(),
     status:      document.getElementById('ped-status').value,
     orcamentoId: orcId,
     orcamentoNum:orcNum
@@ -3911,9 +3980,10 @@ async function carregarDashboard(){
           <div style="font-size:10px;color:var(--muted)">${i.vezes}x — qtd: ${i.qtd}</div>
         </div>
       </div>`).join(''):'<div class="empty">Sem itens registrados.</div>';
-    // Renderiza semáforo de prazos e ROI
+    // Renderiza semáforo de prazos, ROI e notificações
     renderPrazosDashboard(pedidos);
     renderROIDashboard(pedidos);
+    renderNotificacoes(pedidos);
   }catch(e){toast('Erro dashboard: '+e.message,'error');}
 }
 
@@ -4023,6 +4093,102 @@ function renderROIDashboard(pedidos) {
       <div class="roi-canal-val">${fBRL(v.total)}</div>
       <div class="roi-canal-qtd">${v.qtd}×</div>
     </div>`).join('');
+}
+
+// ════ NOTIFICAÇÕES DE APROVAÇÃO ══════════════════════
+const NOTIF_SEEN_KEY = 'lookNotifSeen';
+
+function _notifSeen() {
+  try { return JSON.parse(localStorage.getItem(NOTIF_SEEN_KEY) || '[]'); } catch { return []; }
+}
+function marcarTodasNotifVistas() {
+  const ids = pedidoList.filter(p => p.aprovacaoEm).map(p => p.id + '_' + p.aprovacaoEm);
+  localStorage.setItem(NOTIF_SEEN_KEY, JSON.stringify(ids));
+  renderNotificacoes(pedidoList);
+  toast('Todas notificações marcadas como lidas.', 'success');
+}
+function renderNotificacoes(pedidos) {
+  const cont = document.getElementById('dash-notificacoes');
+  if (!cont) return;
+  const seen = _notifSeen();
+  const eventos = (pedidos || [])
+    .filter(p => p.aprovacaoEm)
+    .map(p => ({ p, key: p.id + '_' + p.aprovacaoEm }))
+    .sort((a, b) => (b.p.aprovacaoEm || '').localeCompare(a.p.aprovacaoEm || ''));
+  const novas = eventos.filter(e => !seen.includes(e.key));
+  // Atualiza badge
+  const badge = document.getElementById('dash-notif-badge');
+  if (badge) {
+    badge.textContent = novas.length;
+    badge.style.display = novas.length > 0 ? '' : 'none';
+  }
+  if (!eventos.length) { cont.innerHTML = '<div class="empty" style="font-size:12px">Sem notificações de aprovação ainda.</div>'; return; }
+  cont.innerHTML = eventos.map(({ p, key }) => {
+    const isNova = !seen.includes(key);
+    const aprov  = p.aprovacaoFeedback === 'APROVADO';
+    const data   = p.aprovacaoEm ? new Date(p.aprovacaoEm).toLocaleString('pt-BR') : '';
+    return `<div class="notif-item" style="${isNova?'background:#fffde7;border-radius:8px;padding:10px 12px;':''}">
+      <div class="notif-dot ${aprov?'aprov':'rejeit'}"></div>
+      <div class="notif-txt">
+        ${isNova?'<b>':''}${aprov?'✅ Arte aprovada':'✏️ Alteração solicitada'}${isNova?'</b>':''}
+        — <span class="ped-num-badge" style="font-size:10px">${p.num?'#'+p.num:'Pedido'}</span>
+        <b>${esc(p.clienteNome)}</b><br>
+        ${!aprov&&p.aprovacaoFeedback?`<span style="color:#856404;font-size:11px">Motivo: ${esc(p.aprovacaoFeedback)}</span><br>`:''}
+        <span style="font-size:11px;color:var(--muted)">${data}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Preview ao digitar URL do mockup
+function pedMockupPreview(url) {
+  const prev = document.getElementById('ped-mockup-preview');
+  const img  = document.getElementById('ped-mockup-img');
+  if (url.trim()) { img.src = url.trim(); prev.style.display = ''; }
+  else prev.style.display = 'none';
+}
+
+// ════ RELATÓRIO — ORIGEM DE VENDAS ════════════════════
+function renderRelOrigem(pedidos) {
+  const cont = document.getElementById('rel-origem-content');
+  const listCont = document.getElementById('rel-origem-lista');
+  if (!cont || !listCont) return;
+  const validos = (pedidos || []).filter(p => p.status !== 'cancelado');
+  const canais  = {};
+  validos.forEach(p => {
+    const k = p.origem || '— Não informado';
+    if (!canais[k]) canais[k] = { total: 0, qtd: 0, pagos: 0 };
+    canais[k].total += p.total || 0;
+    canais[k].qtd++;
+    if (p.pago) canais[k].pagos++;
+  });
+  const lista = Object.entries(canais).sort((a, b) => b[1].total - a[1].total);
+  const maxVal = Math.max(...lista.map(([, v]) => v.total), 1);
+  const totalGeral = lista.reduce((s, [, v]) => s + v.total, 0);
+  cont.innerHTML = lista.map(([canal, v]) => `
+    <div class="roi-canal-item">
+      <div class="roi-canal-nome" style="min-width:140px">${esc(canal)}</div>
+      <div class="roi-canal-bar-wrap"><div class="roi-canal-bar" style="width:${Math.round(v.total/maxVal*100)}%"></div></div>
+      <div class="roi-canal-val">${fBRL(v.total)}</div>
+      <div class="roi-canal-qtd" style="min-width:48px;text-align:right">${Math.round(v.total/totalGeral*100)}%</div>
+      <div style="min-width:40px;font-size:11px;color:var(--muted);text-align:right">${v.qtd} ped.</div>
+    </div>`).join('') || '<div class="empty">Sem pedidos com origem cadastrada.</div>';
+  // Tabela detalhada
+  const pedsFiltrados = validos.filter(p => p.origem).sort((a,b)=>(b.criadoEm||'').localeCompare(a.criadoEm||''));
+  listCont.innerHTML = pedsFiltrados.length
+    ? `<table class="tbl"><thead><tr><th>#</th><th>Cliente</th><th>Canal</th><th>Total</th><th>Status</th><th>Data</th></tr></thead>
+       <tbody>${pedsFiltrados.map(p=>{
+         const lbl=PEDIDO_LABELS[p.status]||PEDIDO_LABELS.pendente;
+         return `<tr>
+           <td><span class="ped-num-badge">${p.num?'#'+p.num:'—'}</span></td>
+           <td>${esc(p.clienteNome)}</td>
+           <td><span class="badge" style="background:#e8eaf6;color:#3949ab;border:1px solid #9fa8da;font-size:10px">${esc(p.origem||'—')}</span></td>
+           <td style="font-family:var(--mono);color:var(--azul)">${fBRL(p.total)}</td>
+           <td><span class="badge ${lbl.cls}" style="font-size:10px">${lbl.label}</span></td>
+           <td style="font-size:11px;color:var(--muted)">${p.criadoEm?new Date(p.criadoEm).toLocaleDateString('pt-BR'):'—'}</td>
+         </tr>`;}).join('')}
+       </tbody></table>`
+    : '<div class="empty">Nenhum pedido com canal de origem preenchido.</div>';
 }
 
 // ════ APROVAÇÃO DE ARTES ══════════════════════════════
