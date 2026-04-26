@@ -3,6 +3,36 @@ const router  = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { authMiddleware, adminOnly } = require('../auth');
 
+// ── ROTAS PÚBLICAS (sem auth) — aprovação de arte ──────
+router.get('/publico/:id', async (req, res, next) => {
+  try {
+    const { Pedidos } = require('../db');
+    const p = await Pedidos.find(req.params.id);
+    if (!p) return res.status(404).json({ error: 'Pedido não encontrado' });
+    res.json({
+      id: p.id, clienteNome: p.clienteNome, items: p.items,
+      total: p.total, prazoEntrega: p.prazoEntrega, obs: p.obs,
+      status: p.status, criadoEm: p.criadoEm
+    });
+  } catch (e) { next(e); }
+});
+
+router.post('/publico/:id/aprovar', async (req, res, next) => {
+  try {
+    const { Pedidos } = require('../db');
+    await Pedidos.update(req.params.id, { status: 'producao', atualizadoEm: new Date().toISOString() });
+    res.json({ ok: true, status: 'producao' });
+  } catch (e) { next(e); }
+});
+
+router.post('/publico/:id/alteracao', async (req, res, next) => {
+  try {
+    const { Pedidos } = require('../db');
+    await Pedidos.update(req.params.id, { status: 'aguardando_aprovacao', atualizadoEm: new Date().toISOString() });
+    res.json({ ok: true, status: 'aguardando_aprovacao' });
+  } catch (e) { next(e); }
+});
+
 router.use(authMiddleware);
 
 router.get('/', async (req, res, next) => {
@@ -84,7 +114,7 @@ router.post('/', async (req, res, next) => {
   try {
     const { Pedidos } = require('../db');
     const { clienteId, clienteNome, items, total, totalBruto, prazoEntrega, obs,
-            orcamentoId, orcamentoNum, status, desconto, descontoTipo, pago, valorRecebido } = req.body;
+            orcamentoId, orcamentoNum, status, desconto, descontoTipo, pago, valorRecebido, origem } = req.body;
     if (!clienteNome?.trim()) return res.status(400).json({ error: 'Nome do cliente é obrigatório' });
     const novo = await Pedidos.create({
       id: uuidv4(),
@@ -102,6 +132,7 @@ router.post('/', async (req, res, next) => {
       status:       status       || 'pendente',
       pago:         pago         || false,
       valorRecebido:valorRecebido|| 0,
+      origem:       origem       || '',
       owner:        req.user.username,
       ownerNome:    req.user.nome,
       criadoEm:     new Date().toISOString()
@@ -114,7 +145,7 @@ router.put('/:id', async (req, res, next) => {
   try {
     const { Pedidos } = require('../db');
     const { status, prazoEntrega, obs, items, total, totalBruto, clienteNome,
-            desconto, descontoTipo, pago, valorRecebido } = req.body;
+            desconto, descontoTipo, pago, valorRecebido, origem } = req.body;
     const updated = await Pedidos.update(req.params.id, {
       ...(status        !== undefined && { status }),
       ...(prazoEntrega  !== undefined && { prazoEntrega }),
@@ -127,6 +158,7 @@ router.put('/:id', async (req, res, next) => {
       ...(descontoTipo  !== undefined && { descontoTipo }),
       ...(pago          !== undefined && { pago }),
       ...(valorRecebido !== undefined && { valorRecebido }),
+      ...(origem        !== undefined && { origem }),
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);
