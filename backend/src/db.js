@@ -73,6 +73,7 @@ async function init() {
   `);
 
   await query(`INSERT INTO sequence (key, value) VALUES ('orc_num', 324) ON CONFLICT DO NOTHING`);
+  await query(`INSERT INTO sequence (key, value) VALUES ('ped_num', 1000) ON CONFLICT DO NOTHING`);
 
   await query(`
     CREATE TABLE IF NOT EXISTS clientes (
@@ -116,6 +117,10 @@ async function init() {
   await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS pago BOOLEAN DEFAULT FALSE`);
   await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS valor_recebido NUMERIC(12,2) DEFAULT 0`);
   await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS origem TEXT DEFAULT ''`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS num INTEGER DEFAULT NULL`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS mockup_url TEXT DEFAULT ''`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS aprovacao_feedback TEXT DEFAULT ''`);
+  await query(`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS aprovacao_em TEXT DEFAULT ''`);
 
   /* status do orçamento: ativo | aprovado | cancelado */
   await query(`ALTER TABLE orcamentos ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'ativo'`);
@@ -333,6 +338,12 @@ const Seq = {
     if (maxUsed === null || maxUsed === undefined) return;
     const current = await Seq.getNext();
     if (current === maxUsed + 2) await Seq.setNext(maxUsed + 1);
+  },
+  getNextPed: async () => {
+    const { rows } = await query(
+      `UPDATE sequence SET value = value + 1 WHERE key = 'ped_num' RETURNING value`
+    );
+    return rows[0]?.value || 1001;
   }
 };
 
@@ -398,12 +409,12 @@ const Pedidos = {
   create: async (data) => {
     const { rows } = await query(`
       INSERT INTO pedidos
-        (id, cliente_id, cliente_nome, items, total, total_bruto, desconto_tipo, desconto,
+        (id, num, cliente_id, cliente_nome, items, total, total_bruto, desconto_tipo, desconto,
          prazo_entrega, obs, orcamento_id, orcamento_num, status, owner, owner_nome,
-         criado_em, pago, valor_recebido, origem)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *
+         criado_em, pago, valor_recebido, origem, mockup_url)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21) RETURNING *
     `, [
-      data.id, data.clienteId || '', data.clienteNome,
+      data.id, data.num || null, data.clienteId || '', data.clienteNome,
       JSON.stringify(data.items || []), data.total || 0,
       data.totalBruto || data.total || 0,
       data.descontoTipo || 'pct',
@@ -411,7 +422,7 @@ const Pedidos = {
       data.prazoEntrega || '', data.obs || '',
       data.orcamentoId || '', data.orcamentoNum || null,
       data.status || 'pendente', data.owner, data.ownerNome, data.criadoEm,
-      data.pago || false, data.valorRecebido || 0, data.origem || ''
+      data.pago || false, data.valorRecebido || 0, data.origem || '', data.mockupUrl || ''
     ]);
     return fromDbPedido(rows[0]);
   },
@@ -433,7 +444,8 @@ const Pedidos = {
       descontoTipo: 'desconto_tipo', desconto: 'desconto',
       pago: 'pago', valorRecebido: 'valor_recebido',
       clienteNome: 'cliente_nome', atualizadoEm: 'atualizado_em',
-      origem: 'origem'
+      origem: 'origem', mockupUrl: 'mockup_url',
+      aprovacaoFeedback: 'aprovacao_feedback', aprovacaoEm: 'aprovacao_em'
     };
     const fields = []; const values = [id]; let idx = 2;
     for (const [k, col] of Object.entries(map)) {
@@ -465,7 +477,10 @@ function fromDbPedido(r) {
     orcamentoId: r.orcamento_id, orcamentoNum: r.orcamento_num,
     status: r.status, owner: r.owner, ownerNome: r.owner_nome,
     criadoEm: r.criado_em, atualizadoEm: r.atualizado_em,
-    origem: r.origem || ''
+    origem: r.origem || '', num: r.num || null,
+    mockupUrl: r.mockup_url || '',
+    aprovacaoFeedback: r.aprovacao_feedback || '',
+    aprovacaoEm: r.aprovacao_em || ''
   };
 }
 
