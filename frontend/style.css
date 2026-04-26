@@ -900,6 +900,141 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
 }
 .msg-preview-body strong { color: var(--azul); }
 
+/* ══ CRM / FICHA DO CLIENTE ══════════════════════════ */
+.crm-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+  /* altura mínima para o painel ocupar a tela toda */
+  min-height: calc(100vh - 160px);
+}
+
+/* ── Sidebar (lista de clientes) ── */
+.crm-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.crm-search {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+}
+.crm-search:focus { border-color: var(--azul); }
+
+.crm-client-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: auto;
+  max-height: calc(100vh - 255px);
+  padding-right: 2px;
+}
+/* scrollbar fina */
+.crm-client-list::-webkit-scrollbar { width: 4px; }
+.crm-client-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.crm-client-item {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 13px;
+  cursor: pointer;
+  transition: all .14s;
+  user-select: none;
+}
+.crm-client-item:hover  { border-color: var(--azul-lt); background: var(--azul-bg); }
+.crm-client-item.active { border-color: var(--azul); background: var(--azul-bg); box-shadow: 0 0 0 1px var(--azul); }
+.crm-client-name { font-weight: 700; font-size: 13px; color: var(--text); }
+.crm-client-sub  { font-size: 11px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Painel principal (ficha) ── */
+.crm-main {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,51,153,.06);
+}
+.crm-empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px;
+  min-height: 300px;
+}
+
+/* ── Cabeçalho da ficha ── */
+.crm-ficha-header {
+  background: var(--azul);
+  color: #fff;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.crm-ficha-nome { font-size: 20px; font-weight: 700; line-height: 1.2; }
+.crm-ficha-sub  { font-size: 12px; opacity: .75; margin-top: 5px; }
+.crm-ficha-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+
+/* ── Cards LTV ── */
+.crm-ltv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.crm-ltv-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--azul);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+}
+.crm-ltv-card.ltv-destaque { border-top-color: var(--success); }
+.crm-ltv-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.crm-ltv-val   { font-family: var(--mono); font-size: 19px; font-weight: 700; color: var(--azul); margin-top: 5px; }
+
+/* seção de anotações */
+.crm-section-title {
+  font-size: 10px; font-weight: 700; color: var(--azul);
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px;
+}
+.crm-notas {
+  width: 100%; resize: vertical; min-height: 76px;
+  padding: 10px 13px; border: 1.5px solid var(--border); border-radius: var(--radius);
+  font-family: var(--font); font-size: 13px; box-sizing: border-box;
+  background: var(--bg); color: var(--text); transition: border-color .15s;
+  line-height: 1.55;
+}
+.crm-notas:focus { outline: none; border-color: var(--azul); }
+
+/* ── Responsive ── */
+@media (max-width:960px) {
+  .crm-layout { grid-template-columns: 1fr; }
+  .crm-client-list { max-height: 220px; }
+  .crm-ltv-grid { grid-template-columns: repeat(3,1fr); }
+}
+@media (max-width:600px) {
+  .crm-ltv-grid { grid-template-columns: 1fr; }
+  .crm-ficha-header { flex-direction: column; }
+}
+
 /* ══ MÓDULO FINANCEIRO ════════════════════════════════ */
 .fin-resumo-grid {
   display: grid;

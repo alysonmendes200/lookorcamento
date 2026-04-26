@@ -148,6 +148,10 @@
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
     <span>Clientes</span>
   </button>
+  <button class="nav-btn" id="nav-crm" onclick="goPage('crm')">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+    <span>CRM / Ficha</span>
+  </button>
   <button class="nav-btn" id="nav-produtos" onclick="goPage('produtos')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
     <span>Produtos</span>
@@ -447,37 +451,45 @@
       <div><div class="page-title">Dashboard</div><div class="page-sub">Visão geral do negócio</div></div>
       <button class="btn btn-ghost" onclick="carregarDashboard()">🔄 Atualizar</button>
     </div>
-    <div class="dash-grid">
-      <div class="dash-card azul"><div class="dash-card-icon">📋</div><div class="dash-card-label">Total Orçamentos</div><div class="dash-card-val" id="dash-tot-orc">—</div></div>
-      <div class="dash-card verde"><div class="dash-card-icon">💰</div><div class="dash-card-label">Recebido (Orç.)</div><div class="dash-card-val sm" id="dash-recebido">—</div></div>
-      <div class="dash-card laranja"><div class="dash-card-icon">⏳</div><div class="dash-card-label">A Receber (Orç.)</div><div class="dash-card-val sm" id="dash-areceber">—</div></div>
-      <div class="dash-card azul"><div class="dash-card-icon">👥</div><div class="dash-card-label">Clientes</div><div class="dash-card-val" id="dash-clientes">—</div></div>
-      <div class="dash-card verde"><div class="dash-card-icon">📦</div><div class="dash-card-label">Pedidos Abertos</div><div class="dash-card-val" id="dash-pedidos-abertos">—</div></div>
-      <div class="dash-card laranja"><div class="dash-card-icon">🛒</div><div class="dash-card-label">Pedidos Pagos</div><div class="dash-card-val sm" id="dash-pedidos-pagos">—</div></div>
-    </div>
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-title">💼 Visão Financeira Consolidada</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:8px">
-        <div class="dre-stat azul"><div class="dre-stat-label">Faturamento Total</div><div class="dre-stat-val" id="dash-fat-total" style="color:var(--azul)">—</div></div>
-        <div class="dre-stat pos"><div class="dre-stat-label">Total Recebido</div><div class="dre-stat-val" id="dash-total-recebido" style="color:#198754">—</div></div>
-        <div class="dre-stat neg"><div class="dre-stat-label">Saídas Caixa</div><div class="dre-stat-val" id="dash-saidas-cx" style="color:#dc3545">—</div></div>
-        <div class="dre-stat azul"><div class="dre-stat-label">Saldo Caixa</div><div class="dre-stat-val" id="dash-saldo-cx">—</div></div>
-        <div class="dre-stat pos"><div class="dre-stat-label">Resultado Líquido</div><div class="dre-stat-val" id="dash-resultado">—</div></div>
+    <!-- Cada div#dash-s-* é uma seção reordenável pelo config -->
+    <div id="dash-s-kpis">
+      <div class="dash-grid">
+        <div class="dash-card azul"><div class="dash-card-icon">📋</div><div class="dash-card-label">Total Orçamentos</div><div class="dash-card-val" id="dash-tot-orc">—</div></div>
+        <div class="dash-card verde"><div class="dash-card-icon">💰</div><div class="dash-card-label">Recebido (Orç.)</div><div class="dash-card-val sm" id="dash-recebido">—</div></div>
+        <div class="dash-card laranja"><div class="dash-card-icon">⏳</div><div class="dash-card-label">A Receber (Orç.)</div><div class="dash-card-val sm" id="dash-areceber">—</div></div>
+        <div class="dash-card azul"><div class="dash-card-icon">👥</div><div class="dash-card-label">Clientes</div><div class="dash-card-val" id="dash-clientes">—</div></div>
+        <div class="dash-card verde"><div class="dash-card-icon">📦</div><div class="dash-card-label">Pedidos Abertos</div><div class="dash-card-val" id="dash-pedidos-abertos">—</div></div>
+        <div class="dash-card laranja"><div class="dash-card-icon">🛒</div><div class="dash-card-label">Pedidos Pagos</div><div class="dash-card-val sm" id="dash-pedidos-pagos">—</div></div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      <div class="card"><div class="card-title">📅 Orçamentos por Mês</div><div class="dash-chart" id="dash-chart-mensal"></div></div>
-      <div class="card"><div class="card-title">📦 Status dos Pedidos</div><div id="dash-pedidos-status" style="margin-top:8px"></div></div>
+    <div id="dash-s-financeiro">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">💼 Visão Financeira Consolidada</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:8px">
+          <div class="dre-stat azul"><div class="dre-stat-label">Faturamento Total</div><div class="dre-stat-val" id="dash-fat-total" style="color:var(--azul)">—</div></div>
+          <div class="dre-stat pos"><div class="dre-stat-label">Total Recebido</div><div class="dre-stat-val" id="dash-total-recebido" style="color:#198754">—</div></div>
+          <div class="dre-stat neg"><div class="dre-stat-label">Saídas Caixa</div><div class="dre-stat-val" id="dash-saidas-cx" style="color:#dc3545">—</div></div>
+          <div class="dre-stat azul"><div class="dre-stat-label">Saldo Caixa</div><div class="dre-stat-val" id="dash-saldo-cx">—</div></div>
+          <div class="dre-stat pos"><div class="dre-stat-label">Resultado Líquido</div><div class="dre-stat-val" id="dash-resultado">—</div></div>
+        </div>
+      </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      <div class="card"><div class="card-title">🏆 Top Clientes (por valor)</div><div id="dash-top-clientes" style="margin-top:8px"></div></div>
-      <div class="card"><div class="card-title">🔥 Itens Mais Vendidos</div><div id="dash-top-itens" style="margin-top:8px"></div></div>
+    <div id="dash-s-graficos">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="card"><div class="card-title">📅 Orçamentos por Mês</div><div class="dash-chart" id="dash-chart-mensal"></div></div>
+        <div class="card"><div class="card-title">📦 Status dos Pedidos</div><div id="dash-pedidos-status" style="margin-top:8px"></div></div>
+      </div>
     </div>
-    <!-- Card semáforo de prazos — pedidos críticos -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-title">🚨 Pedidos Críticos e Prazos</div>
-      <div id="dash-prazos" style="margin-top:8px">
-        <div class="empty" style="font-size:12px">Carregando…</div>
+    <div id="dash-s-ranking">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="card"><div class="card-title">🏆 Top Clientes (por valor)</div><div id="dash-top-clientes" style="margin-top:8px"></div></div>
+        <div class="card"><div class="card-title">🔥 Itens Mais Vendidos</div><div id="dash-top-itens" style="margin-top:8px"></div></div>
+      </div>
+    </div>
+    <div id="dash-s-prazos">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">🚨 Pedidos Críticos e Prazos</div>
+        <div id="dash-prazos" style="margin-top:8px"><div class="empty" style="font-size:12px">Carregando…</div></div>
       </div>
     </div>
   </div>
@@ -585,6 +597,15 @@
         <div style="display:flex;align-items:flex-end"><button class="btn btn-primary" onclick="definirNumeracao()">Definir</button></div>
       </div>
       <div id="cfg-num-feedback" style="margin-top:8px;font-size:12px"></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">📊 Ordem do Dashboard</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Use as setas para reorganizar os blocos exibidos no Dashboard.</div>
+      <div id="dash-order-list" style="display:flex;flex-direction:column;gap:6px"></div>
+      <div class="btn-row" style="margin-top:14px">
+        <button class="btn btn-primary" onclick="salvarDashOrder()">💾 Salvar Ordem</button>
+        <button class="btn btn-ghost" onclick="resetarDashOrder()">↺ Restaurar Padrão</button>
+      </div>
     </div>
     <div class="card" style="margin-top:14px">
       <div class="card-title">🗂️ Etiquetas do Kanban</div>
@@ -1280,6 +1301,44 @@
     </div>
   </div>
 
+  <!-- ══ CRM / FICHA DO CLIENTE ══════════════════════ -->
+  <div class="page" id="page-crm">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div>
+        <div class="page-title">🤝 CRM — Ficha de Clientes</div>
+        <div class="page-sub">Histórico completo, LTV e anotações por cliente</div>
+      </div>
+      <button class="btn btn-primary" onclick="abrirModalNovoCliente()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Novo Cliente
+      </button>
+    </div>
+
+    <div class="crm-layout">
+
+      <!-- ── Painel esquerdo: busca + lista ── -->
+      <div class="crm-sidebar">
+        <input class="crm-search" id="crm-busca" type="text"
+               placeholder="🔍 Buscar por nome, comércio ou telefone…"
+               oninput="renderCRMList()">
+        <div style="font-size:10px;color:var(--muted);padding:0 2px" id="crm-count"></div>
+        <div id="crm-client-list" class="crm-client-list">
+          <div class="empty" style="font-size:12px;padding:16px">Carregando…</div>
+        </div>
+      </div>
+
+      <!-- ── Painel direito: ficha do cliente ── -->
+      <div class="crm-main" id="crm-ficha">
+        <div class="crm-empty-state">
+          <svg width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24" style="opacity:.25"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <div style="font-size:15px;font-weight:700;color:var(--muted)">Selecione um cliente</div>
+          <div style="font-size:12px;color:var(--muted);opacity:.7">Clique em um nome na lista para ver a ficha completa</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ══ FINANCEIRO ════════════════════════════════════ -->
   <div class="page" id="page-financeiro">
     <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -1311,7 +1370,9 @@
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <div class="card-title" style="margin-bottom:0">📋 Lançamentos</div>
-        <button class="btn btn-ghost" onclick="carregarFinanceiro()" style="font-size:12px">🔄 Atualizar</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" onclick="carregarFinanceiro()" style="font-size:12px">🔄 Atualizar</button>
+        </div>
       </div>
       <div style="overflow-x:auto">
         <table class="tbl">
@@ -1327,6 +1388,32 @@
           </thead>
           <tbody id="fin-tabela-body">
             <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhum lançamento ainda.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Extrato do Caixa vinculado -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">💵 Extrato do Caixa</div>
+        <span style="font-size:11px;color:var(--muted)">Transações já registradas no Caixa</span>
+      </div>
+      <!-- Mini-resumo do caixa -->
+      <div id="fin-caixa-resumo" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px"></div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="width:90px">Tipo</th>
+              <th>Descrição</th>
+              <th style="width:110px">Categoria</th>
+              <th style="width:120px">Valor</th>
+              <th style="width:110px">Data</th>
+            </tr>
+          </thead>
+          <tbody id="fin-caixa-body">
+            <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
           </tbody>
         </table>
       </div>
@@ -1857,6 +1944,7 @@ function goPage(p) {
   if(p==='relatorios'&&isAdmin())   carregarRelatorio();
   if(p==='config'&&isAdmin())       carregarConfig();
   if(p==='clientes')                carregarClientes();
+  if(p==='crm')                     carregarCRM();
   if(p==='pedidos')                 carregarPedidos();
   if(p==='produtos')                carregarProdutos();
   if(p==='dashboard'&&isAdmin())    carregarDashboard();
@@ -2528,8 +2616,87 @@ async function excluirUser(id,nome){
 }
 
 // ════ CONFIGURAÇÕES ═══════════════════════════════════
+// ════ ORDEM DO DASHBOARD ══════════════════════════════
+const DASH_SECTIONS_DEF = [
+  { key:'kpis',       label:'📊 KPIs Gerais (cards de topo)' },
+  { key:'financeiro', label:'💼 Visão Financeira Consolidada' },
+  { key:'graficos',   label:'📅 Gráficos — Orçamentos e Pedidos' },
+  { key:'ranking',    label:'🏆 Rankings — Clientes e Itens' },
+  { key:'prazos',     label:'🚨 Pedidos Críticos e Prazos' },
+];
+const DASH_ORDER_KEY = 'lookDashOrder';
+
+// Retorna a ordem salva ou a padrão
+function getDashOrder() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(DASH_ORDER_KEY) || 'null');
+    if (Array.isArray(saved) && saved.length === DASH_SECTIONS_DEF.length) return saved;
+  } catch {}
+  return DASH_SECTIONS_DEF.map(s => s.key);
+}
+
+// Reordena os elementos DOM do dashboard conforme a ordem salva
+function aplicarDashOrder() {
+  const order  = getDashOrder();
+  const parent = document.getElementById('page-dashboard');
+  if (!parent) return;
+  // O cabeçalho (page-header) sempre fica primeiro — pega os outros nós
+  const header = parent.querySelector('.page-header');
+  order.forEach(key => {
+    const el = document.getElementById('dash-s-' + key);
+    if (el) parent.appendChild(el); // move para o final na ordem certa
+  });
+  // Devolve o header para o topo
+  if (header) parent.insertBefore(header, parent.firstChild);
+}
+
+// Renderiza a lista de ordenação na tela de configurações
+function renderDashOrderConfig() {
+  const order = getDashOrder();
+  const list  = document.getElementById('dash-order-list');
+  if (!list) return;
+  list.innerHTML = order.map((key, i) => {
+    const sec = DASH_SECTIONS_DEF.find(s => s.key === key);
+    const label = sec ? sec.label : key;
+    return `<div style="display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+      <span style="flex:1;font-size:13px;font-weight:600">${label}</span>
+      <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px" ${i===0?'disabled':''} onclick="moveDashSection('${key}',-1)">▲</button>
+      <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px" ${i===order.length-1?'disabled':''} onclick="moveDashSection('${key}',1)">▼</button>
+    </div>`;
+  }).join('');
+}
+
+// Move uma seção para cima (-1) ou para baixo (+1) e re-renderiza
+function moveDashSection(key, dir) {
+  const order = getDashOrder();
+  const idx   = order.indexOf(key);
+  if (idx < 0) return;
+  const swap  = idx + dir;
+  if (swap < 0 || swap >= order.length) return;
+  [order[idx], order[swap]] = [order[swap], order[idx]];
+  localStorage.setItem(DASH_ORDER_KEY, JSON.stringify(order));
+  renderDashOrderConfig();
+}
+
+// Salva e aplica a ordem (feedback ao usuário)
+function salvarDashOrder() {
+  // A ordem já foi salva incrementalmente em moveDashSection;
+  // aplica ao dashboard imediatamente
+  aplicarDashOrder();
+  toast('Ordem do Dashboard salva! ✅', 'success');
+}
+
+// Restaura a ordem padrão
+function resetarDashOrder() {
+  localStorage.removeItem(DASH_ORDER_KEY);
+  renderDashOrderConfig();
+  aplicarDashOrder();
+  toast('Ordem restaurada para o padrão.', 'success');
+}
+
 async function carregarConfig(){
   renderKanbanCfgFields();
+  renderDashOrderConfig();
   await carregarNextNum();
   const el=document.getElementById('cfg-num-atual');if(el)el.textContent=String(nextNum).padStart(3,'0');
   const input=document.getElementById('cfg-novo-num');if(input)input.value=nextNum;
@@ -2822,6 +2989,230 @@ function renderClientes(){
     </div>`;
   }).join('')}</div>`;
 }
+// ════ CRM / FICHA DO CLIENTE ══════════════════════════
+
+let crmClienteAtual = null; // cliente selecionado na ficha
+
+// Garante que clientes e pedidos estejam em memória antes de renderizar
+async function carregarCRM() {
+  if (!clienteList.length) {
+    try { clienteList = await API.get('/clientes'); } catch(e) { console.warn(e); }
+  }
+  if (!pedidoList.length) {
+    try { pedidoList = await API.get('/pedidos'); } catch(e) { console.warn(e); }
+  }
+  renderCRMList();
+}
+
+// Renderiza a lista lateral com filtro de busca
+function renderCRMList() {
+  const busca  = (document.getElementById('crm-busca')?.value || '').toLowerCase().trim();
+  const lista  = document.getElementById('crm-client-list');
+  const countEl= document.getElementById('crm-count');
+  if (!lista) return;
+
+  // Filtra por nome, comércio ou telefone
+  const filtrados = busca
+    ? clienteList.filter(c =>
+        c.nome.toLowerCase().includes(busca) ||
+        (c.comercio||'').toLowerCase().includes(busca) ||
+        (c.telefone||'').includes(busca))
+    : clienteList;
+
+  if (countEl) countEl.textContent = filtrados.length + ' cliente' + (filtrados.length !== 1 ? 's' : '');
+
+  if (!filtrados.length) {
+    lista.innerHTML = '<div class="empty" style="font-size:12px;padding:16px">' +
+      (clienteList.length ? 'Nenhum cliente encontrado.' : 'Cadastre clientes no menu Clientes.') + '</div>';
+    return;
+  }
+
+  lista.innerHTML = filtrados.map(c => {
+    // Mostra quantos pedidos o cliente possui (calculado a partir do array em memória)
+    const nPeds  = pedidoList.filter(p =>
+      (p.clienteId && p.clienteId === c.id) ||
+      (p.clienteNome||'').toLowerCase().trim() === c.nome.toLowerCase().trim()
+    ).length;
+    const ativo  = crmClienteAtual?.id === c.id;
+    return `<div class="crm-client-item${ativo?' active':''}" onclick="selecionarClienteCRM('${c.id}')">
+      <div class="crm-client-name">${esc(c.nome)}</div>
+      <div class="crm-client-sub">${c.comercio ? esc(c.comercio) + ' · ' : ''}${nPeds} pedido${nPeds!==1?'s':''}${c.telefone?' · '+esc(c.telefone):''}</div>
+    </div>`;
+  }).join('');
+}
+
+// Seleciona um cliente e monta a ficha completa
+function selecionarClienteCRM(id) {
+  const cli = clienteList.find(c => c.id === id);
+  if (!cli) return;
+  crmClienteAtual = cli;
+  renderCRMList(); // atualiza classe .active na lista
+
+  // Obtém métricas de LTV
+  const { totalPedidos, ltv, ticketMedio, pedidosCliente, ultimoContato } = calcularLTV(cli);
+
+  const ficha   = document.getElementById('crm-ficha');
+  const wppTel  = (cli.telefone||'').replace(/\D/g,'');
+  const btnWpp  = wppTel
+    ? `<button class="btn" style="background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);font-size:12px;padding:5px 12px"
+         onclick="window.open('https://wa.me/55${wppTel}','_blank')">💬 WhatsApp</button>`
+    : '';
+
+  ficha.innerHTML = `
+    <!-- ── Cabeçalho da ficha ── -->
+    <div class="crm-ficha-header">
+      <div>
+        <div class="crm-ficha-nome">${esc(cli.nome)}</div>
+        <div class="crm-ficha-sub">
+          ${cli.comercio ? '🏢 '+esc(cli.comercio)+'&nbsp;&nbsp;' : ''}
+          ${cli.email    ? '✉️ '+esc(cli.email)                   : ''}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px">
+        <div style="font-size:12px;opacity:.8">📅 Último contato: <strong>${ultimoContato}</strong></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          ${btnWpp}
+          <button class="btn" style="background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);font-size:12px;padding:5px 12px"
+                  onclick="editarCliente('${cli.id}')">✏️ Editar</button>
+        </div>
+        ${cli.telefone ? `<div style="font-size:12px;opacity:.7">📞 ${esc(cli.telefone)}</div>` : ''}
+        ${cli.endereco ? `<div style="font-size:11px;opacity:.6">📍 ${esc(cli.endereco)}</div>` : ''}
+      </div>
+    </div>
+
+    <!-- ── Corpo da ficha ── -->
+    <div class="crm-ficha-body">
+
+      <!-- Cards de LTV -->
+      <div class="crm-ltv-grid">
+        <div class="crm-ltv-card">
+          <div class="crm-ltv-label">Total de Pedidos</div>
+          <div class="crm-ltv-val">${totalPedidos}</div>
+        </div>
+        <div class="crm-ltv-card">
+          <div class="crm-ltv-label">Ticket Médio</div>
+          <div class="crm-ltv-val" style="font-size:15px">${fBRL(ticketMedio)}</div>
+        </div>
+        <div class="crm-ltv-card ltv-destaque">
+          <div class="crm-ltv-label">Valor Total Gasto (LTV)</div>
+          <div class="crm-ltv-val" style="color:var(--success);font-size:15px">${fBRL(ltv)}</div>
+        </div>
+      </div>
+
+      <!-- Anotações internas -->
+      <div style="margin-bottom:22px">
+        <div class="crm-section-title">📝 Anotações Internas</div>
+        <textarea id="crm-anotacoes" class="crm-notas"
+          placeholder="Ex: Prefere acabamento fosco · Cliente exigente com prazos · Pagamento sempre à vista…"
+        >${esc(cli.obs||'')}</textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:7px">
+          <button class="btn btn-primary" style="font-size:12px;padding:6px 16px"
+                  onclick="salvarAnotacaoCRM('${cli.id}')">💾 Salvar Anotação</button>
+        </div>
+      </div>
+
+      <!-- Histórico de pedidos -->
+      <div>
+        <div class="crm-section-title">📦 Histórico de Pedidos (${totalPedidos})</div>
+        ${renderHistoricoPedidosCRM(pedidosCliente)}
+      </div>
+
+    </div>`;
+}
+
+/*
+ * Calcula as métricas de LTV (Life Time Value) de um cliente.
+ *
+ * Lógica:
+ *   1. Filtra pedidoList pelo clienteId (vínculo direto) OU pelo nome (vínculo textual,
+ *      necessário pois pedidos legados podem não ter o clienteId preenchido).
+ *   2. LTV = soma dos totais de todos os pedidos NÃO cancelados.
+ *      Inclui pedidos em produção/prontos pois já representam receita gerada.
+ *   3. Ticket médio = LTV ÷ quantidade de pedidos não cancelados.
+ *      Reflete o valor médio que o cliente gasta por transação.
+ *   4. Último contato = data do pedido mais recente (criadoEm ou atualizadoEm).
+ *
+ * @param {object} cli — objeto do cliente vindo de clienteList
+ * @returns {{ totalPedidos, ltv, ticketMedio, pedidosCliente, ultimoContato }}
+ */
+function calcularLTV(cli) {
+  // ── Passo 1: filtrar todos os pedidos do cliente ──────────────────────
+  const pedidosCliente = pedidoList.filter(p =>
+    (p.clienteId && p.clienteId === cli.id) ||
+    (p.clienteNome||'').toLowerCase().trim() === (cli.nome||'').toLowerCase().trim()
+  );
+
+  // ── Passo 2: separar os não-cancelados para os cálculos de valor ─────
+  const validos = pedidosCliente.filter(p => p.status !== 'cancelado');
+
+  // ── Passo 3: LTV — soma de todos os pedidos não cancelados ────────────
+  // Usamos p.total (que já desconta descontos aplicados no pedido)
+  const ltv = validos.reduce((soma, p) => soma + (p.total || 0), 0);
+
+  // ── Passo 4: Ticket médio ─────────────────────────────────────────────
+  const ticketMedio = validos.length > 0 ? ltv / validos.length : 0;
+
+  // ── Passo 5: Último contato — data do pedido mais recente ─────────────
+  const datas = pedidosCliente
+    .map(p => p.criadoEm || p.atualizadoEm || '')
+    .filter(Boolean)
+    .sort()      // ISO strings são ordenáveis lexicograficamente
+    .reverse();
+  const ultimoContato = datas.length
+    ? new Date(datas[0]).toLocaleDateString('pt-BR')
+    : (cli.criadoEm ? new Date(cli.criadoEm).toLocaleDateString('pt-BR') : 'Sem pedidos');
+
+  return { totalPedidos: pedidosCliente.length, ltv, ticketMedio, pedidosCliente, ultimoContato };
+}
+
+// Renderiza a mini-tabela de histórico de pedidos dentro da ficha
+function renderHistoricoPedidosCRM(pedidos) {
+  if (!pedidos.length) {
+    return '<div class="empty" style="font-size:12px">Este cliente ainda não possui pedidos registrados.</div>';
+  }
+  // Ordena do mais recente ao mais antigo
+  const sorted = [...pedidos].sort((a, b) => (b.criadoEm||'').localeCompare(a.criadoEm||''));
+
+  return `<div style="overflow-x:auto">
+    <table class="tbl">
+      <thead><tr>
+        <th style="width:95px">Data</th>
+        <th>Itens</th>
+        <th style="width:115px">Total</th>
+        <th style="width:115px">Status</th>
+        <th style="width:65px">Pago</th>
+      </tr></thead>
+      <tbody>${sorted.map(p => {
+        const lbl  = PEDIDO_LABELS[p.status] || PEDIDO_LABELS.pendente;
+        const data = p.criadoEm ? new Date(p.criadoEm).toLocaleDateString('pt-BR') : '—';
+        const itens= (p.items||[]).map(i=>i.desc).join(', ') || '—';
+        return `<tr>
+          <td style="font-size:11px;color:var(--muted);white-space:nowrap">${data}</td>
+          <td style="font-size:12px;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(itens)}">${esc(itens)}</td>
+          <td style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:700">${fBRL(p.total||0)}</td>
+          <td><span class="badge ${lbl.cls}" style="font-size:10px">${lbl.label}</span></td>
+          <td style="text-align:center"><span class="badge ${p.pago?'badge-pago':'badge-nao-pago'}" style="font-size:10px">${p.pago?'✅':'⏳'}</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+// Salva a anotação (campo obs) no backend e atualiza o cache local
+async function salvarAnotacaoCRM(id) {
+  const nota = document.getElementById('crm-anotacoes')?.value || '';
+  try {
+    const updated = await API.put('/clientes/' + id, { obs: nota });
+    // Atualiza o objeto em memória para manter consistência
+    const idx = clienteList.findIndex(c => c.id === id);
+    if (idx >= 0) clienteList[idx] = { ...clienteList[idx], ...updated };
+    if (crmClienteAtual?.id === id) crmClienteAtual.obs = nota;
+    toast('Anotação salva com sucesso! ✅', 'success');
+  } catch(e) {
+    toast('Erro ao salvar anotação: ' + e.message, 'error');
+  }
+}
+
 function abrirModalNovoCliente(){
   ['cli-nome','cli-comercio','cli-tel','cli-email','cli-cpfcnpj','cli-endereco','cli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('cli-edit-id').value='';
@@ -3342,6 +3733,7 @@ async function excluirPedido(id){
 
 // ════ DASHBOARD ═══════════════════════════════════════
 async function carregarDashboard(){
+  aplicarDashOrder(); // aplica a ordem configurada antes de renderizar
   try{
     const[orcs,pedidos,clientes,produtos,caixa]=await Promise.all([
       API.get('/orcamentos').catch(()=>[]),
@@ -3532,12 +3924,14 @@ function renderPrazosDashboard(pedidos) {
  *     parcela, totalParcelas, pedidoId? }
  */
 
-// Carrega do localStorage e atualiza status de vencidos
-function carregarFinanceiro() {
+// Carrega lançamentos do localStorage + extrato do Caixa da API
+async function carregarFinanceiro() {
   try { lancamentosFinanceiros = JSON.parse(localStorage.getItem('lookLancamentos') || '[]'); }
   catch { lancamentosFinanceiros = []; }
   _finAtualizarVencidos();
   renderFinanceiro();
+  // Carrega extrato do caixa em paralelo (vinculação)
+  await _finCarregarCaixa();
 }
 
 // Persiste array no localStorage
@@ -3695,6 +4089,65 @@ function finMarcarPago(id) {
   _finSalvar();
   renderFinanceiro();
   toast('Marcado como pago! ✅', 'success');
+}
+
+// ── Vínculo com Caixa ─────────────────────────────────
+// Busca transações do Caixa na API e renderiza o extrato vinculado
+async function _finCarregarCaixa() {
+  const resumoEl = document.getElementById('fin-caixa-resumo');
+  const bodyEl   = document.getElementById('fin-caixa-body');
+  if (!resumoEl || !bodyEl) return;
+
+  try {
+    // Reutiliza o caixaList se já carregado, senão busca da API
+    const lista = (typeof caixaList !== 'undefined' && caixaList.length)
+      ? caixaList
+      : await API.get('/caixa').catch(() => []);
+
+    const entradas = lista.filter(t => t.tipo === 'entrada').reduce((s,t) => s + t.valor, 0);
+    const saidas   = lista.filter(t => t.tipo === 'saida').reduce((s,t) => s + t.valor, 0);
+    const saldo    = entradas - saidas;
+
+    // Mini-resumo de saldo do caixa
+    resumoEl.innerHTML = `
+      <div class="fin-card fin-card-verde" style="padding:12px">
+        <div class="fin-card-label">Entradas Caixa</div>
+        <div class="fin-card-val" style="font-size:15px;color:var(--success)">${fBRL(entradas)}</div>
+      </div>
+      <div class="fin-card fin-card-vermelho" style="padding:12px">
+        <div class="fin-card-label">Saídas Caixa</div>
+        <div class="fin-card-val" style="font-size:15px;color:var(--danger)">${fBRL(saidas)}</div>
+      </div>
+      <div class="fin-card fin-card-azul" style="padding:12px">
+        <div class="fin-card-label">Saldo Caixa</div>
+        <div class="fin-card-val" style="font-size:15px;color:${saldo>=0?'var(--success)':'var(--danger)'}">${fBRL(saldo)}</div>
+      </div>`;
+
+    if (!lista.length) {
+      bodyEl.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Nenhuma transação no Caixa ainda.</td></tr>';
+      return;
+    }
+
+    // Ordena do mais recente ao mais antigo
+    const sorted = [...lista].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+    bodyEl.innerHTML = sorted.map(t => {
+      const isEntrada = t.tipo === 'entrada';
+      const tipoBadge = isEntrada
+        ? '<span class="badge-fin-entrada">↑ Entrada</span>'
+        : '<span class="badge-fin-saida">↓ Saída</span>';
+      const corVal = isEntrada ? 'var(--success)' : 'var(--danger)';
+      const dataFmt = t.data ? t.data.split('-').reverse().join('/') : '—';
+      return `<tr>
+        <td>${tipoBadge}</td>
+        <td style="font-weight:600">${esc(t.descricao||'—')}${t.obs?`<div style="font-size:10px;color:var(--muted)">${esc(t.obs)}</div>`:''}</td>
+        <td style="font-size:12px;color:var(--muted)">${esc(t.categoria||'—')}</td>
+        <td style="font-family:var(--mono);color:${corVal};font-weight:600">${fBRL(t.valor)}</td>
+        <td style="font-size:12px;color:var(--muted)">${dataFmt}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    bodyEl.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--danger)">Erro ao carregar Caixa: ${esc(e.message)}</td></tr>`;
+  }
 }
 
 // Exclui um lançamento após confirmação
