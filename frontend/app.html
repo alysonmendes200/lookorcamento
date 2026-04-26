@@ -156,6 +156,10 @@
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
     <span>Caixa</span>
   </button>
+  <button class="nav-btn" id="nav-financeiro" onclick="goPage('financeiro')">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    <span>Financeiro</span>
+  </button>
 
   <div class="nav-section">Ferramentas</div>
   <div style="width:100%">
@@ -468,6 +472,13 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
       <div class="card"><div class="card-title">🏆 Top Clientes (por valor)</div><div id="dash-top-clientes" style="margin-top:8px"></div></div>
       <div class="card"><div class="card-title">🔥 Itens Mais Vendidos</div><div id="dash-top-itens" style="margin-top:8px"></div></div>
+    </div>
+    <!-- Card semáforo de prazos — pedidos críticos -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">🚨 Pedidos Críticos e Prazos</div>
+      <div id="dash-prazos" style="margin-top:8px">
+        <div class="empty" style="font-size:12px">Carregando…</div>
+      </div>
     </div>
   </div>
 
@@ -1269,7 +1280,80 @@
     </div>
   </div>
 
+  <!-- ══ FINANCEIRO ════════════════════════════════════ -->
+  <div class="page" id="page-financeiro">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div><div class="page-title">💰 Módulo Financeiro</div><div class="page-sub">Controle de entradas, despesas e parcelas</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-despesa')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Nova Despesa
+      </button>
+    </div>
+    <!-- Cards de resumo: a receber, a pagar, saldo -->
+    <div class="fin-resumo-grid">
+      <div class="fin-card fin-card-verde">
+        <div class="fin-card-icon">📥</div>
+        <div class="fin-card-label">Total a Receber</div>
+        <div class="fin-card-val" id="fin-a-receber">R$ 0,00</div>
+      </div>
+      <div class="fin-card fin-card-vermelho">
+        <div class="fin-card-icon">📤</div>
+        <div class="fin-card-label">Total a Pagar</div>
+        <div class="fin-card-val" id="fin-a-pagar">R$ 0,00</div>
+      </div>
+      <div class="fin-card fin-card-azul">
+        <div class="fin-card-icon">⚖️</div>
+        <div class="fin-card-label">Saldo Previsto</div>
+        <div class="fin-card-val" id="fin-saldo">R$ 0,00</div>
+      </div>
+    </div>
+    <!-- Tabela de lançamentos -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">📋 Lançamentos</div>
+        <button class="btn btn-ghost" onclick="carregarFinanceiro()" style="font-size:12px">🔄 Atualizar</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="width:90px">Tipo</th>
+              <th>Descrição</th>
+              <th style="width:120px">Valor</th>
+              <th style="width:110px">Vencimento</th>
+              <th style="width:130px">Status</th>
+              <th style="width:80px">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="fin-tabela-body">
+            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhum lançamento ainda.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </main>
+</div>
+
+<!-- ══ MODAL: NOVA DESPESA PARCELADA ════════════════ -->
+<div class="modal-overlay" id="modal-despesa">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('modal-despesa')">✕</button>
+    <div class="modal-title">📤 Nova Despesa Parcelada</div>
+    <div class="form-row">
+      <div class="fg" style="flex:3"><label>Descrição *</label><input id="fin-desc" type="text" placeholder="Ex: Compra de vinil, aluguel, luz…"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Valor Total *</label><input id="fin-valor" type="number" min="0" step="0.01" placeholder="0,00"></div>
+      <div class="fg"><label>Data 1ª Parcela *</label><input id="fin-data1" type="date"></div>
+      <div class="fg"><label>Qtd. Parcelas</label><input id="fin-parcelas" type="number" min="1" max="60" value="1"></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px">
+      <button class="btn btn-primary" onclick="salvarDespesaParcelada()">💾 Salvar</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-despesa')">Cancelar</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══ MODAL: NOVA TRANSAÇÃO CAIXA ══════════════ -->
@@ -1681,6 +1765,7 @@ let pedItemCount = 0;
 let viewPedido   = 'kanban';
 let viewClientes = 'cards';
 let catalogoAlvo = 'orc'; // 'orc' ou 'ped'
+let lancamentosFinanceiros = []; // módulo financeiro — persiste em localStorage
 
 const PEDIDO_STATUS_ORDER = ['pendente','producao','pronto','entregue','cancelado'];
 const PEDIDO_LABELS_DEFAULT = {
@@ -1783,6 +1868,7 @@ function goPage(p) {
   if(p==='calc-laser')              calcLaser();
   if(p==='mensagens')               goPageMensagens();
   if(p==='integracao-wpp')          goPageIntegracaoWpp();
+  if(p==='financeiro')              carregarFinanceiro();
 }
 function logout(){localStorage.removeItem('orcToken');localStorage.removeItem('orcUser');location.replace('index.html');}
 
@@ -3213,6 +3299,9 @@ async function salvarPedido(){
       const novo=await API.post('/pedidos',payload);
       pedidoList.unshift(novo);
       savedPed=novo;
+      // Gera lançamentos financeiros: 50% sinal (pago) + 50% restante (pendente 30d)
+      carregarFinanceiro(); // garante que o array está atualizado antes de gerar
+      gerarLancamentosPedido(novo);
       toast('Pedido criado!','success');
     }
     // Auto-registro no caixa
@@ -3354,7 +3443,267 @@ async function carregarDashboard(){
           <div style="font-size:10px;color:var(--muted)">${i.vezes}x — qtd: ${i.qtd}</div>
         </div>
       </div>`).join(''):'<div class="empty">Sem itens registrados.</div>';
+    // Renderiza semáforo de prazos com os pedidos carregados
+    renderPrazosDashboard(pedidos);
   }catch(e){toast('Erro dashboard: '+e.message,'error');}
+}
+
+// ════ SEMÁFORO DE PRAZOS (Dashboard) ═════════════════
+/*
+ * Lê os pedidos ativos, compara prazoEntrega com hoje e
+ * classifica em 3 cores: 🔴 Vencido | 🟡 Atenção (≤2d) | 🟢 No prazo (≥3d)
+ */
+function renderPrazosDashboard(pedidos) {
+  const cont = document.getElementById('dash-prazos');
+  if (!cont) return;
+
+  // Só considera pedidos que ainda não foram entregues/cancelados e têm prazo definido
+  const ativos = (pedidos || []).filter(p =>
+    !['entregue','cancelado'].includes(p.status) && p.prazoEntrega && p.prazoEntrega.trim()
+  );
+
+  if (!ativos.length) {
+    cont.innerHTML = '<div class="empty" style="font-size:12px">Nenhum pedido ativo com prazo definido.</div>';
+    return;
+  }
+
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+  // Tenta converter DD/MM/AAAA ou YYYY-MM-DD para objeto Date; ignora texto livre
+  const comDias = ativos.map(p => {
+    const s = (p.prazoEntrega || '').trim();
+    let dt = null;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+      const [d,m,a] = s.split('/');
+      dt = new Date(`${a}-${m}-${d}T00:00:00`);
+    } else if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+      dt = new Date(s + 'T00:00:00');
+    }
+    // Diferença em dias inteiros
+    const dias = dt ? Math.round((dt - hoje) / 86400000) : null;
+    return { ...p, diasRestantes: dias };
+  }).filter(p => p.diasRestantes !== null)
+    .sort((a, b) => a.diasRestantes - b.diasRestantes);
+
+  if (!comDias.length) {
+    cont.innerHTML = '<div class="empty" style="font-size:12px">Nenhum prazo em formato reconhecido (use DD/MM/AAAA ou AAAA-MM-DD).</div>';
+    return;
+  }
+
+  cont.innerHTML = comDias.map(p => {
+    let badgeCls, badgeTxt, cor;
+    if (p.diasRestantes < 0) {
+      // 🔴 Vencido — data já passou
+      badgeCls = 'prazo-vencido';
+      badgeTxt = `🔴 Vencido há ${Math.abs(p.diasRestantes)}d`;
+      cor      = '#dc3545';
+    } else if (p.diasRestantes <= 2) {
+      // 🟡 Atenção — faltam 0, 1 ou 2 dias
+      badgeCls = 'prazo-atencao';
+      badgeTxt = `🟡 ${p.diasRestantes === 0 ? 'Hoje!' : p.diasRestantes + 'd restantes'}`;
+      cor      = '#e8a020';
+    } else {
+      // 🟢 No prazo — faltam 3 dias ou mais
+      badgeCls = 'prazo-ok';
+      badgeTxt = `🟢 ${p.diasRestantes}d restantes`;
+      cor      = '#198754';
+    }
+    const lbl = PEDIDO_LABELS[p.status] || PEDIDO_LABELS.pendente;
+    return `<div class="prazo-item">
+      <div class="prazo-cor" style="background:${cor}"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.clienteNome)}</div>
+        <div style="font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center;margin-top:2px;flex-wrap:wrap">
+          <span class="badge ${lbl.cls}" style="font-size:10px">${lbl.label}</span>
+          <span>📅 ${esc(p.prazoEntrega)}</span>
+        </div>
+      </div>
+      <span class="badge ${badgeCls}">${badgeTxt}</span>
+    </div>`;
+  }).join('');
+}
+
+// ════ MÓDULO FINANCEIRO ═══════════════════════════════
+/*
+ * Lançamentos são persistidos em localStorage ('lookLancamentos').
+ * Estrutura de cada lançamento:
+ *   { id, tipo: 'entrada'|'despesa', descricao, valor, vencimento: 'YYYY-MM-DD',
+ *     status: 'pendente'|'pago'|'atrasado', origem: 'manual'|'pedido',
+ *     parcela, totalParcelas, pedidoId? }
+ */
+
+// Carrega do localStorage e atualiza status de vencidos
+function carregarFinanceiro() {
+  try { lancamentosFinanceiros = JSON.parse(localStorage.getItem('lookLancamentos') || '[]'); }
+  catch { lancamentosFinanceiros = []; }
+  _finAtualizarVencidos();
+  renderFinanceiro();
+}
+
+// Persiste array no localStorage
+function _finSalvar() {
+  localStorage.setItem('lookLancamentos', JSON.stringify(lancamentosFinanceiros));
+}
+
+// Verifica pendentes cujo vencimento já passou e os marca como 'atrasado'
+function _finAtualizarVencidos() {
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  let alterou = false;
+  lancamentosFinanceiros = lancamentosFinanceiros.map(l => {
+    if (l.status === 'pendente') {
+      const venc = new Date(l.vencimento + 'T00:00:00');
+      if (venc < hoje) { l.status = 'atrasado'; alterou = true; }
+    }
+    return l;
+  });
+  if (alterou) _finSalvar();
+}
+
+// Renderiza resumo (cards) + tabela de lançamentos
+function renderFinanceiro() {
+  // Soma entradas e despesas ainda não pagas
+  const aReceber = lancamentosFinanceiros
+    .filter(l => l.tipo === 'entrada'  && l.status !== 'pago')
+    .reduce((s, l) => s + l.valor, 0);
+  const aPagar   = lancamentosFinanceiros
+    .filter(l => l.tipo === 'despesa'  && l.status !== 'pago')
+    .reduce((s, l) => s + l.valor, 0);
+  const saldo    = aReceber - aPagar;
+
+  document.getElementById('fin-a-receber').textContent = fBRL(aReceber);
+  document.getElementById('fin-a-pagar').textContent   = fBRL(aPagar);
+  const saldoEl = document.getElementById('fin-saldo');
+  saldoEl.textContent  = fBRL(saldo);
+  saldoEl.style.color  = saldo >= 0 ? 'var(--success)' : 'var(--danger)';
+
+  // Ordena por vencimento mais próximo
+  const sorted = [...lancamentosFinanceiros].sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+  const tbody  = document.getElementById('fin-tabela-body');
+  if (!sorted.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhum lançamento registrado. Use "Nova Despesa" ou feche um pedido.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = sorted.map(l => {
+    // Escolhe badge de status
+    const badgeCls = l.status === 'pago' ? 'badge-fin-pago' : l.status === 'atrasado' ? 'badge-fin-atrasado' : 'badge-fin-pendente';
+    const badgeTxt = l.status === 'pago' ? '✅ Pago' : l.status === 'atrasado' ? '🔴 Atrasado' : '🟡 Pendente';
+    const tipoBadge = l.tipo === 'entrada'
+      ? '<span class="badge-fin-entrada">↑ Entrada</span>'
+      : '<span class="badge-fin-saida">↓ Despesa</span>';
+    // Exibe "parcela X/N" quando há mais de 1
+    const parc = (l.totalParcelas > 1) ? ` <small style="color:var(--muted)">(${l.parcela}/${l.totalParcelas})</small>` : '';
+    const vencFmt = l.vencimento ? new Date(l.vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '—';
+    const corVal  = l.tipo === 'entrada' ? 'var(--success)' : 'var(--danger)';
+    return `<tr>
+      <td>${tipoBadge}</td>
+      <td style="font-weight:600">${esc(l.descricao)}${parc}</td>
+      <td style="font-family:var(--mono);color:${corVal};font-weight:600">${fBRL(l.valor)}</td>
+      <td>${vencFmt}</td>
+      <td><span class="badge ${badgeCls}">${badgeTxt}</span></td>
+      <td>
+        <div class="tbl-actions">
+          ${l.status !== 'pago' ? `<button class="ta" onclick="finMarcarPago('${l.id}')" title="Marcar como Pago">✔</button>` : ''}
+          <button class="ta del" onclick="finExcluir('${l.id}')" title="Excluir">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/*
+ * Divide o valor total em X parcelas mensais iguais e salva cada uma como
+ * lançamento do tipo 'despesa' com status 'pendente'.
+ */
+function salvarDespesaParcelada() {
+  const desc  = document.getElementById('fin-desc').value.trim();
+  const total = parseFloat(document.getElementById('fin-valor').value) || 0;
+  const data1 = document.getElementById('fin-data1').value; // 'YYYY-MM-DD'
+  const qtd   = parseInt(document.getElementById('fin-parcelas').value) || 1;
+
+  if (!desc)    { toast('Informe a descrição.', 'error'); return; }
+  if (total<=0) { toast('Informe um valor válido.', 'error'); return; }
+  if (!data1)   { toast('Informe a data da 1ª parcela.', 'error'); return; }
+  if (qtd < 1 || qtd > 60) { toast('Parcelas inválidas (1–60).', 'error'); return; }
+
+  // Valor por parcela arredondado em centavos
+  const valorParc = +(total / qtd).toFixed(2);
+  const [ano, mes, dia] = data1.split('-').map(Number);
+
+  for (let i = 0; i < qtd; i++) {
+    // new Date(ano, mes-1+i, dia) avança automaticamente o mês
+    const d    = new Date(ano, mes - 1 + i, dia);
+    const venc = d.toISOString().split('T')[0];
+    lancamentosFinanceiros.push({
+      id:           `fin_${Date.now()}_${i}`,
+      tipo:         'despesa',
+      descricao:    desc,
+      valor:        valorParc,
+      vencimento:   venc,
+      status:       'pendente',
+      origem:       'manual',
+      parcela:      i + 1,
+      totalParcelas:qtd
+    });
+  }
+
+  _finSalvar();
+  _finAtualizarVencidos();
+  renderFinanceiro();
+
+  // Reseta formulário e fecha modal
+  ['fin-desc','fin-valor','fin-data1'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('fin-parcelas').value = '1';
+  closeModal('modal-despesa');
+  toast(`${qtd} parcela${qtd > 1 ? 's' : ''} de ${fBRL(valorParc)} criada${qtd > 1 ? 's' : ''}!`, 'success');
+}
+
+/*
+ * Chamado ao criar um novo pedido: gera 2 lançamentos de entrada —
+ *   Parcela 1: 50% (Sinal) marcado como 'pago' na data de hoje
+ *   Parcela 2: 50% (Restante) marcado como 'pendente' com vencimento em 30 dias
+ */
+function gerarLancamentosPedido(pedido) {
+  // Evita duplicidade se o pedido já gerou lançamentos
+  const jaExiste = lancamentosFinanceiros.some(l => l.pedidoId === pedido.id);
+  if (jaExiste) return;
+
+  const sinal    = +(pedido.total * 0.5).toFixed(2);
+  const restante = +(pedido.total - sinal).toFixed(2);
+  const hoje     = new Date().toISOString().split('T')[0];
+  const venc30   = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+
+  lancamentosFinanceiros.push({
+    id: `fin_${pedido.id}_sinal`, tipo: 'entrada',
+    descricao: `Pedido — ${pedido.clienteNome} (Sinal 50%)`,
+    valor: sinal, vencimento: hoje, status: 'pago',
+    origem: 'pedido', pedidoId: pedido.id, parcela: 1, totalParcelas: 2
+  });
+  lancamentosFinanceiros.push({
+    id: `fin_${pedido.id}_rest`, tipo: 'entrada',
+    descricao: `Pedido — ${pedido.clienteNome} (Restante 50%)`,
+    valor: restante, vencimento: venc30, status: 'pendente',
+    origem: 'pedido', pedidoId: pedido.id, parcela: 2, totalParcelas: 2
+  });
+  _finSalvar();
+}
+
+// Marca um lançamento como pago
+function finMarcarPago(id) {
+  const l = lancamentosFinanceiros.find(x => x.id === id);
+  if (!l) return;
+  l.status = 'pago';
+  _finSalvar();
+  renderFinanceiro();
+  toast('Marcado como pago! ✅', 'success');
+}
+
+// Exclui um lançamento após confirmação
+function finExcluir(id) {
+  if (!confirm('Excluir este lançamento?')) return;
+  lancamentosFinanceiros = lancamentosFinanceiros.filter(x => x.id !== id);
+  _finSalvar();
+  renderFinanceiro();
+  toast('Lançamento excluído.', 'success');
 }
 
 // ════ ORÇAMENTO — CATÁLOGO DE CLIENTES ════════════════

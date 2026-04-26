@@ -900,6 +900,58 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
 }
 .msg-preview-body strong { color: var(--azul); }
 
+/* ══ MÓDULO FINANCEIRO ════════════════════════════════ */
+.fin-resumo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.fin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-top: 3px solid var(--azul);
+  box-shadow: 0 1px 4px rgba(0,51,153,.06);
+}
+.fin-card-verde   { border-top-color: var(--success); }
+.fin-card-vermelho{ border-top-color: var(--danger); }
+.fin-card-azul    { border-top-color: var(--azul); }
+.fin-card-icon  { font-size: 22px; }
+.fin-card-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.fin-card-val   { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text); margin-top: 2px; }
+
+/* badges de status financeiro */
+.badge-fin-pendente { background:#fff3cd; color:#856404;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge-fin-pago     { background:#d1fae5; color:#065f46;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge-fin-atrasado { background:#fee2e2; color:#991b1b;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge-fin-entrada  { background:#d1fae5; color:#065f46;  padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
+.badge-fin-saida    { background:#fee2e2; color:#991b1b;  padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
+
+/* ══ SEMÁFORO DE PRAZOS (Dashboard) ══════════════════ */
+.prazo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.prazo-item:last-child { border-bottom: none; }
+.prazo-cor {
+  width: 4px;
+  min-height: 36px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+.prazo-vencido { background:#fee2e2; color:#991b1b; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+.prazo-atencao { background:#fff3cd; color:#856404; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+.prazo-ok      { background:#d1fae5; color:#065f46; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+
 /* ── RESPONSIVE ── */
 @media (max-width:900px) {
   .calc-tool-wrap { grid-template-columns: 1fr; }
