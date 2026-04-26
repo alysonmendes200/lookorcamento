@@ -20,7 +20,13 @@ router.get('/publico/:id', async (req, res, next) => {
 router.post('/publico/:id/aprovar', async (req, res, next) => {
   try {
     const { Pedidos } = require('../db');
-    await Pedidos.update(req.params.id, { status: 'producao', atualizadoEm: new Date().toISOString() });
+    const now = new Date().toISOString();
+    await Pedidos.update(req.params.id, {
+      status: 'producao',
+      aprovacaoFeedback: 'APROVADO',
+      aprovacaoEm: now,
+      atualizadoEm: now
+    });
     res.json({ ok: true, status: 'producao' });
   } catch (e) { next(e); }
 });
@@ -28,7 +34,14 @@ router.post('/publico/:id/aprovar', async (req, res, next) => {
 router.post('/publico/:id/alteracao', async (req, res, next) => {
   try {
     const { Pedidos } = require('../db');
-    await Pedidos.update(req.params.id, { status: 'aguardando_aprovacao', atualizadoEm: new Date().toISOString() });
+    const { feedback } = req.body;
+    const now = new Date().toISOString();
+    await Pedidos.update(req.params.id, {
+      status: 'aguardando_aprovacao',
+      aprovacaoFeedback: feedback || 'Alteração solicitada',
+      aprovacaoEm: now,
+      atualizadoEm: now
+    });
     res.json({ ok: true, status: 'aguardando_aprovacao' });
   } catch (e) { next(e); }
 });
@@ -112,12 +125,14 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const { Pedidos } = require('../db');
+    const { Pedidos, Seq } = require('../db');
     const { clienteId, clienteNome, items, total, totalBruto, prazoEntrega, obs,
-            orcamentoId, orcamentoNum, status, desconto, descontoTipo, pago, valorRecebido, origem } = req.body;
+            orcamentoId, orcamentoNum, status, desconto, descontoTipo, pago, valorRecebido, origem, mockupUrl } = req.body;
     if (!clienteNome?.trim()) return res.status(400).json({ error: 'Nome do cliente é obrigatório' });
+    const nextNum = await Seq.getNextPed();
     const novo = await Pedidos.create({
       id: uuidv4(),
+      num:          nextNum,
       clienteId:    clienteId    || '',
       clienteNome:  clienteNome.trim(),
       items:        items        || [],
@@ -133,6 +148,7 @@ router.post('/', async (req, res, next) => {
       pago:         pago         || false,
       valorRecebido:valorRecebido|| 0,
       origem:       origem       || '',
+      mockupUrl:    mockupUrl    || '',
       owner:        req.user.username,
       ownerNome:    req.user.nome,
       criadoEm:     new Date().toISOString()
@@ -145,20 +161,24 @@ router.put('/:id', async (req, res, next) => {
   try {
     const { Pedidos } = require('../db');
     const { status, prazoEntrega, obs, items, total, totalBruto, clienteNome,
-            desconto, descontoTipo, pago, valorRecebido, origem } = req.body;
+            desconto, descontoTipo, pago, valorRecebido, origem, mockupUrl,
+            aprovacaoFeedback, aprovacaoEm } = req.body;
     const updated = await Pedidos.update(req.params.id, {
-      ...(status        !== undefined && { status }),
-      ...(prazoEntrega  !== undefined && { prazoEntrega }),
-      ...(obs           !== undefined && { obs }),
-      ...(items         !== undefined && { items }),
-      ...(total         !== undefined && { total }),
-      ...(totalBruto    !== undefined && { totalBruto }),
-      ...(clienteNome   !== undefined && { clienteNome }),
-      ...(desconto      !== undefined && { desconto }),
-      ...(descontoTipo  !== undefined && { descontoTipo }),
-      ...(pago          !== undefined && { pago }),
-      ...(valorRecebido !== undefined && { valorRecebido }),
-      ...(origem        !== undefined && { origem }),
+      ...(status             !== undefined && { status }),
+      ...(prazoEntrega       !== undefined && { prazoEntrega }),
+      ...(obs                !== undefined && { obs }),
+      ...(items              !== undefined && { items }),
+      ...(total              !== undefined && { total }),
+      ...(totalBruto         !== undefined && { totalBruto }),
+      ...(clienteNome        !== undefined && { clienteNome }),
+      ...(desconto           !== undefined && { desconto }),
+      ...(descontoTipo       !== undefined && { descontoTipo }),
+      ...(pago               !== undefined && { pago }),
+      ...(valorRecebido      !== undefined && { valorRecebido }),
+      ...(origem             !== undefined && { origem }),
+      ...(mockupUrl          !== undefined && { mockupUrl }),
+      ...(aprovacaoFeedback  !== undefined && { aprovacaoFeedback }),
+      ...(aprovacaoEm        !== undefined && { aprovacaoEm }),
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);
