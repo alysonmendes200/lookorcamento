@@ -193,6 +193,21 @@
 /* ── STAT CARDS CORES ─────────────────────────── */
 .stat-val.green,.stat-val.sm.green{color:#198754;}
 .stat-val.red,.stat-val.sm.red{color:#dc3545;}
+
+/* ── GESTÃO DE APROVAÇÕES ─────────────────────── */
+.aprov-card{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.aprov-card:last-child{border-bottom:none;}
+.aprov-thumb{width:80px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;background:var(--bg);}
+.aprov-thumb-empty{width:80px;height:72px;border-radius:8px;border:2px dashed var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--bg);}
+.aprov-body{flex:1;min-width:0;}
+.aprov-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.aprov-cliente{font-weight:700;font-size:14px;color:var(--text);}
+.aprov-motivo{background:#fff8e1;border:1px solid #ffe082;border-radius:6px;padding:6px 10px;font-size:12px;color:#5d4037;margin-top:6px;line-height:1.4;}
+.aprov-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.aprov-alerta-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.aprov-alerta-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.aprov-alerta-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+.aprov-alerta-val{font-size:22px;font-weight:700;color:var(--text);margin-top:1px;}
 </style>
 </head>
 <body>
@@ -239,6 +254,10 @@
   <button class="nav-btn" id="nav-produtos" onclick="goPage('produtos')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
     <span>Produtos</span>
+  </button>
+  <button class="nav-btn" id="nav-aprovacoes" onclick="goPage('aprovacoes')">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    <span>Gestão de Aprovações</span>
   </button>
   <button class="nav-btn" id="nav-caixa" onclick="goPage('caixa')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
@@ -573,10 +592,6 @@
           <div class="dash-mini-icon verde">🛒</div>
           <div class="dash-mini-body"><div class="dash-mini-label">Pedidos Pagos</div><div class="dash-mini-val" id="dash-pedidos-pagos">—</div></div>
         </div>
-        <div class="dash-mini">
-          <div class="dash-mini-icon roxo">🎨</div>
-          <div class="dash-mini-body"><div class="dash-mini-label">Ag. Aprovação</div><div class="dash-mini-val" id="dash-ag-aprov">—</div></div>
-        </div>
       </div>
       <!-- Recebido (Orçamentos) — mantido para compatibilidade com JS existente, oculto -->
       <span id="dash-recebido" style="display:none"></span>
@@ -617,15 +632,39 @@
         <div id="dash-roi" style="margin-top:8px"><div class="empty" style="font-size:12px">Carregando…</div></div>
       </div>
     </div>
-    <div id="dash-s-notificacoes">
-      <div class="card" style="margin-bottom:14px">
-        <div class="card-title" style="display:flex;align-items:center;gap:8px">
-          🔔 Notificações de Aprovação
-          <span id="dash-notif-badge" class="notif-badge" style="display:none">0</span>
-          <button onclick="marcarTodasNotifVistas()" style="margin-left:auto;font-size:11px;padding:3px 10px;border-radius:6px;border:1px solid var(--border);background:var(--white);cursor:pointer;color:var(--muted)">Marcar todas como lidas</button>
+  </div>
+
+  <!-- ══ GESTÃO DE APROVAÇÕES ══════════════════════════ -->
+  <div class="page" id="page-aprovacoes">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div><div class="page-title">Gestão de Aprovações</div><div class="page-sub">Acompanhe as artes enviadas para aprovação dos clientes</div></div>
+      <button class="btn btn-ghost" onclick="carregarGestaoAprovacoes()">🔄 Atualizar</button>
+    </div>
+    <!-- Painel de alertas rápidos -->
+    <div id="aprov-alertas" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px"></div>
+    <!-- Filtro de status -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="filter-bar" style="padding:0;border:none;background:none">
+        <div class="fg" style="min-width:180px;max-width:260px">
+          <label>Buscar cliente</label>
+          <input id="aprov-busca" type="text" placeholder="Nome…" oninput="renderGestaoAprovacoes()">
         </div>
-        <div id="dash-notificacoes" style="margin-top:8px"><div class="empty" style="font-size:12px">Sem notificações.</div></div>
+        <div class="fg">
+          <label>Situação</label>
+          <select id="aprov-flt-status" onchange="renderGestaoAprovacoes()">
+            <option value="">Todos</option>
+            <option value="aguardando_aprovacao">🎨 Aguardando Aprovação</option>
+            <option value="aprovado">✅ Aprovados</option>
+            <option value="alteracao">✏️ Alteração Solicitada</option>
+            <option value="sem_arte">📭 Sem Arte Enviada</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('aprov-busca').value='';document.getElementById('aprov-flt-status').value='';renderGestaoAprovacoes()">Limpar</button>
       </div>
+    </div>
+    <!-- Lista de pedidos com gestão de arte -->
+    <div class="card">
+      <div id="aprov-lista"><div class="empty">Carregando…</div></div>
     </div>
   </div>
 
@@ -2146,6 +2185,7 @@ function goPage(p) {
   if(p==='mensagens')               goPageMensagens();
   if(p==='integracao-wpp')          goPageIntegracaoWpp();
   if(p==='financeiro')              carregarFinanceiro();
+  if(p==='aprovacoes')              carregarGestaoAprovacoes();
 }
 function logout(){localStorage.removeItem('orcToken');localStorage.removeItem('orcUser');location.replace('index.html');}
 
@@ -2819,7 +2859,6 @@ const DASH_SECTIONS_DEF = [
   { key:'ranking',       label:'🏆 Rankings — Clientes e Itens' },
   { key:'prazos',        label:'🚨 Pedidos Críticos e Prazos' },
   { key:'roi',           label:'📈 Retorno por Canal (ROI)' },
-  { key:'notificacoes',  label:'🔔 Notificações de Aprovação' },
 ];
 const DASH_ORDER_KEY = 'lookDashOrder';
 
@@ -4013,9 +4052,6 @@ async function carregarDashboard(){
     document.getElementById('dash-clientes').textContent=clientes.length;
     document.getElementById('dash-pedidos-abertos').textContent=pedidos.filter(p=>!['entregue','cancelado'].includes(p.status)).length;
     document.getElementById('dash-pedidos-pagos').textContent=fBRL(pedRecebido);
-    const agAprov=pedidos.filter(p=>p.status==='aguardando_aprovacao').length;
-    document.getElementById('dash-ag-aprov').textContent=agAprov;
-    document.getElementById('dash-ag-aprov').style.color=agAprov>0?'#4527a0':'var(--text)';
     // Financeiro consolidado (card existente)
     document.getElementById('dash-fat-total').textContent=fBRL(fatTotal);
     document.getElementById('dash-total-recebido').textContent=fBRL(recTotal);
@@ -4094,7 +4130,6 @@ async function carregarDashboard(){
     // Renderiza semáforo de prazos, ROI e notificações
     renderPrazosDashboard(pedidos);
     renderROIDashboard(pedidos);
-    renderNotificacoes(pedidos);
   }catch(e){toast('Erro dashboard: '+e.message,'error');}
 }
 
@@ -4215,7 +4250,6 @@ function _notifSeen() {
 function marcarTodasNotifVistas() {
   const ids = pedidoList.filter(p => p.aprovacaoEm).map(p => p.id + '_' + p.aprovacaoEm);
   localStorage.setItem(NOTIF_SEEN_KEY, JSON.stringify(ids));
-  renderNotificacoes(pedidoList);
   toast('Todas notificações marcadas como lidas.', 'success');
 }
 function renderNotificacoes(pedidos) {
@@ -4246,6 +4280,122 @@ function renderNotificacoes(pedidos) {
         <b>${esc(p.clienteNome)}</b><br>
         ${!aprov&&p.aprovacaoFeedback?`<span style="color:#856404;font-size:11px">Motivo: ${esc(p.aprovacaoFeedback)}</span><br>`:''}
         <span style="font-size:11px;color:var(--muted)">${data}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════ GESTÃO DE APROVAÇÕES ════════════════════════════
+let aprovacoesList = [];
+
+async function carregarGestaoAprovacoes() {
+  try {
+    aprovacoesList = await API.get('/pedidos');
+    renderGestaoAprovacoes();
+  } catch(e) { toast('Erro ao carregar aprovações: ' + e.message, 'error'); }
+}
+
+function resolverThumbAprov(url) {
+  if (!url) return null;
+  const u = url.trim();
+  const dm = u.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (dm) return `https://drive.google.com/thumbnail?id=${dm[1]}&sz=w160`;
+  const do2 = u.match(/drive\.google\.com\/open\?id=([^&]+)/);
+  if (do2) return `https://drive.google.com/thumbnail?id=${do2[1]}&sz=w160`;
+  if (/\.(jpe?g|png|gif|webp|svg)(\?|$)/i.test(u)) return u;
+  return null; // link externo, sem thumb
+}
+
+function renderGestaoAprovacoes() {
+  const busca  = (document.getElementById('aprov-busca')?.value || '').toLowerCase();
+  const fltSt  = document.getElementById('aprov-flt-status')?.value || '';
+  const cont   = document.getElementById('aprov-lista');
+  const alertas = document.getElementById('aprov-alertas');
+  if (!cont) return;
+
+  // Pedidos relevantes: todos exceto entregue/cancelado
+  const ativos = aprovacoesList.filter(p => !['entregue','cancelado'].includes(p.status));
+  const agAprov    = ativos.filter(p => p.status === 'aguardando_aprovacao');
+  const aprovados  = ativos.filter(p => p.aprovacaoFeedback === 'APROVADO' && p.aprovacaoEm);
+  const alteracoes = ativos.filter(p => p.aprovacaoEm && p.aprovacaoFeedback && p.aprovacaoFeedback !== 'APROVADO');
+  const semArte    = ativos.filter(p => !p.mockupUrl);
+
+  // Painel de alertas
+  if (alertas) {
+    alertas.innerHTML = [
+      { icon:'🎨', bg:'#ede7f6', label:'Ag. Aprovação', val: agAprov.length, valColor:'#4527a0' },
+      { icon:'✅', bg:'#d4edda', label:'Aprovados',      val: aprovados.length,  valColor:'#155724' },
+      { icon:'✏️', bg:'#fff3cd', label:'Com Alteração',  val: alteracoes.length, valColor:'#856404' },
+      { icon:'📭', bg:'#f4f7ff', label:'Sem Arte',       val: semArte.length,    valColor:'var(--text)' },
+    ].map(a => `
+      <div class="aprov-alerta-card">
+        <div class="aprov-alerta-icon" style="background:${a.bg}">${a.icon}</div>
+        <div><div class="aprov-alerta-label">${a.label}</div><div class="aprov-alerta-val" style="color:${a.valColor}">${a.val}</div></div>
+      </div>`).join('');
+  }
+
+  // Filtros
+  let lista = ativos.filter(p => {
+    if (busca && !p.clienteNome.toLowerCase().includes(busca)) return false;
+    if (fltSt === 'aguardando_aprovacao') return p.status === 'aguardando_aprovacao';
+    if (fltSt === 'aprovado')   return p.aprovacaoFeedback === 'APROVADO' && p.aprovacaoEm;
+    if (fltSt === 'alteracao')  return p.aprovacaoEm && p.aprovacaoFeedback && p.aprovacaoFeedback !== 'APROVADO';
+    if (fltSt === 'sem_arte')   return !p.mockupUrl;
+    return true;
+  });
+
+  if (!lista.length) { cont.innerHTML = '<div class="empty">Nenhum pedido encontrado.</div>'; return; }
+
+  // Ordena: alterações > ag.aprovação > sem arte > aprovados
+  const prioridade = p => {
+    if (p.aprovacaoEm && p.aprovacaoFeedback && p.aprovacaoFeedback !== 'APROVADO') return 0;
+    if (p.status === 'aguardando_aprovacao') return 1;
+    if (!p.mockupUrl) return 2;
+    return 3;
+  };
+  lista.sort((a,b) => prioridade(a) - prioridade(b) || (b.criadoEm||'').localeCompare(a.criadoEm||''));
+
+  const baseUrl = location.origin + location.pathname.replace('app.html','') + 'aprovacao.html';
+
+  cont.innerHTML = lista.map(p => {
+    const thumb = resolverThumbAprov(p.mockupUrl);
+    const isAlteracao = p.aprovacaoEm && p.aprovacaoFeedback && p.aprovacaoFeedback !== 'APROVADO';
+    const isAprovado  = p.aprovacaoFeedback === 'APROVADO' && p.aprovacaoEm;
+    const linkAprov   = `${baseUrl}?id=${p.id}`;
+    const statusBadge = (() => {
+      if (p.status === 'aguardando_aprovacao') return '<span class="badge badge-status-aguardando">🎨 Ag. Aprovação</span>';
+      if (p.status === 'producao')  return '<span class="badge badge-status-producao">🔧 Em Produção</span>';
+      if (p.status === 'pronto')    return '<span class="badge badge-status-pronto">✅ Pronto</span>';
+      return `<span class="badge badge-status-pendente">${esc(p.status)}</span>`;
+    })();
+
+    const thumbHtml = thumb
+      ? `<img class="aprov-thumb" src="${esc(thumb)}" alt="Arte" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        + `<div class="aprov-thumb-empty" style="display:none">🖼️</div>`
+      : p.mockupUrl
+        ? `<div class="aprov-thumb-empty" title="Link externo">🔗</div>`
+        : `<div class="aprov-thumb-empty" title="Sem arte">📭</div>`;
+
+    return `<div class="aprov-card" style="${isAlteracao?'background:#fffde7;border-radius:10px;padding:12px;':''}">
+      ${thumbHtml}
+      <div class="aprov-body">
+        <div class="aprov-row">
+          ${p.num ? `<span class="ped-num-badge">#${p.num}</span>` : ''}
+          <span class="aprov-cliente">${esc(p.clienteNome)}</span>
+          ${statusBadge}
+          ${isAlteracao ? '<span style="background:#fff3cd;color:#856404;border:1px solid #ffd971;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">✏️ Alteração</span>' : ''}
+          ${isAprovado  ? '<span style="background:#d4edda;color:#155724;border:1px solid #c3e6cb;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">✅ Aprovado</span>' : ''}
+        </div>
+        <div style="font-size:11px;color:var(--muted)">${p.criadoEm ? new Date(p.criadoEm).toLocaleDateString('pt-BR') : ''}${p.prazoEntrega ? ' &nbsp;|&nbsp; Prazo: '+esc(p.prazoEntrega) : ''}</div>
+        ${isAlteracao ? `<div class="aprov-motivo">✏️ <strong>Motivo:</strong> ${esc(p.aprovacaoFeedback)}</div>` : ''}
+        ${isAprovado  ? `<div style="font-size:11px;color:#155724;margin-top:4px">✅ Aprovado em ${new Date(p.aprovacaoEm).toLocaleString('pt-BR')}</div>` : ''}
+        <div class="aprov-actions">
+          <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px" onclick="navigator.clipboard.writeText('${esc(linkAprov)}').then(()=>toast('Link copiado!','success'))">
+            🔗 Copiar link de aprovação
+          </button>
+          ${p.mockupUrl ? `<a href="${esc(p.mockupUrl)}" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:12px;padding:5px 12px;text-decoration:none">🖼️ Ver arte</a>` : ''}
+          <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px" onclick="verPedido('${p.id}');goPage('pedidos')">📋 Abrir pedido</button>
+        </div>
       </div>
     </div>`;
   }).join('');
