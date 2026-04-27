@@ -194,6 +194,36 @@
 .stat-val.green,.stat-val.sm.green{color:#198754;}
 .stat-val.red,.stat-val.sm.red{color:#dc3545;}
 
+/* ── ESTOQUE ─────────────────────────────────────── */
+.estq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+.estq-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .15s,transform .15s;}
+.estq-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.09);transform:translateY(-2px);}
+.estq-card-header{background:var(--azul-bg);padding:14px 16px;display:flex;align-items:center;gap:10px;}
+.estq-card-icon{width:40px;height:40px;background:var(--azul);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0;}
+.estq-card-nome{font-weight:700;font-size:13px;color:var(--text);}
+.estq-card-dim{font-size:11px;color:var(--muted);margin-top:2px;}
+.estq-card-body{padding:12px 16px;flex:1;}
+.estq-qty{font-size:30px;font-weight:800;font-family:var(--mono);color:var(--azul);}
+.estq-qty-unit{font-size:11px;color:var(--muted);margin-left:4px;}
+.estq-custo{font-size:12px;color:var(--muted);margin-top:4px;}
+.estq-card-footer{padding:10px 16px;border-top:1px solid var(--border);background:var(--bg);display:flex;gap:6px;align-items:center;}
+.estq-badge-ok {background:#d4edda;color:#155724;border:1px solid #c3e6cb;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.estq-badge-low{background:#fff3cd;color:#856404;border:1px solid #ffd971;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.estq-badge-out{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+
+/* ── SIMULADOR DE CORTE ───────────────────────────── */
+.sim-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.sim-result{background:linear-gradient(135deg,#001433 0%,#003399 100%);color:#fff;border-radius:12px;padding:20px;}
+.sim-result-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.65;margin-bottom:14px;}
+.sim-result-main-label{font-size:11px;opacity:.7;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.sim-result-main-val{font-size:32px;font-weight:800;font-family:var(--mono);margin:2px 0 14px;}
+.sim-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sim-mini{background:rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;}
+.sim-mini-label{font-size:9px;opacity:.65;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.sim-mini-val{font-size:16px;font-weight:700;font-family:var(--mono);margin-top:3px;}
+.sim-orientacao{font-size:11px;opacity:.6;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.15);}
+@media(max-width:768px){.sim-layout{grid-template-columns:1fr;}}
+
 /* ── GESTÃO DE APROVAÇÕES ─────────────────────── */
 .aprov-card{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
 .aprov-card:last-child{border-bottom:none;}
@@ -237,6 +267,7 @@
     <button class="nav-btn" onclick="goPage('clientes');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Clientes</span></button>
     <button class="nav-btn" onclick="goPage('crm');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>CRM / Ficha</span></button>
     <button class="nav-btn" onclick="goPage('aprovacoes');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg><span>Aprovações</span></button>
+    <button class="nav-btn" onclick="goPage('estoque');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg><span>Estoque</span></button>
     <button class="nav-btn" onclick="goPage('caixa');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg><span>Caixa</span></button>
     <button class="nav-btn" onclick="goPage('financeiro');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span>Financeiro</span></button>
     <button class="nav-btn" onclick="goPage('produtos');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg><span>Produtos</span></button>
@@ -326,6 +357,10 @@
   <button class="nav-btn" id="nav-aprovacoes" onclick="goPage('aprovacoes')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
     <span>Gestão de Aprovações</span>
+  </button>
+  <button class="nav-btn" id="nav-estoque" onclick="goPage('estoque')">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+    <span>Estoque</span>
   </button>
   <button class="nav-btn" id="nav-caixa" onclick="goPage('caixa')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
@@ -733,6 +768,60 @@
     <!-- Lista de pedidos com gestão de arte -->
     <div class="card">
       <div id="aprov-lista"><div class="empty">Carregando…</div></div>
+    </div>
+  </div>
+
+  <!-- ══ ESTOQUE ══════════════════════════════════════ -->
+  <div class="page" id="page-estoque">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div><div class="page-title">📦 Estoque</div><div class="page-sub">Controle de insumos e materiais</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="abrirModalNovoInsumo()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+          Novo Material
+        </button>
+        <button class="btn btn-primary" onclick="abrirModalCompra()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Registrar Compra
+        </button>
+      </div>
+    </div>
+    <!-- Cards de resumo -->
+    <div id="estq-resumo" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px"></div>
+    <!-- Grid de materiais -->
+    <div id="estq-lista" class="estq-grid"><div class="empty">Carregando…</div></div>
+
+    <!-- Card Simulador de Corte e Orçamento -->
+    <div class="card" style="margin-top:20px">
+      <div class="card-title">🧮 Simulador de Corte e Orçamento</div>
+      <div class="sim-layout">
+        <div>
+          <div class="form-row">
+            <div class="fg">
+              <label>Material / Placa</label>
+              <select id="sim-material" onchange="simCalcular()">
+                <option value="">— selecione um material —</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Margem de Lucro (%)</label>
+              <input id="sim-margem" type="number" min="0" max="999" step="1" value="40" oninput="simCalcular()">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="fg">
+              <label>Largura da Peça (cm)</label>
+              <input id="sim-pw" type="number" min="0.1" step="0.1" placeholder="ex: 30" oninput="simCalcular()">
+            </div>
+            <div class="fg">
+              <label>Altura da Peça (cm)</label>
+              <input id="sim-ph" type="number" min="0.1" step="0.1" placeholder="ex: 20" oninput="simCalcular()">
+            </div>
+          </div>
+          <div id="sim-aviso" style="font-size:12px;color:var(--muted);margin-top:6px;min-height:18px"></div>
+        </div>
+        <div id="sim-resultado" style="display:none"><!-- preenchido pelo JS --></div>
+      </div>
     </div>
   </div>
 
@@ -1605,17 +1694,22 @@
     <div class="fin-resumo-grid">
       <div class="fin-card fin-card-verde">
         <div class="fin-card-icon">📥</div>
-        <div class="fin-card-label">Total a Receber</div>
+        <div class="fin-card-label">A Receber (Pendente)</div>
         <div class="fin-card-val" id="fin-a-receber">R$ 0,00</div>
       </div>
       <div class="fin-card fin-card-vermelho">
         <div class="fin-card-icon">📤</div>
-        <div class="fin-card-label">Total a Pagar</div>
+        <div class="fin-card-label">A Pagar (Pendente)</div>
         <div class="fin-card-val" id="fin-a-pagar">R$ 0,00</div>
       </div>
+      <div class="fin-card" style="border-top-color:#198754">
+        <div class="fin-card-icon">💵</div>
+        <div class="fin-card-label">Saldo Real (Pago)</div>
+        <div class="fin-card-val" id="fin-saldo-real">R$ 0,00</div>
+      </div>
       <div class="fin-card fin-card-azul">
-        <div class="fin-card-icon">⚖️</div>
-        <div class="fin-card-label">Saldo Previsto</div>
+        <div class="fin-card-icon">🔮</div>
+        <div class="fin-card-label">Saldo Previsto (Tudo)</div>
         <div class="fin-card-val" id="fin-saldo">R$ 0,00</div>
       </div>
     </div>
@@ -2096,6 +2190,90 @@
   </div>
 </div>
 
+<!-- ══ MODAL: REGISTRAR COMPRA ═══════════════════════ -->
+<div class="modal-overlay" id="modal-compra">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close" onclick="closeModal('modal-compra')">✕</button>
+    <div class="modal-title">🛒 Registrar Compra</div>
+    <div class="modal-sub">Adiciona estoque e gera conta a pagar automaticamente</div>
+    <div class="form-row">
+      <div class="fg" style="flex:2">
+        <label>Insumo / Material</label>
+        <select id="compra-insumo-sel" onchange="compraToggleNovo(this.value)">
+          <option value="">— selecione —</option>
+        </select>
+      </div>
+    </div>
+    <!-- Seção "novo insumo" — aparece quando seleciona "+ Novo" -->
+    <div id="compra-novo-wrap" style="display:none;background:var(--azul-bg);border:1px solid var(--azul);border-radius:8px;padding:14px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--azul);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">📐 Dados do novo insumo</div>
+      <div class="form-row">
+        <div class="fg"><label>Nome do Material</label><input id="compra-novo-nome" type="text" placeholder="ex: MDF 15mm"></div>
+        <div class="fg"><label>Unidade</label>
+          <select id="compra-novo-unit">
+            <option value="placa">Placa</option>
+            <option value="folha">Folha</option>
+            <option value="metro">Metro</option>
+            <option value="unidade">Unidade</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Largura da Placa (cm)</label><input id="compra-novo-w" type="number" min="1" step="0.1" placeholder="ex: 90"></div>
+        <div class="fg"><label>Altura da Placa (cm)</label><input id="compra-novo-h" type="number" min="1" step="0.1" placeholder="ex: 90"></div>
+        <div class="fg"><label>Estoque mínimo</label><input id="compra-novo-min" type="number" min="0" value="2"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Quantidade</label><input id="compra-qty" type="number" min="1" step="1" value="1" oninput="compraCustoUnitario()"></div>
+      <div class="fg"><label>Valor Total da Compra (R$)</label><input id="compra-valor" type="number" min="0" step="0.01" placeholder="0,00" oninput="compraCustoUnitario()"></div>
+    </div>
+    <div id="compra-custo-unit" style="font-size:12px;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+    <div class="form-row">
+      <div class="fg"><label>Vencimento (conta a pagar)</label><input id="compra-venc" type="date"></div>
+      <div class="fg"><label>Observação</label><input id="compra-obs" type="text" placeholder="Fornecedor, NF…"></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px">
+      <button class="btn btn-primary" onclick="registrarCompra()">💾 Registrar Compra</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-compra')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: NOVO MATERIAL (estoque) ════════════════ -->
+<div class="modal-overlay" id="modal-novo-insumo">
+  <div class="modal" style="max-width:440px">
+    <button class="modal-close" onclick="closeModal('modal-novo-insumo')">✕</button>
+    <div class="modal-title">📦 Novo Material</div>
+    <div class="modal-sub">Cadastre um insumo para usar no estoque e no simulador</div>
+    <div class="form-row">
+      <div class="fg"><label>Nome do Material</label><input id="ni-nome" type="text" placeholder="ex: MDF 15mm 90×90"></div>
+      <div class="fg"><label>Unidade</label>
+        <select id="ni-unit">
+          <option value="placa">Placa</option>
+          <option value="folha">Folha</option>
+          <option value="metro">Metro</option>
+          <option value="unidade">Unidade</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Largura da Placa (cm)</label><input id="ni-w" type="number" min="1" step="0.1" placeholder="ex: 90"></div>
+      <div class="fg"><label>Altura da Placa (cm)</label><input id="ni-h" type="number" min="1" step="0.1" placeholder="ex: 90"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Qtd. inicial no estoque</label><input id="ni-qty" type="number" min="0" value="0"></div>
+      <div class="fg"><label>Custo unitário atual (R$)</label><input id="ni-custo" type="number" min="0" step="0.01" placeholder="0,00"></div>
+      <div class="fg"><label>Estoque mínimo</label><input id="ni-min" type="number" min="0" value="2"></div>
+    </div>
+    <input type="hidden" id="ni-edit-id">
+    <div class="btn-row" style="margin-top:16px">
+      <button class="btn btn-primary" onclick="salvarNovoInsumo()">💾 Salvar</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-novo-insumo')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ PÁGINA PÚBLICA: APROVAÇÃO DE ARTE ══════════════ -->
 <div id="page-aprovacao-publica" style="display:none;position:fixed;inset:0;z-index:9999;overflow-y:auto;">
   <div class="aprov-wrap">
@@ -2148,6 +2326,7 @@ let viewPedido   = 'kanban';
 let viewClientes = 'cards';
 let catalogoAlvo = 'orc'; // 'orc' ou 'ped'
 let lancamentosFinanceiros = []; // módulo financeiro — persiste em localStorage
+let estoqueList = [];            // insumos do estoque — persiste em localStorage
 
 const PEDIDO_STATUS_ORDER = ['pendente','aguardando_aprovacao','producao','pronto','entregue','cancelado'];
 const PEDIDO_LABELS_DEFAULT = {
@@ -2256,6 +2435,7 @@ function goPage(p) {
   if(p==='integracao-wpp')          goPageIntegracaoWpp();
   if(p==='financeiro')              carregarFinanceiro();
   if(p==='aprovacoes')              carregarGestaoAprovacoes();
+  if(p==='estoque')                 carregarEstoque();
 }
 function logout(){localStorage.removeItem('orcToken');localStorage.removeItem('orcUser');location.replace('index.html');}
 
@@ -4114,11 +4294,12 @@ async function excluirPedido(id){
       lancamentosFinanceiros=JSON.parse(localStorage.getItem('lookLancamentos')||'[]');
     }catch{lancamentosFinanceiros=[];}
     const antes=lancamentosFinanceiros.length;
+    // Remove lançamentos vinculados por pedidoId (vendas a receber e contas pendentes)
     lancamentosFinanceiros=lancamentosFinanceiros.filter(l=>l.pedidoId!==id);
     if(lancamentosFinanceiros.length<antes){
       localStorage.setItem('lookLancamentos',JSON.stringify(lancamentosFinanceiros));
     }
-    toast('Pedido excluído e lançamentos removidos.','success');
+    toast('Pedido excluído e contas vinculadas removidas.','success');
     renderPedidos();
   }catch(e){toast(e.message,'error');}
 }
@@ -4657,20 +4838,41 @@ function _finAtualizarVencidos() {
 
 // Renderiza resumo (cards) + tabela de lançamentos
 function renderFinanceiro() {
-  // Soma entradas e despesas ainda não pagas
+  // Pendentes (ainda não pagos)
   const aReceber = lancamentosFinanceiros
-    .filter(l => l.tipo === 'entrada'  && l.status !== 'pago')
+    .filter(l => l.tipo === 'entrada' && l.status !== 'pago')
     .reduce((s, l) => s + l.valor, 0);
-  const aPagar   = lancamentosFinanceiros
-    .filter(l => l.tipo === 'despesa'  && l.status !== 'pago')
+  const aPagar = lancamentosFinanceiros
+    .filter(l => l.tipo === 'despesa' && l.status !== 'pago')
     .reduce((s, l) => s + l.valor, 0);
-  const saldo    = aReceber - aPagar;
+
+  // Saldo Real: somente lançamentos já pagos (Entradas pagas - Despesas pagas)
+  const entradasPagas = lancamentosFinanceiros
+    .filter(l => l.tipo === 'entrada' && l.status === 'pago')
+    .reduce((s, l) => s + l.valor, 0);
+  const despesasPagas = lancamentosFinanceiros
+    .filter(l => l.tipo === 'despesa' && l.status === 'pago')
+    .reduce((s, l) => s + l.valor, 0);
+  const saldoReal = entradasPagas - despesasPagas;
+
+  // Saldo Previsto: tudo (pago + pendente)
+  const todasEntradas = lancamentosFinanceiros
+    .filter(l => l.tipo === 'entrada')
+    .reduce((s, l) => s + l.valor, 0);
+  const todasDespesas = lancamentosFinanceiros
+    .filter(l => l.tipo === 'despesa')
+    .reduce((s, l) => s + l.valor, 0);
+  const saldoPrev = todasEntradas - todasDespesas;
 
   document.getElementById('fin-a-receber').textContent = fBRL(aReceber);
   document.getElementById('fin-a-pagar').textContent   = fBRL(aPagar);
+
+  const saldoRealEl = document.getElementById('fin-saldo-real');
+  if (saldoRealEl) { saldoRealEl.textContent = fBRL(saldoReal); saldoRealEl.style.color = saldoReal >= 0 ? 'var(--success)' : 'var(--danger)'; }
+
   const saldoEl = document.getElementById('fin-saldo');
-  saldoEl.textContent  = fBRL(saldo);
-  saldoEl.style.color  = saldo >= 0 ? 'var(--success)' : 'var(--danger)';
+  saldoEl.textContent = fBRL(saldoPrev);
+  saldoEl.style.color = saldoPrev >= 0 ? 'var(--success)' : 'var(--danger)';
 
   // Ordena por vencimento mais próximo
   const sorted = [...lancamentosFinanceiros].sort((a, b) => a.vencimento.localeCompare(b.vencimento));
@@ -4784,13 +4986,27 @@ function gerarLancamentosPedido(pedido) {
 }
 
 // Marca um lançamento como pago
-function finMarcarPago(id) {
+async function finMarcarPago(id) {
   const l = lancamentosFinanceiros.find(x => x.id === id);
   if (!l) return;
   l.status = 'pago';
   _finSalvar();
   renderFinanceiro();
-  toast('Marcado como pago! ✅', 'success');
+  // Registra automaticamente no Caixa (API) para refletir no saldo do caixa
+  try {
+    const tipo = l.tipo === 'entrada' ? 'entrada' : 'saida';
+    await API.post('/caixa', {
+      tipo,
+      descricao: l.descricao,
+      valor: l.valor,
+      categoria: l.categoria === 'compra' ? 'Compra de Estoque' : (l.categoria === 'venda' ? 'Recebimento de Venda' : 'Financeiro'),
+      data: new Date().toISOString().split('T')[0],
+      obs: l.obs || ''
+    });
+    toast('Baixa realizada e lançado no Caixa! ✅', 'success');
+  } catch {
+    toast('Marcado como pago (Caixa não atualizado — verifique conexão).', 'warning');
+  }
 }
 
 // ── Vínculo com Caixa ─────────────────────────────────
@@ -5927,6 +6143,406 @@ function calcPapel(){
   set('pp-area',     area    > 0 ? fmtN(area)+' m²'  : '—');
   set('pp-normal',   fmt(normal));
   set('pp-desconto', fmt(desconto));
+}
+
+// ════════════════════════════════════════════════════════════
+// MÓDULO ESTOQUE
+// ════════════════════════════════════════════════════════════
+const ESTOQUE_KEY = 'lookEstoque';
+
+function _estoqueLoad() {
+  try { estoqueList = JSON.parse(localStorage.getItem(ESTOQUE_KEY) || '[]'); }
+  catch { estoqueList = []; }
+}
+function _estoqueSalvar() {
+  localStorage.setItem(ESTOQUE_KEY, JSON.stringify(estoqueList));
+}
+function _estoqueUUID() {
+  return 'est-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+}
+
+function carregarEstoque() {
+  _estoqueLoad();
+  renderEstoque();
+  simPreencherMateriais();
+}
+
+function renderEstoque() {
+  const resumoEl = document.getElementById('estq-resumo');
+  const listaEl  = document.getElementById('estq-lista');
+  if (!resumoEl || !listaEl) return;
+
+  const total    = estoqueList.length;
+  const semEstq  = estoqueList.filter(i => i.qtd <= 0).length;
+  const estqBaixo = estoqueList.filter(i => i.qtd > 0 && i.qtd <= (i.minimo || 2)).length;
+
+  resumoEl.innerHTML = [
+    { icon:'📦', label:'Materiais',      val: total,     bg:'#e8eeff', color:'var(--azul)' },
+    { icon:'✅', label:'Em estoque',     val: total - semEstq - estqBaixo, bg:'#d4edda', color:'#155724' },
+    { icon:'⚠️', label:'Estoque baixo',  val: estqBaixo, bg:'#fff3cd', color:'#856404' },
+    { icon:'❌', label:'Sem estoque',    val: semEstq,   bg:'#f8d7da', color:'#721c24' },
+  ].map(c => `
+    <div class="dash-mini">
+      <div class="dash-mini-icon" style="background:${c.bg}">${c.icon}</div>
+      <div class="dash-mini-body">
+        <div class="dash-mini-label">${c.label}</div>
+        <div class="dash-mini-val" style="color:${c.color}">${c.val}</div>
+      </div>
+    </div>`).join('');
+
+  if (!estoqueList.length) {
+    listaEl.innerHTML = '<div class="empty">Nenhum material cadastrado. Clique em "Novo Material" para começar.</div>';
+    return;
+  }
+
+  listaEl.innerHTML = estoqueList.map(item => {
+    const badge = item.qtd <= 0
+      ? '<span class="estq-badge-out">❌ Sem estoque</span>'
+      : item.qtd <= (item.minimo || 2)
+        ? '<span class="estq-badge-low">⚠️ Estoque baixo</span>'
+        : '<span class="estq-badge-ok">✅ OK</span>';
+    const dim = (item.largura && item.altura)
+      ? `${item.largura}×${item.altura}cm`
+      : item.unidade;
+    return `<div class="estq-card">
+      <div class="estq-card-header">
+        <div class="estq-card-icon">📦</div>
+        <div>
+          <div class="estq-card-nome">${esc(item.nome)}</div>
+          <div class="estq-card-dim">${dim}</div>
+        </div>
+      </div>
+      <div class="estq-card-body">
+        <div><span class="estq-qty">${item.qtd}</span><span class="estq-qty-unit">${item.unidade || 'un.'}</span></div>
+        <div class="estq-custo">Custo unitário: ${fBRL(item.custoUnitario || 0)}</div>
+        ${badge}
+      </div>
+      <div class="estq-card-footer">
+        <button class="ta edit" onclick="editarInsumo('${item.id}')" title="Editar">✏️</button>
+        <button class="ta del"  onclick="excluirInsumo('${item.id}')" title="Excluir">🗑️</button>
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;margin-left:auto" onclick="abrirModalCompra('${item.id}')">🛒 Comprar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Novo / editar insumo ──────────────────────────────────
+function abrirModalNovoInsumo(id) {
+  document.getElementById('ni-edit-id').value = id || '';
+  if (id) {
+    const item = estoqueList.find(i => i.id === id);
+    if (!item) return;
+    document.getElementById('ni-nome').value  = item.nome;
+    document.getElementById('ni-unit').value  = item.unidade || 'placa';
+    document.getElementById('ni-w').value     = item.largura || '';
+    document.getElementById('ni-h').value     = item.altura || '';
+    document.getElementById('ni-qty').value   = item.qtd || 0;
+    document.getElementById('ni-custo').value = item.custoUnitario || '';
+    document.getElementById('ni-min').value   = item.minimo || 2;
+  } else {
+    ['ni-nome','ni-w','ni-h','ni-custo'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('ni-unit').value = 'placa';
+    document.getElementById('ni-qty').value  = 0;
+    document.getElementById('ni-min').value  = 2;
+  }
+  openModal('modal-novo-insumo');
+}
+
+function editarInsumo(id) { abrirModalNovoInsumo(id); }
+
+function salvarNovoInsumo() {
+  const nome  = document.getElementById('ni-nome').value.trim();
+  if (!nome) { toast('Informe o nome do material.', 'error'); return; }
+  const editId = document.getElementById('ni-edit-id').value;
+  const dados  = {
+    nome,
+    unidade:      document.getElementById('ni-unit').value,
+    largura:      parseFloat(document.getElementById('ni-w').value) || 0,
+    altura:       parseFloat(document.getElementById('ni-h').value) || 0,
+    qtd:          parseFloat(document.getElementById('ni-qty').value) || 0,
+    custoUnitario:parseFloat(document.getElementById('ni-custo').value) || 0,
+    minimo:       parseInt(document.getElementById('ni-min').value) || 2,
+  };
+  if (editId) {
+    const idx = estoqueList.findIndex(i => i.id === editId);
+    if (idx >= 0) estoqueList[idx] = { ...estoqueList[idx], ...dados };
+  } else {
+    estoqueList.push({ id: _estoqueUUID(), ...dados });
+  }
+  _estoqueSalvar();
+  closeModal('modal-novo-insumo');
+  renderEstoque();
+  simPreencherMateriais();
+  toast(editId ? 'Material atualizado.' : 'Material cadastrado!', 'success');
+}
+
+function excluirInsumo(id) {
+  if (!confirm('Excluir este material do estoque?')) return;
+  estoqueList = estoqueList.filter(i => i.id !== id);
+  _estoqueSalvar();
+  renderEstoque();
+  simPreencherMateriais();
+  toast('Material removido.', 'success');
+}
+
+// ── Registrar Compra ──────────────────────────────────────
+function abrirModalCompra(insumoIdPresel) {
+  _estoqueLoad();
+  // Popula select de insumos
+  const sel = document.getElementById('compra-insumo-sel');
+  sel.innerHTML = '<option value="">— selecione —</option>'
+    + estoqueList.map(i => `<option value="${i.id}">${esc(i.nome)} (${i.qtd} ${i.unidade||'un'} em estoque)</option>`).join('')
+    + '<option value="__novo__">➕ Novo insumo…</option>';
+  if (insumoIdPresel) sel.value = insumoIdPresel;
+  document.getElementById('compra-novo-wrap').style.display = 'none';
+  document.getElementById('compra-qty').value   = 1;
+  document.getElementById('compra-valor').value = '';
+  document.getElementById('compra-obs').value   = '';
+  document.getElementById('compra-custo-unit').textContent = '';
+  // Sugere vencimento para 30 dias
+  const d = new Date(); d.setDate(d.getDate() + 30);
+  document.getElementById('compra-venc').value = d.toISOString().split('T')[0];
+  openModal('modal-compra');
+}
+
+function compraToggleNovo(val) {
+  document.getElementById('compra-novo-wrap').style.display = val === '__novo__' ? 'block' : 'none';
+}
+
+function compraCustoUnitario() {
+  const qty   = parseFloat(document.getElementById('compra-qty').value) || 0;
+  const total = parseFloat(document.getElementById('compra-valor').value) || 0;
+  const el    = document.getElementById('compra-custo-unit');
+  el.textContent = qty > 0 && total > 0
+    ? `Custo unitário: ${fBRL(total / qty)} por unidade`
+    : '';
+}
+
+function registrarCompra() {
+  const sel    = document.getElementById('compra-insumo-sel').value;
+  const qty    = parseFloat(document.getElementById('compra-qty').value) || 0;
+  const valor  = parseFloat(document.getElementById('compra-valor').value) || 0;
+  const venc   = document.getElementById('compra-venc').value;
+  const obs    = document.getElementById('compra-obs').value.trim();
+
+  if (!sel)    { toast('Selecione um insumo.', 'error'); return; }
+  if (qty <= 0){ toast('Quantidade deve ser maior que zero.', 'error'); return; }
+  if (valor <= 0){ toast('Informe o valor da compra.', 'error'); return; }
+  if (!venc)   { toast('Informe o vencimento.', 'error'); return; }
+
+  _estoqueLoad();
+  let insumoId = sel;
+  let insumoNome = '';
+
+  if (sel === '__novo__') {
+    // Cria novo insumo
+    const nome = document.getElementById('compra-novo-nome').value.trim();
+    if (!nome) { toast('Informe o nome do novo insumo.', 'error'); return; }
+    const novoItem = {
+      id:           _estoqueUUID(),
+      nome,
+      unidade:      document.getElementById('compra-novo-unit').value,
+      largura:      parseFloat(document.getElementById('compra-novo-w').value) || 0,
+      altura:       parseFloat(document.getElementById('compra-novo-h').value) || 0,
+      qtd:          0,
+      custoUnitario:0,
+      minimo:       parseInt(document.getElementById('compra-novo-min').value) || 2,
+    };
+    estoqueList.push(novoItem);
+    insumoId   = novoItem.id;
+    insumoNome = novoItem.nome;
+  } else {
+    const item = estoqueList.find(i => i.id === sel);
+    if (!item) { toast('Insumo não encontrado.', 'error'); return; }
+    insumoNome = item.nome;
+  }
+
+  // Atualiza estoque: soma quantidade e recalcula custo médio ponderado
+  const item = estoqueList.find(i => i.id === insumoId);
+  const custoNovo = valor / qty;
+  const qtdAntiga  = item.qtd || 0;
+  const custoAntigo= item.custoUnitario || 0;
+  // Custo médio ponderado = (qty_antiga * custo_antigo + qty_nova * custo_novo) / (qty_antiga + qty_nova)
+  item.custoUnitario = qtdAntiga + qty > 0
+    ? (qtdAntiga * custoAntigo + qty * custoNovo) / (qtdAntiga + qty)
+    : custoNovo;
+  item.qtd = qtdAntiga + qty;
+  _estoqueSalvar();
+
+  // Gera conta a pagar no módulo financeiro
+  try { lancamentosFinanceiros = JSON.parse(localStorage.getItem('lookLancamentos') || '[]'); } catch { lancamentosFinanceiros = []; }
+  const novaContaId = 'fin-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5);
+  lancamentosFinanceiros.push({
+    id:           novaContaId,
+    tipo:         'despesa',
+    categoria:    'compra',
+    descricao:    `Compra: ${insumoNome} (${qty} ${item.unidade||'un.'})`,
+    valor,
+    vencimento:   venc,
+    status:       'pendente',
+    obs,
+    estoqueId:    insumoId,
+    pedidoId:     null,
+    parcela:      1,
+    totalParcelas:1,
+  });
+  _finSalvar();
+
+  closeModal('modal-compra');
+  renderEstoque();
+  simPreencherMateriais();
+  toast(`Compra registrada! +${qty} ${item.unidade||'un.'} de ${insumoNome}. Conta a pagar gerada.`, 'success');
+}
+
+// ════════════════════════════════════════════════════════════
+// SIMULADOR DE CORTE E ORÇAMENTO
+// ════════════════════════════════════════════════════════════
+
+/** Popula o <select> do simulador com os materiais do estoque */
+function simPreencherMateriais() {
+  _estoqueLoad();
+  const sel = document.getElementById('sim-material');
+  if (!sel) return;
+  const atual = sel.value;
+  sel.innerHTML = '<option value="">— selecione um material —</option>'
+    + estoqueList
+        .filter(i => i.largura > 0 && i.altura > 0) // só materiais com dimensões de placa
+        .map(i => `<option value="${i.id}">${esc(i.nome)} — ${i.largura}×${i.altura}cm — ${fBRL(i.custoUnitario)}/un</option>`)
+        .join('');
+  if (atual) sel.value = atual;
+  simCalcular();
+}
+
+/**
+ * Calcula quantas peças de (pw × ph) cm cabem em uma placa de (sw × sh) cm.
+ *
+ * Algoritmo: teste de encaixe ortogonal em grade simples (guilhotina).
+ *   - Orientação 1 (normal):  encaixe como pw × ph → cols = ⌊sw/pw⌋, rows = ⌊sh/ph⌋
+ *   - Orientação 2 (girada):  gira a peça 90° → cols = ⌊sw/ph⌋, rows = ⌊sh/pw⌋
+ *   - Retorna a orientação que produz mais peças inteiras.
+ *
+ * @param {number} sw - largura da placa (cm)
+ * @param {number} sh - altura da placa (cm)
+ * @param {number} pw - largura da peça desejada (cm)
+ * @param {number} ph - altura da peça desejada (cm)
+ * @returns {{ pecas:number, colunas:number, linhas:number, orientacao:string, girada:boolean }}
+ */
+function calcEncaixe(sw, sh, pw, ph) {
+  // Orientação normal: peça na posição original
+  const cols1 = Math.floor(sw / pw);
+  const rows1 = Math.floor(sh / ph);
+  const tot1  = cols1 * rows1;
+
+  // Orientação girada: peça rotacionada 90°
+  const cols2 = Math.floor(sw / ph);
+  const rows2 = Math.floor(sh / pw);
+  const tot2  = cols2 * rows2;
+
+  if (tot2 > tot1) {
+    // Girada rende mais
+    return { pecas: tot2, colunas: cols2, linhas: rows2,
+             orientacao: `${ph}×${pw}cm (girada 90°)`, girada: true };
+  }
+  // Normal é igual ou melhor
+  return { pecas: tot1, colunas: cols1, linhas: rows1,
+           orientacao: `${pw}×${ph}cm (posição normal)`, girada: false };
+}
+
+/** Executa o cálculo e atualiza o painel de resultados */
+function simCalcular() {
+  const matId   = document.getElementById('sim-material')?.value;
+  const pw      = parseFloat(document.getElementById('sim-pw')?.value) || 0;
+  const ph      = parseFloat(document.getElementById('sim-ph')?.value) || 0;
+  const margem  = parseFloat(document.getElementById('sim-margem')?.value) || 0;
+  const avisoEl = document.getElementById('sim-aviso');
+  const resEl   = document.getElementById('sim-resultado');
+  if (!resEl) return;
+
+  if (!matId || pw <= 0 || ph <= 0) {
+    resEl.style.display = 'none';
+    if (avisoEl) avisoEl.textContent = matId && (pw <= 0 || ph <= 0)
+      ? 'Preencha as dimensões da peça para calcular.'
+      : '';
+    return;
+  }
+
+  _estoqueLoad();
+  const mat = estoqueList.find(i => i.id === matId);
+  if (!mat || mat.largura <= 0 || mat.altura <= 0) {
+    if (avisoEl) avisoEl.textContent = '⚠️ Material sem dimensões de placa cadastradas.';
+    resEl.style.display = 'none';
+    return;
+  }
+
+  // Verifica se a peça cabe na placa em pelo menos uma orientação
+  const cabePeloMenos = (pw <= mat.largura && ph <= mat.altura) || (ph <= mat.largura && pw <= mat.altura);
+  if (!cabePeloMenos) {
+    if (avisoEl) avisoEl.textContent = `⚠️ A peça (${pw}×${ph}cm) não cabe na placa (${mat.largura}×${mat.altura}cm).`;
+    resEl.style.display = 'none';
+    return;
+  }
+  if (avisoEl) avisoEl.textContent = '';
+
+  // Cálculo principal de encaixe
+  const enc = calcEncaixe(mat.largura, mat.altura, pw, ph);
+
+  // Cálculos financeiros
+  const custoPlaca    = mat.custoUnitario || 0;
+  const custoUnitario = enc.pecas > 0 ? custoPlaca / enc.pecas : 0;
+  const precoSugerido = custoUnitario * (1 + margem / 100);
+
+  // Percentual de aproveitamento da placa
+  const areaPecas = enc.pecas * pw * ph;
+  const areaPlaca = mat.largura * mat.altura;
+  const aproveit  = areaPlaca > 0 ? Math.round(areaPecas / areaPlaca * 100) : 0;
+
+  resEl.style.display = 'block';
+  resEl.innerHTML = `
+    <div class="sim-result">
+      <div class="sim-result-title">📊 Resultado do Simulador</div>
+      <div class="sim-result-main-label">Rendimento por placa</div>
+      <div class="sim-result-main-val">${enc.pecas} peças</div>
+      <div class="sim-mini-grid">
+        <div class="sim-mini">
+          <div class="sim-mini-label">Custo unitário</div>
+          <div class="sim-mini-val">${fBRL(custoUnitario)}</div>
+        </div>
+        <div class="sim-mini">
+          <div class="sim-mini-label">Preço sugerido (${margem}%)</div>
+          <div class="sim-mini-val">${fBRL(precoSugerido)}</div>
+        </div>
+        <div class="sim-mini">
+          <div class="sim-mini-label">Aproveitamento</div>
+          <div class="sim-mini-val">${aproveit}%</div>
+        </div>
+        <div class="sim-mini">
+          <div class="sim-mini-label">Grade</div>
+          <div class="sim-mini-val">${enc.colunas}×${enc.linhas}</div>
+        </div>
+      </div>
+      <div class="sim-orientacao">Melhor encaixe: ${enc.orientacao}</div>
+      <button onclick="simUsarNoPedido(${precoSugerido.toFixed(2)},'${esc(mat.nome)} ${pw}×${ph}cm')"
+        style="margin-top:12px;width:100%;padding:10px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s"
+        onmouseover="this.style.background='rgba(255,255,255,.25)'"
+        onmouseout="this.style.background='rgba(255,255,255,.15)'">
+        📋 Usar este valor no Pedido
+      </button>
+    </div>`;
+}
+
+/**
+ * Abre o formulário de Novo Pedido com descrição e valor já preenchidos.
+ * @param {number} preco - preço sugerido calculado pelo simulador
+ * @param {string} desc  - descrição do item (material + dimensões)
+ */
+function simUsarNoPedido(preco, desc) {
+  goPage('pedidos');
+  setTimeout(() => {
+    abrirModalNovoPedido();
+    // addPedItem já gerencia o container e o cálculo
+    setTimeout(() => addPedItem(desc, 1, parseFloat(preco.toFixed(2))), 150);
+    toast('Preço do simulador adicionado ao pedido! ✅', 'success');
+  }, 300);
 }
 </script>
 </body>
