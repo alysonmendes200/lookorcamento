@@ -21,8 +21,8 @@
 .roi-canal-nome{min-width:120px;font-size:12px;font-weight:600;color:var(--text);}
 .roi-canal-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
 .roi-canal-bar{height:8px;background:var(--azul);border-radius:4px;transition:width .4s;}
-.roi-canal-val{min-width:90px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:700;}
-.roi-canal-qtd{min-width:36px;text-align:right;font-size:11px;color:var(--muted);}
+.roi-canal-val{min-width:90px;text-align:right;font-family:var(--mono);font-size:13px;color:var(--azul);font-weight:700;}
+.roi-canal-qtd{min-width:36px;text-align:right;font-size:12px;color:var(--muted);}
 
 /* ══ DASHBOARD HERO ══════════════════════════════════ */
 .dash-hero{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
@@ -49,7 +49,7 @@
 .dash-mini-val{font-size:18px;font-weight:700;color:var(--text);margin-top:1px;}
 
 /* Número do pedido badge */
-.ped-num-badge{display:inline-block;background:#003399;color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;font-family:var(--mono);letter-spacing:.04em;}
+.ped-num-badge{display:inline-block;background:#003399;color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;font-family:var(--mono);letter-spacing:.03em;}
 
 /* Notificações */
 .notif-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
@@ -85,7 +85,7 @@
 .kanban-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.09);transform:translateY(-2px);}
 .kanban-card-title{font-weight:600;font-size:13px;color:var(--text);}
 .kanban-card-sub  {font-size:11px;color:var(--muted);margin-top:2px;}
-.kanban-card-val  {font-size:12px;color:var(--azul);font-weight:700;margin-top:6px;font-family:var(--mono);}
+.kanban-card-val  {font-size:13px;color:var(--azul);font-weight:700;margin-top:6px;font-family:var(--mono);}
 
 .view-tabs {display:flex;gap:8px;margin-bottom:16px;}
 .view-tab  {padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--white);font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;}
@@ -131,7 +131,7 @@
 .prod-item:hover{border-color:var(--azul);background:var(--azul-bg);}
 .prod-item-nome{font-weight:600;font-size:13px;color:var(--text);}
 .prod-item-info{font-size:11px;color:var(--muted);margin-top:2px;}
-.prod-item-preco{font-size:12px;color:var(--azul);font-weight:700;margin-top:4px;font-family:var(--mono);}
+.prod-item-preco{font-size:13px;color:var(--azul);font-weight:700;margin-top:4px;font-family:var(--mono);}
 .prod-cat-badge{display:inline-block;padding:1px 7px;border-radius:10px;background:var(--border);color:var(--muted);font-size:10px;font-weight:600;margin-bottom:3px;}
 
 /* Tabela produtos — legado (mantido para catálogo no modal) */
@@ -174,8 +174,8 @@
 /* ── CAIXA ─────────────────────────────────────── */
 .caixa-entrada{color:#198754;font-weight:700;}
 .caixa-saida  {color:#dc3545;font-weight:700;}
-.badge-entrada{background:#d1fae5;color:#155724;border:1px solid #c3e6cb;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--mono);}
-.badge-saida  {background:#fee2e2;color:#842029;border:1px solid #f5c6cb;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--mono);}
+.badge-entrada{background:#d1fae5;color:#155724;border:1px solid #c3e6cb;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;font-family:var(--mono);}
+.badge-saida  {background:#fee2e2;color:#842029;border:1px solid #f5c6cb;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;font-family:var(--mono);}
 .saldo-pos{color:#198754;}
 .saldo-neg{color:#dc3545;}
 
@@ -2511,7 +2511,7 @@ function renderHist(){
           ${orc.obs?`<div style="font-size:10px;color:var(--muted);font-style:italic">📝 ${esc(orc.obs.substring(0,50))}${orc.obs.length>50?'…':''}</div>`:''}
           ${orc.editedAt?`<div style="font-size:10px;color:var(--warning)">Editado: ${esc(orc.editedAt)}</div>`:''}</td>
       ${isAdmin()?`<td style="font-size:11px;color:var(--muted)">${esc(orc.ownerNome||orc.owner||'—')}</td>`:''}
-      <td style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:600">${fBRL(orc.total)}</td>
+      <td style="font-family:var(--mono);font-size:13px;color:var(--azul);font-weight:700">${fBRL(orc.total)}</td>
       <td>
         <span class="badge ${orc.pago?'badge-pago':'badge-nao-pago'}">${orc.pago?'✅ Pago':'🔴 Pendente'}</span>
         ${orc.status&&orc.status!=='ativo'?`<span class="badge badge-orc-${orc.status}" style="margin-top:3px;display:block;width:fit-content">${orc.status==='aprovado'?'✅ Aprovado':'❌ Cancelado'}</span>`:''}
@@ -2763,10 +2763,10 @@ function renderRelCaixa(){
   const cont=document.getElementById('rel-caixa-content');if(!cont)return;
   cont.innerHTML=`
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:10px;background:var(--bg);border-radius:8px">
-      <div><span style="font-size:11px;color:var(--muted)">Entradas</span><div style="font-weight:700;color:#198754;font-family:var(--mono)">${fBRL(entradas)}</div></div>
-      <div><span style="font-size:11px;color:var(--muted)">Saídas</span><div style="font-weight:700;color:#dc3545;font-family:var(--mono)">${fBRL(saidas)}</div></div>
-      <div><span style="font-size:11px;color:var(--muted)">Saldo</span><div style="font-weight:700;color:${saldo>=0?'#198754':'#dc3545'};font-family:var(--mono)">${fBRL(saldo)}</div></div>
-      <div><span style="font-size:11px;color:var(--muted)">Transações</span><div style="font-weight:700">${list.length}</div></div>
+      <div><span style="font-size:11px;color:var(--muted)">Entradas</span><div style="font-size:15px;font-weight:700;color:#198754;font-family:var(--mono)">${fBRL(entradas)}</div></div>
+      <div><span style="font-size:11px;color:var(--muted)">Saídas</span><div style="font-size:15px;font-weight:700;color:#dc3545;font-family:var(--mono)">${fBRL(saidas)}</div></div>
+      <div><span style="font-size:11px;color:var(--muted)">Saldo</span><div style="font-size:15px;font-weight:700;color:${saldo>=0?'#198754':'#dc3545'};font-family:var(--mono)">${fBRL(saldo)}</div></div>
+      <div><span style="font-size:11px;color:var(--muted)">Transações</span><div style="font-size:15px;font-weight:700">${list.length}</div></div>
     </div>
     ${list.length?`<div style="overflow-x:auto"><table class="tbl"><thead><tr>
       <th>Data</th><th>Descrição</th><th>Tipo</th><th>Categoria</th><th>Orç.</th><th>Valor</th>
@@ -2777,7 +2777,7 @@ function renderRelCaixa(){
         <td><span class="badge-${t.tipo}">${t.tipo==='entrada'?'💚 Entrada':'🔴 Saída'}</span></td>
         <td style="font-size:12px;color:var(--muted)">${esc(t.categoria||'—')}</td>
         <td>${t.orcamentoNum?`<span class="badge badge-orc">${String(t.orcamentoNum).padStart(3,'0')}</span>`:'—'}</td>
-        <td class="${t.tipo==='entrada'?'caixa-entrada':'caixa-saida'}" style="font-family:var(--mono);font-size:12px;white-space:nowrap">${t.tipo==='saida'?'- ':'+ '}${fBRL(t.valor)}</td>
+        <td class="${t.tipo==='entrada'?'caixa-entrada':'caixa-saida'}" style="font-family:var(--mono);font-size:13px;font-weight:700;white-space:nowrap">${t.tipo==='saida'?'- ':'+ '}${fBRL(t.valor)}</td>
       </tr>`).join('')}
     </tbody></table></div>`:'<div class="empty">Nenhuma transação no período.</div>'}`;
 }
@@ -3434,7 +3434,7 @@ function renderHistoricoPedidosCRM(pedidos) {
         return `<tr>
           <td style="font-size:11px;color:var(--muted);white-space:nowrap">${data}</td>
           <td style="font-size:12px;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(itens)}">${esc(itens)}</td>
-          <td style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:700">${fBRL(p.total||0)}</td>
+          <td style="font-family:var(--mono);font-size:13px;color:var(--azul);font-weight:700">${fBRL(p.total||0)}</td>
           <td><span class="badge ${lbl.cls}" style="font-size:10px">${lbl.label}</span></td>
           <td style="text-align:center"><span class="badge ${p.pago?'badge-pago':'badge-nao-pago'}" style="font-size:10px">${p.pago?'✅':'⏳'}</span></td>
         </tr>`;
@@ -3684,7 +3684,7 @@ function renderKanban(list){
           onclick="if(!_dragPedidoId)verPedido('${p.id}')">
           <div style="display:flex;justify-content:space-between;align-items:flex-start">
             <div style="flex:1">
-              ${p.num?`<div style="font-size:10px;font-weight:700;color:var(--azul);font-family:var(--mono);margin-bottom:2px">#${p.num}</div>`:''}
+              ${p.num?`<div style="font-size:11px;font-weight:700;color:var(--azul);font-family:var(--mono);margin-bottom:2px">#${p.num}</div>`:''}
               <div class="kanban-card-title">${esc(p.clienteNome)}</div>
             </div>
             <button onclick="event.stopPropagation();wppPedido('${p.id}')" title="WhatsApp" style="border:none;background:none;cursor:pointer;font-size:14px;padding:0 0 0 4px;color:#25D366">💬</button>
@@ -3740,7 +3740,7 @@ function renderListaPedidos(list){
       <td><div style="font-weight:600">${esc(p.clienteNome)}</div><div style="font-size:11px;color:var(--muted)">${esc(p.ownerNome||'')}</div></td>
       <td><span class="badge ${lbl.cls}">${lbl.label}</span></td>
       <td style="font-size:12px;color:var(--muted)">${esc(p.prazoEntrega||'—')}</td>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:600">${fBRL(p.total||0)}</td>
+      <td style="font-family:var(--mono);font-size:13px;color:var(--azul);font-weight:700">${fBRL(p.total||0)}</td>
       <td><span class="badge ${p.pago?'badge-pago':'badge-nao-pago'}">${p.pago?'✅ Pago':'⏳ Pend.'}</span></td>
       <td>${p.orcamentoNum?`<span class="badge badge-orc">${String(p.orcamentoNum).padStart(3,'0')}</span>`:'—'}</td>
       <td><div class="tbl-actions">
@@ -4099,7 +4099,7 @@ async function carregarDashboard(){
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0">
-          <div style="font-family:var(--mono);font-size:12px;color:var(--azul);font-weight:700">${fBRL(c.total)}</div>
+          <div style="font-family:var(--mono);font-size:13px;color:var(--azul);font-weight:700">${fBRL(c.total)}</div>
           <div style="font-size:10px;color:var(--muted)">${c.orcs?c.orcs+' orç.':''} ${c.peds?c.peds+' ped.':''}</div>
         </div>
       </div>`).join(''):'<div class="empty">Nenhum registro ainda.</div>';
@@ -4123,7 +4123,7 @@ async function carregarDashboard(){
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0">
-          <div style="font-family:var(--mono);font-size:12px;color:#198754;font-weight:700">${fBRL(i.total)}</div>
+          <div style="font-family:var(--mono);font-size:13px;color:#198754;font-weight:700">${fBRL(i.total)}</div>
           <div style="font-size:10px;color:var(--muted)">${i.vezes}x — qtd: ${i.qtd}</div>
         </div>
       </div>`).join(''):'<div class="empty">Sem itens registrados.</div>';
@@ -4874,7 +4874,7 @@ function renderCaixa(){
     <td><span class="badge-${t.tipo}">${t.tipo==='entrada'?'💚 Entrada':'🔴 Saída'}</span></td>
     <td style="font-size:12px;color:var(--muted)">${esc(t.categoria||'—')}</td>
     <td>${t.orcamentoNum?`<span class="badge badge-orc">${String(t.orcamentoNum).padStart(3,'0')}</span>`:'—'}</td>
-    <td class="${t.tipo==='entrada'?'caixa-entrada':'caixa-saida'}" style="font-family:var(--mono);font-size:12px;white-space:nowrap">${t.tipo==='saida'?'- ':'+ '}${fBRL(t.valor)}</td>
+    <td class="${t.tipo==='entrada'?'caixa-entrada':'caixa-saida'}" style="font-family:var(--mono);font-size:13px;font-weight:700;white-space:nowrap">${t.tipo==='saida'?'- ':'+ '}${fBRL(t.valor)}</td>
     <td><div class="tbl-actions">
       <button class="ta edit" onclick="editarCaixaTransacao('${t.id}')">✏️</button>
       <button class="ta del" onclick="excluirCaixaTransacao('${t.id}')">🗑️</button>
