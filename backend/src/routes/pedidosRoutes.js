@@ -10,9 +10,10 @@ router.get('/publico/:id', async (req, res, next) => {
     const p = await Pedidos.find(req.params.id);
     if (!p) return res.status(404).json({ error: 'Pedido não encontrado' });
     res.json({
-      id: p.id, clienteNome: p.clienteNome, items: p.items,
+      id: p.id, num: p.num, clienteNome: p.clienteNome, items: p.items,
       total: p.total, prazoEntrega: p.prazoEntrega, obs: p.obs,
-      status: p.status, criadoEm: p.criadoEm
+      status: p.status, criadoEm: p.criadoEm, mockupUrl: p.mockupUrl,
+      aprovacaoFeedback: p.aprovacaoFeedback, aprovacaoEm: p.aprovacaoEm
     });
   } catch (e) { next(e); }
 });
