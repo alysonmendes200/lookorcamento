@@ -1094,11 +1094,146 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
   .msg-layout      { grid-template-columns: 1fr; }
 }
 @media (max-width:680px) {
-  .sidebar { width:52px; padding:12px 6px; }
-  .sidebar-logo-text, .nav-section, .nav-btn span, .sb-name, .sb-role { display:none; }
-  .sidebar-logo img { height:24px; }
-  .nav-btn { justify-content:center; }
-  .main { padding:12px; }
-  .items-head, .item-row { grid-template-columns:1fr 52px 88px 88px 64px; }
   .calc-result-pair { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE RESPONSIVO — ≤ 768 px
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Mobile top bar ─────────────────────────────────── */
+.mobile-header {
+  display:none;
+  position:fixed; top:0; left:0; right:0; height:54px;
+  background:var(--azul); color:#fff;
+  align-items:center; padding:0 14px; gap:10px;
+  z-index:1100; box-shadow:0 2px 12px rgba(0,0,0,.25);
+}
+.mobile-header-logo { height:26px; filter:brightness(0) invert(1); flex-shrink:0; }
+.mobile-header-title { flex:1; font-size:13px; font-weight:700; letter-spacing:.04em; opacity:.9; }
+.mobile-hamburger {
+  background:transparent; border:none; color:#fff; cursor:pointer;
+  display:flex; flex-direction:column; justify-content:center; gap:5px;
+  width:36px; height:36px; padding:6px; flex-shrink:0; border-radius:6px;
+  transition:background .15s;
+}
+.mobile-hamburger:hover { background:rgba(255,255,255,.15); }
+.mobile-hamburger span {
+  display:block; width:22px; height:2px; background:#fff;
+  border-radius:2px; transition:all .22s;
+}
+.mobile-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.mobile-hamburger.open span:nth-child(2) { opacity:0; }
+.mobile-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+/* ── Nav overlay (drawer) ───────────────────────────── */
+.mobile-nav-overlay {
+  display:none; position:fixed; inset:0; z-index:1090;
+  background:rgba(0,15,50,.6); backdrop-filter:blur(2px);
+}
+.mobile-nav-overlay.open { display:block; }
+.mobile-nav-drawer {
+  position:absolute; top:0; left:0; bottom:0; width:272px;
+  background:var(--azul); overflow-y:auto;
+  padding:64px 10px 80px;
+  transform:translateX(-100%);
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+  box-shadow:4px 0 24px rgba(0,0,0,.4);
+}
+.mobile-nav-overlay.open .mobile-nav-drawer { transform:translateX(0); }
+
+/* ── Bottom tab bar ─────────────────────────────────── */
+.mobile-bottom-bar {
+  display:none; position:fixed; bottom:0; left:0; right:0; height:62px;
+  background:var(--azul); border-top:1px solid rgba(255,255,255,.15);
+  z-index:1080; align-items:stretch;
+}
+.mobile-tab {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:3px; background:transparent; border:none;
+  color:rgba(255,255,255,.55); font-size:9px; font-weight:700;
+  letter-spacing:.04em; cursor:pointer; text-transform:uppercase;
+  transition:color .15s,background .15s; font-family:var(--font);
+  padding:0 4px;
+}
+.mobile-tab:hover, .mobile-tab.active { color:#fff; background:rgba(255,255,255,.1); }
+.mobile-tab svg { width:20px; height:20px; margin-bottom:1px; }
+
+/* ── Responsive layout ──────────────────────────────── */
+@media (max-width:768px) {
+  /* Mostrar mobile, esconder desktop sidebar */
+  .mobile-header     { display:flex; }
+  .mobile-bottom-bar { display:flex; }
+  .sidebar           { display:none; }
+
+  /* Layout base */
+  .layout { flex-direction:column; }
+  .main   { padding:10px; padding-top:64px; padding-bottom:74px; }
+
+  /* Page header */
+  .page-header { margin-bottom:14px; }
+  .page-title  { font-size:18px; }
+
+  /* Grids do dashboard empilham */
+  .dash-hero             { grid-template-columns:1fr; }
+  .dash-hero-val         { font-size:24px; }
+  .dash-mini-grid        { grid-template-columns:1fr 1fr; }
+  #dash-s-graficos > div { grid-template-columns:1fr; }
+  #dash-s-ranking  > div { grid-template-columns:1fr; }
+
+  /* Cards: overflow para tabelas internas */
+  .card { padding:12px; overflow-x:auto; }
+  .tbl  { min-width:540px; }
+
+  /* Form rows empilham */
+  .form-row { flex-direction:column; gap:8px; }
+  .fg       { min-width:0; width:100%; }
+
+  /* Filter bar: 2 colunas + full width */
+  .filter-bar      { gap:6px; }
+  .filter-bar .fg  { min-width:0; max-width:100%; flex:1 1 calc(50% - 3px); }
+
+  /* Modais */
+  .modal-overlay { padding:6px; align-items:flex-end; }
+  .modal         { max-width:100%; border-radius:14px 14px 0 0; padding:18px 14px; max-height:94vh; }
+  .modal-close   { top:12px; right:12px; }
+
+  /* Botões em linha: wrap */
+  .btn-row .btn { flex:1 1 calc(50% - 5px); justify-content:center; font-size:12px; }
+
+  /* Itens do orçamento: colunas comprimidas */
+  .items-head,
+  .item-row { grid-template-columns:1fr 50px 82px 78px 60px; gap:3px; font-size:12px; }
+
+  /* Kanban horizontal scroll */
+  .kanban-board { grid-template-columns:repeat(6,minmax(175px,1fr)); overflow-x:auto; flex-wrap:nowrap; padding-bottom:8px; }
+
+  /* Stats row */
+  .stats-row  { flex-wrap:wrap; gap:8px; }
+  .stat-card  { min-width:calc(50% - 4px); flex:1 1 calc(50% - 4px); }
+
+  /* DRE e grid financeiro: 2 cols */
+  .dre-stats { grid-template-columns:1fr 1fr; }
+  #dash-s-financeiro > .card > div { grid-template-columns:1fr 1fr; }
+
+  /* Grid clientes e produtos */
+  .cli-grid      { grid-template-columns:1fr; }
+  .prod-card-grid{ grid-template-columns:1fr; }
+
+  /* Total bar */
+  .total-val   { font-size:17px; }
+  .total-label { font-size:11px; }
+
+  /* ROI canal */
+  .roi-canal-nome { min-width:80px; font-size:11px; }
+  .roi-canal-val  { min-width:72px; font-size:12px; }
+
+  /* Alertas aprovações */
+  #aprov-alertas { grid-template-columns:1fr 1fr; }
+  .aprov-card    { flex-direction:column; }
+  .aprov-thumb, .aprov-thumb-empty { width:100%; height:120px; }
+
+  /* Page headers com botão lateral */
+  .page-header > div + button,
+  .page-header > div + div { align-self:flex-start; }
 }

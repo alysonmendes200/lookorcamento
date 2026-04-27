@@ -213,6 +213,71 @@
 <body>
 <div class="layout">
 
+<!-- ══ MOBILE HEADER ════════════════════════════════ -->
+<div class="mobile-header">
+  <img class="mobile-header-logo" src="assets/look.svg" alt="Look">
+  <span class="mobile-header-title">Look ERP</span>
+  <button class="mobile-hamburger" id="mob-ham" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- ══ MOBILE NAV OVERLAY ════════════════════════════ -->
+<div class="mobile-nav-overlay" id="mob-overlay" onclick="closeMobileMenuOutside(event)">
+  <nav class="mobile-nav-drawer" id="mob-drawer">
+    <div class="sidebar-user" style="margin-bottom:12px">
+      <div class="avatar" id="mob-av">A</div>
+      <div><div class="sb-name" id="mob-name">—</div><div class="sb-role" id="mob-role">—</div></div>
+    </div>
+    <div class="nav-section">Orçamentos</div>
+    <button class="nav-btn" onclick="goPage('novo');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Novo Orçamento</span></button>
+    <button class="nav-btn" onclick="goPage('historico');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Histórico</span></button>
+    <div class="nav-section">Vendas</div>
+    <button class="nav-btn" onclick="goPage('pedidos');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><span>Pedidos</span></button>
+    <button class="nav-btn" onclick="goPage('clientes');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Clientes</span></button>
+    <button class="nav-btn" onclick="goPage('crm');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>CRM / Ficha</span></button>
+    <button class="nav-btn" onclick="goPage('aprovacoes');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg><span>Aprovações</span></button>
+    <button class="nav-btn" onclick="goPage('caixa');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg><span>Caixa</span></button>
+    <button class="nav-btn" onclick="goPage('financeiro');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span>Financeiro</span></button>
+    <button class="nav-btn" onclick="goPage('produtos');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg><span>Produtos</span></button>
+    <div class="nav-section">Ferramentas</div>
+    <button class="nav-btn" onclick="goPage('calculadora');carregarCalculadora();closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/></svg><span>Calculadora de Custos</span></button>
+    <button class="nav-btn" onclick="goPage('mensagens');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Templates</span></button>
+    <div class="nav-section admin-only">Administração</div>
+    <button class="nav-btn admin-only" onclick="goPage('relatorios');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span>Relatórios</span></button>
+    <button class="nav-btn admin-only" onclick="goPage('dashboard');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></button>
+    <button class="nav-btn admin-only" onclick="goPage('usuarios');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Usuários</span></button>
+    <button class="nav-btn admin-only" onclick="goPage('config');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06"/></svg><span>Configurações</span></button>
+    <div class="nav-section">Conta</div>
+    <button class="nav-btn" onclick="goPage('perfil');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Meu Perfil</span></button>
+    <button class="nav-btn danger" onclick="logout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg><span>Sair</span></button>
+  </nav>
+</div>
+
+<!-- ══ MOBILE BOTTOM BAR ═════════════════════════════ -->
+<div class="mobile-bottom-bar">
+  <button class="mobile-tab" id="mob-tab-novo" onclick="goPage('novo');closeMobileMenu()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    Orçamento
+  </button>
+  <button class="mobile-tab" id="mob-tab-pedidos" onclick="goPage('pedidos');closeMobileMenu()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+    Pedidos
+  </button>
+  <button class="mobile-tab" id="mob-tab-clientes" onclick="goPage('clientes');closeMobileMenu()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    Clientes
+  </button>
+  <button class="mobile-tab" id="mob-tab-caixa" onclick="goPage('caixa');closeMobileMenu()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+    Caixa
+  </button>
+  <button class="mobile-tab" id="mob-tab-menu" onclick="toggleMobileMenu()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    Menu
+  </button>
+</div>
+
 <!-- ══ SIDEBAR ══════════════════════════════════════ -->
 <nav class="sidebar">
   <div class="sidebar-logo" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:16px">
@@ -2148,6 +2213,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sb-name').textContent = currentUser.nome;
   document.getElementById('sb-role').textContent = currentUser.role==='admin'?'⭐ Administrador':'Operador';
   document.querySelectorAll('.admin-only').forEach(el=>{ el.style.display=isAdmin()?'':'none'; });
+  _syncMobileUser();
   document.getElementById('p-nome').value = currentUser.nome;
   document.getElementById('p-user').value = currentUser.username;
   carregarKanbanConfig();
@@ -2167,6 +2233,7 @@ function goPage(p) {
   document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   const nb=document.getElementById('nav-'+p); if(nb) nb.classList.add('active');
+  _updateMobileTab(p);
   if(p==='historico')               carregarHist();
   if(p==='usuarios'&&isAdmin())     carregarUsers();
   if(p==='relatorios'&&isAdmin())   carregarRelatorio();
@@ -2188,6 +2255,41 @@ function goPage(p) {
   if(p==='aprovacoes')              carregarGestaoAprovacoes();
 }
 function logout(){localStorage.removeItem('orcToken');localStorage.removeItem('orcUser');location.replace('index.html');}
+
+// ════ MOBILE MENU ══════════════════════════════════════
+function toggleMobileMenu() {
+  const overlay = document.getElementById('mob-overlay');
+  const ham     = document.getElementById('mob-ham');
+  const isOpen  = overlay.classList.toggle('open');
+  ham.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeMobileMenu() {
+  document.getElementById('mob-overlay').classList.remove('open');
+  const ham = document.getElementById('mob-ham');
+  if (ham) ham.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeMobileMenuOutside(e) {
+  if (e.target === document.getElementById('mob-overlay')) closeMobileMenu();
+}
+function _syncMobileUser() {
+  const u = currentUser;
+  if (!u) return;
+  const av = document.getElementById('mob-av');
+  const nm = document.getElementById('mob-name');
+  const rl = document.getElementById('mob-role');
+  if (av) av.textContent = (u.nome||u.username||'?')[0].toUpperCase();
+  if (nm) nm.textContent = u.nome || u.username;
+  if (rl) rl.textContent = u.role === 'admin' ? '⭐ Administrador' : 'Operador';
+}
+function _updateMobileTab(page) {
+  document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+  const map = { novo:'mob-tab-novo', historico:'mob-tab-novo', pedidos:'mob-tab-pedidos',
+    clientes:'mob-tab-clientes', crm:'mob-tab-clientes', caixa:'mob-tab-caixa', financeiro:'mob-tab-caixa' };
+  const tabId = map[page];
+  if (tabId) { const el = document.getElementById(tabId); if (el) el.classList.add('active'); }
+}
 
 // ════ NUMERAÇÃO ═══════════════════════════════════════
 async function carregarNextNum(){
