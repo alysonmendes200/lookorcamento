@@ -676,7 +676,7 @@
         </div>
         <div class="dash-mini">
           <div class="dash-mini-icon laranja">⏳</div>
-          <div class="dash-mini-body"><div class="dash-mini-label">A Receber</div><div class="dash-mini-val" id="dash-areceber">—</div></div>
+          <div class="dash-mini-body"><div class="dash-mini-label">A Receber (Fluxo)</div><div class="dash-mini-val" id="dash-areceber">—</div></div>
         </div>
         <div class="dash-mini">
           <div class="dash-mini-icon verde">👥</div>
@@ -699,10 +699,10 @@
         <div class="card-title">💼 Visão Financeira Consolidada</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:8px">
           <div class="dre-stat azul"><div class="dre-stat-label">Faturamento Total</div><div class="dre-stat-val" id="dash-fat-total" style="color:var(--azul)">—</div></div>
-          <div class="dre-stat pos"><div class="dre-stat-label">Total Recebido</div><div class="dre-stat-val" id="dash-total-recebido" style="color:#198754">—</div></div>
-          <div class="dre-stat neg"><div class="dre-stat-label">Saídas Caixa</div><div class="dre-stat-val" id="dash-saidas-cx" style="color:#dc3545">—</div></div>
-          <div class="dre-stat azul"><div class="dre-stat-label">Saldo Caixa</div><div class="dre-stat-val" id="dash-saldo-cx">—</div></div>
-          <div class="dre-stat pos"><div class="dre-stat-label">Resultado Líquido</div><div class="dre-stat-val" id="dash-resultado">—</div></div>
+          <div class="dre-stat pos"><div class="dre-stat-label">Entradas Pagas</div><div class="dre-stat-val" id="dash-total-recebido" style="color:#198754">—</div></div>
+          <div class="dre-stat neg"><div class="dre-stat-label">Saídas Pagas</div><div class="dre-stat-val" id="dash-saidas-cx" style="color:#dc3545">—</div></div>
+          <div class="dre-stat azul"><div class="dre-stat-label">Saldo Atual</div><div class="dre-stat-val" id="dash-saldo-cx">—</div></div>
+          <div class="dre-stat pos"><div class="dre-stat-label">Saldo Atual</div><div class="dre-stat-val" id="dash-resultado">—</div></div>
         </div>
       </div>
     </div>
@@ -1886,6 +1886,21 @@
         <div class="fg"><label>Quantidade</label><input id="prod-m2-qty" type="number" min="1" step="1" value="1" oninput="calcM2Prod()"></div>
       </div>
       <div id="prod-m2-result" style="font-size:12px;color:var(--muted)">Preencha largura e altura para calcular.</div>
+    </div>
+    <!-- Seção: Preços por Quantidade -->
+    <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:12px;font-weight:700;color:var(--azul);letter-spacing:.04em;text-transform:uppercase">📦 Preços por Quantidade (Atacado)</div>
+        <button type="button" class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="addFaixaPreco()">+ Adicionar Faixa</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Configure preços menores para pedidos maiores. O sistema aplica automaticamente no pedido.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 36px;gap:6px;margin-bottom:4px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);padding:0 4px">Qtd Mínima</div>
+        <div style="font-size:11px;font-weight:600;color:var(--muted);padding:0 4px">Preço Unit. (R$)</div>
+        <div></div>
+      </div>
+      <div id="prod-faixas-lista" class="faixas-lista"></div>
+      <div id="prod-faixas-vazio" style="font-size:12px;color:var(--muted);padding:8px 4px">Nenhuma faixa cadastrada — o preço base será usado.</div>
     </div>
     <input type="hidden" id="prod-edit-id">
     <div class="btn-row">
@@ -3283,7 +3298,10 @@ function renderProdutos(){
             <div class="prod-card-desc">${esc(p.descricao||'Sem descrição')}</div>
           </div>
           <div class="prod-card-footer">
-            <div class="prod-card-preco">${fBRL(p.preco)}</div>
+            <div>
+              <div class="prod-card-preco">${fBRL(p.preco)}</div>
+              ${(Array.isArray(p.faixasPreco)&&p.faixasPreco.length)?`<span class="prod-faixas-badge">📦 ${p.faixasPreco.length} faixa${p.faixasPreco.length>1?'s':''} de atacado</span>`:''}
+            </div>
             <div class="prod-card-actions">
               <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="editarProduto('${p.id}')">✏️ Editar</button>
               ${isAdmin()?`<button class="btn btn-ghost" style="padding:5px 10px;font-size:12px;color:#dc3545;border-color:#dc3545" onclick="excluirProduto('${p.id}','${esc(p.nome)}')">🗑️</button>`:''}
@@ -3297,6 +3315,41 @@ function atualizarDatalistCategorias(){
   const dl=document.getElementById('cat-list');if(!dl)return;
   dl.innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('');
 }
+// ── Faixas de Preço ───────────────────────────────────
+let _prodFaixas = []; // array temporário enquanto edita o modal
+
+function _renderFaixasModal() {
+  const lista = document.getElementById('prod-faixas-lista');
+  const vazio = document.getElementById('prod-faixas-vazio');
+  if (!lista) return;
+  if (!_prodFaixas.length) { lista.innerHTML = ''; if(vazio)vazio.style.display=''; return; }
+  if(vazio)vazio.style.display='none';
+  lista.innerHTML = _prodFaixas.map((f, i) => `
+    <div class="faixa-row">
+      <input type="number" min="1" step="1" placeholder="Ex: 10" value="${f.qtdMin||''}"
+        oninput="_prodFaixas[${i}].qtdMin=parseInt(this.value)||0" style="font-size:13px">
+      <input type="number" min="0" step="0.01" placeholder="Ex: 8,50" value="${f.preco||''}"
+        oninput="_prodFaixas[${i}].preco=parseFloat(this.value)||0" style="font-size:13px">
+      <button type="button" class="faixa-del" onclick="_remFaixa(${i})" title="Remover">×</button>
+    </div>`).join('');
+}
+function addFaixaPreco() {
+  _prodFaixas.push({ qtdMin: '', preco: '' });
+  _renderFaixasModal();
+  // foca no último campo de qtd
+  const rows = document.querySelectorAll('#prod-faixas-lista .faixa-row');
+  if (rows.length) rows[rows.length-1].querySelector('input')?.focus();
+}
+function _remFaixa(i) {
+  _prodFaixas.splice(i, 1);
+  _renderFaixasModal();
+}
+function _getFaixasValidas() {
+  return _prodFaixas
+    .filter(f => f.qtdMin > 0 && f.preco > 0)
+    .sort((a, b) => a.qtdMin - b.qtdMin);
+}
+
 function abrirModalNovoProduto(){
   ['prod-nome','prod-descricao','prod-categoria'].forEach(id=>{ const el=document.getElementById(id);if(el)el.value=''; });
   document.getElementById('prod-preco').value='0';
@@ -3309,6 +3362,8 @@ function abrirModalNovoProduto(){
   document.getElementById('prod-m2-larg').value='';
   document.getElementById('prod-m2-alt').value='';
   document.getElementById('prod-m2-qty').value='1';
+  _prodFaixas = [];
+  _renderFaixasModal();
   openModal('modal-produto');
 }
 function toggleM2Calc(){
@@ -3349,19 +3404,23 @@ function editarProduto(id){
   document.getElementById('prod-m2-larg').value='';
   document.getElementById('prod-m2-alt').value='';
   document.getElementById('prod-m2-qty').value='1';
+  _prodFaixas = (Array.isArray(p.faixasPreco) ? [...p.faixasPreco] : []);
+  _renderFaixasModal();
   toggleM2Calc();
   openModal('modal-produto');
 }
 async function salvarProduto(){
   const nome=document.getElementById('prod-nome').value.trim();
   if(!nome){toast('Nome é obrigatório.','error');return;}
+  const faixasValidas=_getFaixasValidas();
   const payload={
     nome,
-    descricao: document.getElementById('prod-descricao').value.trim(),
-    categoria: document.getElementById('prod-categoria').value.trim(),
-    preco:     parseFloat(document.getElementById('prod-preco').value)||0,
-    unidade:   document.getElementById('prod-unidade').value.trim()||'un',
-    ativo:     document.getElementById('prod-ativo').value==='true'
+    descricao:   document.getElementById('prod-descricao').value.trim(),
+    categoria:   document.getElementById('prod-categoria').value.trim(),
+    preco:       parseFloat(document.getElementById('prod-preco').value)||0,
+    unidade:     document.getElementById('prod-unidade').value.trim()||'un',
+    ativo:       document.getElementById('prod-ativo').value==='true',
+    faixasPreco: faixasValidas
   };
   const editId=document.getElementById('prod-edit-id').value;
   const btn=document.getElementById('btn-salvar-prod');
@@ -3416,13 +3475,20 @@ function renderCatalogo(){
 }
 function adicionarProdutoDosCatalogo(id){
   const p=produtoList.find(x=>x.id===id);if(!p)return;
+  const descricao=p.nome+(p.descricao?' — '+p.descricao:'');
   if(catalogoAlvo==='orc'){
-    addItem(p.nome+(p.descricao?' — '+p.descricao:''),1,p.preco);
+    addItem(descricao,1,p.preco);
   }else{
-    addPedItem(p.nome+(p.descricao?' — '+p.descricao:''),1,p.preco);
+    // passa o prodId para habilitar tabela regressiva de preços
+    addPedItem(descricao,1,p.preco,p.id);
+    // seta base-price e dispara calcPedRow para checar faixas com qty=1
+    const lastId='pr'+pedItemCount;
+    const row=document.getElementById(lastId);
+    if(row){row.dataset.basePrice=p.preco;calcPedRow(lastId);}
   }
   closeModal('modal-catalogo');
-  toast(`"${p.nome}" adicionado!`,'success');
+  const temFaixas=Array.isArray(p.faixasPreco)&&p.faixasPreco.length;
+  toast(`"${p.nome}" adicionado!${temFaixas?' Possui '+p.faixasPreco.length+' faixa(s) de desconto.':''}`, 'success');
 }
 
 // ════ CLIENTES ════════════════════════════════════════
@@ -4120,16 +4186,19 @@ function editarPedido(id){
 }
 
 // Itens do pedido
-function addPedItem(desc='',qty='',unit=''){
+function addPedItem(desc='',qty='',unit='',prodId=''){
   pedItemCount++;
   const id='pr'+pedItemCount;
   const wrap=document.createElement('div');
   wrap.id='w-'+id;
   wrap.innerHTML=`
-    <div class="item-row" id="${id}">
+    <div class="item-row" id="${id}" data-prod-id="${esc(prodId)}" data-base-price="${unit||''}">
       <input type="text" placeholder="Descrição do item" value="${esc(desc)}" oninput="calcPedRow('${id}')">
       <input type="number" placeholder="Qtd" min="0" value="${qty}" id="q-${id}" oninput="calcPedRow('${id}')">
-      <input type="number" placeholder="Preço unit." min="0" step="0.01" value="${unit}" oninput="calcPedRow('${id}')">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <input type="number" placeholder="Preço unit." min="0" step="0.01" value="${unit}" id="u-${id}" oninput="onPedUnitChange('${id}')">
+        <span class="badge-atacado" id="badge-${id}" style="display:none">📦 Preço Atacado</span>
+      </div>
       <div class="item-total" id="pt-${id}">R$ 0,00</div>
       <div class="item-btns">
         <button type="button" class="m2-btn" id="m2btn-${id}" onclick="toggleM2Row('${id}','ped')" title="Calcular m²">📐</button>
@@ -4148,11 +4217,50 @@ function addPedItem(desc='',qty='',unit=''){
   document.getElementById('ped-items-container').appendChild(wrap);
   if(desc&&qty&&unit)calcPedRow(id);
 }
+// Quando o usuário edita o preço manualmente, desvincula do produto (sem atacado automático)
+function onPedUnitChange(id) {
+  const row = document.getElementById(id);
+  if (row) { row.dataset.prodId = ''; row.dataset.basePrice = ''; }
+  const badge = document.getElementById('badge-'+id);
+  if (badge) { badge.style.display = 'none'; }
+  const inp = document.getElementById('u-'+id);
+  if (inp) inp.style.color = '';
+  calcPedRow(id);
+}
 function calcPedRow(id){
   const row=document.getElementById(id);if(!row)return;
   const ins=row.querySelectorAll('input');
-  document.getElementById('pt-'+id).textContent=fBRL((parseFloat(ins[1].value)||0)*(parseFloat(ins[2].value)||0));
+  const qty=parseFloat(ins[1].value)||0;
+  const unitInp=document.getElementById('u-'+id)||ins[2];
+  const badge=document.getElementById('badge-'+id);
+  const prodId=row.dataset.prodId;
+
+  if(prodId){
+    const prod=produtoList.find(p=>p.id===prodId);
+    const precoFaixa=getPrecoFaixa(prod,qty);
+    if(precoFaixa!==null){
+      unitInp.value=precoFaixa.toFixed(2);
+      unitInp.style.color='var(--azul)';
+      if(badge)badge.style.display='';
+    }else{
+      // qty abaixo da menor faixa — volta ao preço base
+      const basePrice=parseFloat(row.dataset.basePrice)||prod?.preco||0;
+      if(basePrice&&parseFloat(unitInp.value)!==basePrice){unitInp.value=basePrice.toFixed(2);}
+      unitInp.style.color='';
+      if(badge)badge.style.display='none';
+    }
+  }
+
+  document.getElementById('pt-'+id).textContent=fBRL(qty*(parseFloat(unitInp.value)||0));
   calcPedGrand();
+}
+
+// Retorna o preço da faixa para a quantidade informada, ou null se não houver faixa aplicável
+function getPrecoFaixa(produto,qty){
+  if(!produto||!Array.isArray(produto.faixasPreco)||!produto.faixasPreco.length)return null;
+  const faixas=[...produto.faixasPreco].sort((a,b)=>b.qtdMin-a.qtdMin);
+  const f=faixas.find(f=>qty>=f.qtdMin);
+  return f?parseFloat(f.preco):null;
 }
 function calcPedGrand(){
   let sub=0;document.querySelectorAll('#ped-items-container .item-total').forEach(el=>sub+=pBRL(el.textContent));
@@ -4184,7 +4292,12 @@ function togglePedCondPag(){
 function getPedItems(){
   return [...document.querySelectorAll('#ped-items-container .item-row')].map(row=>{
     const ins=row.querySelectorAll('input');
-    const desc=ins[0].value.trim(),qty=parseFloat(ins[1].value)||0,unit=parseFloat(ins[2].value)||0;
+    const desc=ins[0].value.trim();
+    const qty=parseFloat(ins[1].value)||0;
+    // busca pelo id específico do campo de preço (u-XX) para pegar o valor correto após atacado
+    const unitId='u-'+row.id;
+    const unitEl=document.getElementById(unitId)||ins[2];
+    const unit=parseFloat(unitEl?.value)||0;
     return{desc,qty,unit,total:qty*unit};
   }).filter(i=>i.desc&&i.qty>0);
 }
@@ -4284,44 +4397,47 @@ async function excluirPedido(id){
 async function carregarDashboard(){
   aplicarDashOrder(); // aplica a ordem configurada antes de renderizar
   try{
-    const[orcs,pedidos,clientes,produtos,caixa]=await Promise.all([
+    const[orcs,pedidos,clientes,produtos]=await Promise.all([
       API.get('/orcamentos').catch(()=>[]),
       API.get('/pedidos').catch(()=>[]),
       API.get('/clientes').catch(()=>[]),
-      API.get('/produtos').catch(()=>[]),
-      API.get('/caixa').catch(()=>[])
+      API.get('/produtos').catch(()=>[])
     ]);
+
+    // Lê Fluxo de Caixa do localStorage (fonte única de verdade financeira)
+    let fluxo=[];
+    try{fluxo=JSON.parse(localStorage.getItem('lookLancamentos')||'[]');}catch{}
+    const fluxoEntradasPagas =fluxo.filter(l=>l.tipo==='entrada'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
+    const fluxoDespesasPagas =fluxo.filter(l=>l.tipo==='despesa'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
+    const fluxoSaldoAtual    =fluxoEntradasPagas-fluxoDespesasPagas;
+    const fluxoAReceber      =fluxo.filter(l=>l.tipo==='entrada'&&l.status!=='pago').reduce((s,l)=>s+l.valor,0);
+    const fluxoAPagar        =fluxo.filter(l=>l.tipo==='despesa'&&l.status!=='pago').reduce((s,l)=>s+l.valor,0);
+
+    const fatTotal=orcs.reduce((s,o)=>s+o.total,0)+pedidos.reduce((s,p)=>s+p.total,0);
     const orcRecebido=orcs.filter(o=>o.pago).reduce((s,o)=>s+(o.valorRecebido||o.total),0);
     const orcARec=orcs.filter(o=>!o.pago).reduce((s,o)=>s+o.total,0);
-    const pedPagos=pedidos.filter(p=>p.pago);
-    const pedRecebido=pedPagos.reduce((s,p)=>s+(p.valorRecebido||p.total),0);
-    const cxEntradas=caixa.filter(t=>t.tipo==='entrada').reduce((s,t)=>s+t.valor,0);
-    const cxSaidas  =caixa.filter(t=>t.tipo==='saida'  ).reduce((s,t)=>s+t.valor,0);
-    const cxSaldo=cxEntradas-cxSaidas;
-    const fatTotal=orcs.reduce((s,o)=>s+o.total,0)+pedidos.reduce((s,p)=>s+p.total,0);
-    const recTotal=orcRecebido+pedRecebido+cxEntradas;
-    const resultado=orcRecebido+pedRecebido+cxEntradas-cxSaidas;
 
     // Hero cards
     document.getElementById('dash-fat-hero').textContent=fBRL(fatTotal);
     document.getElementById('dash-fat-hero-sub').textContent=`${orcs.length} orç. + ${pedidos.length} pedidos`;
-    document.getElementById('dash-recebido-hero').textContent=fBRL(recTotal);
-    document.getElementById('dash-recebido-hero-sub').textContent=`Saldo caixa: ${fBRL(cxSaldo)}`;
+    document.getElementById('dash-recebido-hero').textContent=fBRL(fluxoSaldoAtual);
+    document.getElementById('dash-recebido-hero-sub').textContent=`Saldo Atual (Fluxo de Caixa)`;
     // Mini cards
     document.getElementById('dash-tot-orc').textContent=orcs.length;
     document.getElementById('dash-recebido').textContent=fBRL(orcRecebido);
-    document.getElementById('dash-areceber').textContent=fBRL(orcARec);
+    document.getElementById('dash-areceber').textContent=fBRL(fluxoAReceber);
     document.getElementById('dash-clientes').textContent=clientes.length;
     document.getElementById('dash-pedidos-abertos').textContent=pedidos.filter(p=>!['entregue','cancelado'].includes(p.status)).length;
-    document.getElementById('dash-pedidos-pagos').textContent=fBRL(pedRecebido);
-    // Financeiro consolidado (card existente)
+    document.getElementById('dash-pedidos-pagos').textContent=fBRL(fluxoEntradasPagas);
+    // Visão Financeira Consolidada — alinhada com Fluxo de Caixa
     document.getElementById('dash-fat-total').textContent=fBRL(fatTotal);
-    document.getElementById('dash-total-recebido').textContent=fBRL(recTotal);
-    document.getElementById('dash-saidas-cx').textContent=fBRL(cxSaidas);
+    document.getElementById('dash-total-recebido').textContent=fBRL(fluxoEntradasPagas);
+    document.getElementById('dash-saidas-cx').textContent=fBRL(fluxoDespesasPagas);
     const saldoEl=document.getElementById('dash-saldo-cx');
-    saldoEl.textContent=fBRL(cxSaldo);
-    saldoEl.style.color=cxSaldo>=0?'#198754':'#dc3545';
+    saldoEl.textContent=fBRL(fluxoSaldoAtual);
+    saldoEl.style.color=fluxoSaldoAtual>=0?'#198754':'#dc3545';
     const resEl=document.getElementById('dash-resultado');
+    const resultado=fluxoSaldoAtual;
     resEl.textContent=fBRL(resultado);
     resEl.style.color=resultado>=0?'#198754':'#dc3545';
 
