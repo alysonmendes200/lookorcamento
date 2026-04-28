@@ -13,18 +13,19 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { Produtos } = require('../db');
-    const { nome, descricao, unidade, preco, categoria, ativo } = req.body;
+    const { nome, descricao, unidade, preco, categoria, ativo, faixasPreco } = req.body;
     if (!nome?.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const novo = await Produtos.create({
       id: uuidv4(),
-      nome:      nome.trim(),
-      descricao: (descricao || '').trim(),
-      unidade:   (unidade   || 'un').trim(),
-      preco:     parseFloat(preco) || 0,
-      categoria: (categoria || '').trim(),
-      ativo:     ativo !== false,
-      criadoPor: req.user.username,
-      criadoEm:  new Date().toISOString()
+      nome:        nome.trim(),
+      descricao:   (descricao || '').trim(),
+      unidade:     (unidade   || 'un').trim(),
+      preco:       parseFloat(preco) || 0,
+      categoria:   (categoria || '').trim(),
+      ativo:       ativo !== false,
+      faixasPreco: Array.isArray(faixasPreco) ? faixasPreco : [],
+      criadoPor:   req.user.username,
+      criadoEm:    new Date().toISOString()
     });
     res.status(201).json(novo);
   } catch (e) { next(e); }
@@ -33,15 +34,16 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { Produtos } = require('../db');
-    const { nome, descricao, unidade, preco, categoria, ativo } = req.body;
+    const { nome, descricao, unidade, preco, categoria, ativo, faixasPreco } = req.body;
     if (!nome?.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const updated = await Produtos.update(req.params.id, {
-      nome:      nome.trim(),
-      descricao: (descricao || '').trim(),
-      unidade:   (unidade   || 'un').trim(),
-      preco:     parseFloat(preco) || 0,
-      categoria: (categoria || '').trim(),
-      ativo:     ativo !== false,
+      nome:        nome.trim(),
+      descricao:   (descricao || '').trim(),
+      unidade:     (unidade   || 'un').trim(),
+      preco:       parseFloat(preco) || 0,
+      categoria:   (categoria || '').trim(),
+      ativo:       ativo !== false,
+      faixasPreco: Array.isArray(faixasPreco) ? faixasPreco : [],
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);
