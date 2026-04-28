@@ -13,7 +13,7 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { Produtos } = require('../db');
-    const { nome, descricao, unidade, preco, categoria, ativo } = req.body;
+    const { nome, descricao, unidade, preco, categoria, ativo, faixas } = req.body;
     if (!nome?.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const novo = await Produtos.create({
       id: uuidv4(),
@@ -23,6 +23,7 @@ router.post('/', async (req, res, next) => {
       preco:     parseFloat(preco) || 0,
       categoria: (categoria || '').trim(),
       ativo:     ativo !== false,
+      faixas:    Array.isArray(faixas) ? faixas : [],
       criadoPor: req.user.username,
       criadoEm:  new Date().toISOString()
     });
@@ -33,7 +34,7 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { Produtos } = require('../db');
-    const { nome, descricao, unidade, preco, categoria, ativo } = req.body;
+    const { nome, descricao, unidade, preco, categoria, ativo, faixas } = req.body;
     if (!nome?.trim()) return res.status(400).json({ error: 'Nome é obrigatório' });
     const updated = await Produtos.update(req.params.id, {
       nome:      nome.trim(),
@@ -42,6 +43,7 @@ router.put('/:id', async (req, res, next) => {
       preco:     parseFloat(preco) || 0,
       categoria: (categoria || '').trim(),
       ativo:     ativo !== false,
+      faixas:    Array.isArray(faixas) ? faixas : [],
       atualizadoEm: new Date().toISOString()
     });
     res.json(updated);

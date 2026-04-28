@@ -179,6 +179,7 @@ async function init() {
       atualizado_em TEXT DEFAULT ''
     )
   `);
+  await query(`ALTER TABLE produtos ADD COLUMN IF NOT EXISTS faixas JSONB DEFAULT '[]'`);
 
   await query(`
     CREATE TABLE IF NOT EXISTS caixa_transacoes (
@@ -499,20 +500,24 @@ const Produtos = {
   create: async (data) => {
     const { rows } = await query(`
       INSERT INTO produtos
-        (id, nome, descricao, unidade, preco, categoria, ativo, criado_por, criado_em)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *
+        (id, nome, descricao, unidade, preco, categoria, ativo, faixas, criado_por, criado_em)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *
     `, [data.id, data.nome, data.descricao, data.unidade,
-        data.preco, data.categoria, data.ativo, data.criadoPor, data.criadoEm]);
+        data.preco, data.categoria, data.ativo,
+        JSON.stringify(data.faixas || []),
+        data.criadoPor, data.criadoEm]);
     return fromDbProduto(rows[0]);
   },
   update: async (id, data) => {
     const { rows } = await query(`
       UPDATE produtos
          SET nome=$2, descricao=$3, unidade=$4, preco=$5,
-             categoria=$6, ativo=$7, atualizado_em=$8
+             categoria=$6, ativo=$7, faixas=$8, atualizado_em=$9
        WHERE id=$1 RETURNING *
     `, [id, data.nome, data.descricao, data.unidade,
-        data.preco, data.categoria, data.ativo, data.atualizadoEm]);
+        data.preco, data.categoria, data.ativo,
+        JSON.stringify(data.faixas || []),
+        data.atualizadoEm]);
     return fromDbProduto(rows[0]);
   },
   delete: async (id) => { await query('DELETE FROM produtos WHERE id = $1', [id]); }
@@ -522,6 +527,7 @@ function fromDbProduto(r) {
   return {
     id: r.id, nome: r.nome, descricao: r.descricao, unidade: r.unidade,
     preco: parseFloat(r.preco) || 0, categoria: r.categoria, ativo: r.ativo,
+    faixas: typeof r.faixas === 'string' ? JSON.parse(r.faixas) : (r.faixas || []),
     criadoPor: r.criado_por, criadoEm: r.criado_em, atualizadoEm: r.atualizado_em
   };
 }
