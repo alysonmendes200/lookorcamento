@@ -124,7 +124,6 @@ async function init() {
 
   /* status do orçamento: ativo | aprovado | cancelado */
   await query(`ALTER TABLE orcamentos ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'ativo'`);
-  await query(`ALTER TABLE produtos ADD COLUMN IF NOT EXISTS faixas_preco TEXT DEFAULT '[]'`);
 
   await query(`
     CREATE TABLE IF NOT EXISTS audit_logs (
@@ -498,36 +497,31 @@ const Produtos = {
     return rows[0] ? fromDbProduto(rows[0]) : null;
   },
   create: async (data) => {
-    const faixas = JSON.stringify(Array.isArray(data.faixasPreco) ? data.faixasPreco : []);
     const { rows } = await query(`
       INSERT INTO produtos
-        (id, nome, descricao, unidade, preco, categoria, ativo, faixas_preco, criado_por, criado_em)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *
+        (id, nome, descricao, unidade, preco, categoria, ativo, criado_por, criado_em)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *
     `, [data.id, data.nome, data.descricao, data.unidade,
-        data.preco, data.categoria, data.ativo, faixas, data.criadoPor, data.criadoEm]);
+        data.preco, data.categoria, data.ativo, data.criadoPor, data.criadoEm]);
     return fromDbProduto(rows[0]);
   },
   update: async (id, data) => {
-    const faixas = JSON.stringify(Array.isArray(data.faixasPreco) ? data.faixasPreco : []);
     const { rows } = await query(`
       UPDATE produtos
          SET nome=$2, descricao=$3, unidade=$4, preco=$5,
-             categoria=$6, ativo=$7, faixas_preco=$8, atualizado_em=$9
+             categoria=$6, ativo=$7, atualizado_em=$8
        WHERE id=$1 RETURNING *
     `, [id, data.nome, data.descricao, data.unidade,
-        data.preco, data.categoria, data.ativo, faixas, data.atualizadoEm]);
+        data.preco, data.categoria, data.ativo, data.atualizadoEm]);
     return fromDbProduto(rows[0]);
   },
   delete: async (id) => { await query('DELETE FROM produtos WHERE id = $1', [id]); }
 };
 
 function fromDbProduto(r) {
-  let faixasPreco = [];
-  try { faixasPreco = JSON.parse(r.faixas_preco || '[]'); } catch {}
   return {
     id: r.id, nome: r.nome, descricao: r.descricao, unidade: r.unidade,
     preco: parseFloat(r.preco) || 0, categoria: r.categoria, ativo: r.ativo,
-    faixasPreco,
     criadoPor: r.criado_por, criadoEm: r.criado_em, atualizadoEm: r.atualizado_em
   };
 }
