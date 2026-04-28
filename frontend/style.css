@@ -1062,33 +1062,10 @@ input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; }
 
 /* badges de status financeiro */
 .badge-fin-pendente { background:#fff3cd; color:#856404;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
-.badge-fin-pago      { background:#d1fae5; color:#065f46;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
-.badge-fin-atrasado  { background:#fee2e2; color:#991b1b;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
-.badge-fin-pendente  { background:#fef9c3; color:#92400e;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
-.badge-fin-entrada   { background:#d1fae5; color:#065f46;  padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
-.badge-fin-saida     { background:#fee2e2; color:#991b1b;  padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
-
-/* ── Preços por Quantidade (Tabela Regressiva) ── */
-.faixas-lista { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
-.faixa-row { display:grid; grid-template-columns:1fr 1fr 36px; gap:6px; align-items:center; }
-.faixa-row input { font-size:13px; }
-.faixa-del { background:transparent; border:1.5px solid var(--border); border-radius:6px; color:var(--danger); width:36px; height:34px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:background .15s; }
-.faixa-del:hover { background:var(--danger); color:#fff; border-color:var(--danger); }
-
-/* Badge de atacado no item do pedido */
-.badge-atacado {
-  display:inline-flex; align-items:center; gap:3px;
-  background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;
-  border-radius:6px; padding:2px 7px; font-size:10px; font-weight:700;
-  white-space:nowrap; letter-spacing:.02em;
-}
-
-/* Produto card — indicador de faixas */
-.prod-faixas-badge {
-  display:inline-flex; align-items:center; gap:3px;
-  background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0;
-  border-radius:6px; padding:2px 7px; font-size:10px; font-weight:700; margin-top:4px;
-}
+.badge-fin-pago     { background:#d1fae5; color:#065f46;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge-fin-atrasado { background:#fee2e2; color:#991b1b;  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge-fin-entrada  { background:#d1fae5; color:#065f46;  padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
+.badge-fin-saida    { background:#fee2e2; color:#991b1b;  padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
 
 /* ══ SEMÁFORO DE PRAZOS (Dashboard) ══════════════════ */
 .prazo-item {

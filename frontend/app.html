@@ -268,7 +268,8 @@
     <button class="nav-btn" onclick="goPage('crm');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>CRM / Ficha</span></button>
     <button class="nav-btn" onclick="goPage('aprovacoes');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg><span>Aprovações</span></button>
     <button class="nav-btn" onclick="goPage('estoque');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg><span>Estoque</span></button>
-    <button class="nav-btn" onclick="goPage('fluxo');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span>Fluxo de Caixa</span></button>
+    <button class="nav-btn" onclick="goPage('caixa');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg><span>Caixa</span></button>
+    <button class="nav-btn" onclick="goPage('financeiro');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span>Financeiro</span></button>
     <button class="nav-btn" onclick="goPage('produtos');closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg><span>Produtos</span></button>
     <div class="nav-section">Ferramentas</div>
     <button class="nav-btn" onclick="goPage('calculadora');carregarCalculadora();closeMobileMenu()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/></svg><span>Calculadora de Custos</span></button>
@@ -301,9 +302,9 @@
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
     Clientes
   </button>
-  <button class="mobile-tab" id="mob-tab-fluxo" onclick="goPage('fluxo');closeMobileMenu()">
-    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-    Fluxo
+  <button class="mobile-tab" id="mob-tab-caixa" onclick="goPage('caixa');closeMobileMenu()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+    Caixa
   </button>
   <button class="mobile-tab" id="mob-tab-menu" onclick="toggleMobileMenu()">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -361,9 +362,13 @@
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
     <span>Estoque</span>
   </button>
-  <button class="nav-btn" id="nav-fluxo" onclick="goPage('fluxo')">
+  <button class="nav-btn" id="nav-caixa" onclick="goPage('caixa')">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+    <span>Caixa</span>
+  </button>
+  <button class="nav-btn" id="nav-financeiro" onclick="goPage('financeiro')">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-    <span>Fluxo de Caixa</span>
+    <span>Financeiro</span>
   </button>
 
   <div class="nav-section">Ferramentas</div>
@@ -676,7 +681,7 @@
         </div>
         <div class="dash-mini">
           <div class="dash-mini-icon laranja">⏳</div>
-          <div class="dash-mini-body"><div class="dash-mini-label">A Receber (Fluxo)</div><div class="dash-mini-val" id="dash-areceber">—</div></div>
+          <div class="dash-mini-body"><div class="dash-mini-label">A Receber</div><div class="dash-mini-val" id="dash-areceber">—</div></div>
         </div>
         <div class="dash-mini">
           <div class="dash-mini-icon verde">👥</div>
@@ -699,10 +704,10 @@
         <div class="card-title">💼 Visão Financeira Consolidada</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:8px">
           <div class="dre-stat azul"><div class="dre-stat-label">Faturamento Total</div><div class="dre-stat-val" id="dash-fat-total" style="color:var(--azul)">—</div></div>
-          <div class="dre-stat pos"><div class="dre-stat-label">Entradas Pagas</div><div class="dre-stat-val" id="dash-total-recebido" style="color:#198754">—</div></div>
-          <div class="dre-stat neg"><div class="dre-stat-label">Saídas Pagas</div><div class="dre-stat-val" id="dash-saidas-cx" style="color:#dc3545">—</div></div>
-          <div class="dre-stat azul"><div class="dre-stat-label">Saldo Atual</div><div class="dre-stat-val" id="dash-saldo-cx">—</div></div>
-          <div class="dre-stat pos"><div class="dre-stat-label">Saldo Atual</div><div class="dre-stat-val" id="dash-resultado">—</div></div>
+          <div class="dre-stat pos"><div class="dre-stat-label">Total Recebido</div><div class="dre-stat-val" id="dash-total-recebido" style="color:#198754">—</div></div>
+          <div class="dre-stat neg"><div class="dre-stat-label">Saídas Caixa</div><div class="dre-stat-val" id="dash-saidas-cx" style="color:#dc3545">—</div></div>
+          <div class="dre-stat azul"><div class="dre-stat-label">Saldo Caixa</div><div class="dre-stat-val" id="dash-saldo-cx">—</div></div>
+          <div class="dre-stat pos"><div class="dre-stat-label">Resultado Líquido</div><div class="dre-stat-val" id="dash-resultado">—</div></div>
         </div>
       </div>
     </div>
@@ -974,90 +979,31 @@
   </div>
 
   <!-- CAIXA -->
-  <!-- ══ PÁGINA: FLUXO DE CAIXA ══════════════════════════ -->
-  <div class="page" id="page-fluxo">
-    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
-      <div><div class="page-title">💰 Fluxo de Caixa</div><div class="page-sub">Controle unificado de entradas, saídas e previsões</div></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost" onclick="openModal('modal-despesa')">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Nova Despesa
-        </button>
-        <button class="btn btn-primary" onclick="abrirModalMovManual()">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Nova Movimentação
-        </button>
-      </div>
+  <div class="page" id="page-caixa">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div><div class="page-title">Caixa</div><div class="page-sub">Controle de entradas e saídas</div></div>
+      <button class="btn btn-primary" onclick="abrirModalNovaCaixa()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Nova Transação
+      </button>
     </div>
-
-    <!-- Cards de resumo -->
-    <div class="fin-resumo-grid" style="grid-template-columns:repeat(auto-fit,minmax(175px,1fr))">
-      <div class="fin-card" style="border-top-color:#198754">
-        <div class="fin-card-icon">💵</div>
-        <div class="fin-card-label">Saldo Atual</div>
-        <div class="fin-card-val" id="fluxo-saldo-atual">R$ 0,00</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">Entradas pagas − Saídas pagas</div>
-      </div>
-      <div class="fin-card fin-card-verde">
-        <div class="fin-card-icon">📥</div>
-        <div class="fin-card-label">A Receber</div>
-        <div class="fin-card-val" id="fluxo-a-receber">R$ 0,00</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">Entradas pendentes</div>
-      </div>
-      <div class="fin-card fin-card-vermelho">
-        <div class="fin-card-icon">📤</div>
-        <div class="fin-card-label">A Pagar</div>
-        <div class="fin-card-val" id="fluxo-a-pagar">R$ 0,00</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">Saídas pendentes</div>
-      </div>
-    </div>
-
-    <!-- Filtros -->
+    <div class="stats-row" id="caixa-stats"></div>
     <div class="card" style="margin-bottom:14px">
       <div class="filter-bar" style="padding:0;border:none;background:none">
+        <div class="fg"><label>De</label><input id="caixa-di" type="date" onchange="carregarCaixa()"></div>
+        <div class="fg"><label>Até</label><input id="caixa-df" type="date" onchange="carregarCaixa()"></div>
         <div class="fg"><label>Tipo</label>
-          <select id="fluxo-tipo-flt" onchange="renderFluxo()">
+          <select id="caixa-tipo-flt" onchange="renderCaixa()">
             <option value="">Todos</option>
             <option value="entrada">Entradas</option>
-            <option value="despesa">Saídas</option>
-          </select>
-        </div>
-        <div class="fg"><label>Status</label>
-          <select id="fluxo-status-flt" onchange="renderFluxo()">
-            <option value="">Todos</option>
-            <option value="pago">Pago</option>
-            <option value="pendente">Pendente</option>
-            <option value="atrasado">Atrasado</option>
-          </select>
-        </div>
+            <option value="saida">Saídas</option>
+          </select></div>
         <div class="fg" style="min-width:160px"><label>Buscar</label>
-          <input id="fluxo-busca" type="text" placeholder="Descrição ou categoria…" oninput="renderFluxo()">
-        </div>
-        <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('fluxo-tipo-flt').value='';document.getElementById('fluxo-status-flt').value='';document.getElementById('fluxo-busca').value='';renderFluxo()">Limpar</button>
+          <input id="caixa-busca" type="text" placeholder="Descrição ou categoria…" oninput="renderCaixa()"></div>
+        <button class="btn btn-ghost" style="margin-top:14px" onclick="document.getElementById('caixa-di').value='';document.getElementById('caixa-df').value='';document.getElementById('caixa-tipo-flt').value='';document.getElementById('caixa-busca').value='';carregarCaixa()">Limpar</button>
       </div>
     </div>
-
-    <!-- Tabela unificada -->
-    <div class="card">
-      <div id="fluxo-content">
-        <div style="overflow-x:auto">
-          <table class="tbl">
-            <thead><tr>
-              <th style="width:90px">Tipo</th>
-              <th>Descrição</th>
-              <th style="width:110px">Categoria</th>
-              <th style="width:120px">Valor</th>
-              <th style="width:110px">Vencimento</th>
-              <th style="width:120px">Status</th>
-              <th style="width:80px">Ações</th>
-            </tr></thead>
-            <tbody id="fluxo-tabela-body">
-              <tr><td colspan="7" class="empty">Carregando…</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <div class="card"><div id="caixa-content"><div class="empty">Carregando…</div></div></div>
   </div>
 
   <!-- ══ PÁGINA: LOGS DE AUDITORIA ════════════════════ -->
@@ -1736,6 +1682,90 @@
   </div>
 
   <!-- ══ FINANCEIRO ════════════════════════════════════ -->
+  <div class="page" id="page-financeiro">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div><div class="page-title">💰 Módulo Financeiro</div><div class="page-sub">Controle de entradas, despesas e parcelas</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-despesa')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Nova Despesa
+      </button>
+    </div>
+    <!-- Cards de resumo: a receber, a pagar, saldo -->
+    <div class="fin-resumo-grid">
+      <div class="fin-card fin-card-verde">
+        <div class="fin-card-icon">📥</div>
+        <div class="fin-card-label">A Receber (Pendente)</div>
+        <div class="fin-card-val" id="fin-a-receber">R$ 0,00</div>
+      </div>
+      <div class="fin-card fin-card-vermelho">
+        <div class="fin-card-icon">📤</div>
+        <div class="fin-card-label">A Pagar (Pendente)</div>
+        <div class="fin-card-val" id="fin-a-pagar">R$ 0,00</div>
+      </div>
+      <div class="fin-card" style="border-top-color:#198754">
+        <div class="fin-card-icon">💵</div>
+        <div class="fin-card-label">Saldo Real (Pago)</div>
+        <div class="fin-card-val" id="fin-saldo-real">R$ 0,00</div>
+      </div>
+      <div class="fin-card fin-card-azul">
+        <div class="fin-card-icon">🔮</div>
+        <div class="fin-card-label">Saldo Previsto (Tudo)</div>
+        <div class="fin-card-val" id="fin-saldo">R$ 0,00</div>
+      </div>
+    </div>
+    <!-- Tabela de lançamentos -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">📋 Lançamentos</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" onclick="carregarFinanceiro()" style="font-size:12px">🔄 Atualizar</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="width:90px">Tipo</th>
+              <th>Descrição</th>
+              <th style="width:120px">Valor</th>
+              <th style="width:110px">Vencimento</th>
+              <th style="width:130px">Status</th>
+              <th style="width:80px">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="fin-tabela-body">
+            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhum lançamento ainda.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Extrato do Caixa vinculado -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">💵 Extrato do Caixa</div>
+        <span style="font-size:11px;color:var(--muted)">Transações já registradas no Caixa</span>
+      </div>
+      <!-- Mini-resumo do caixa -->
+      <div id="fin-caixa-resumo" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px"></div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="width:90px">Tipo</th>
+              <th>Descrição</th>
+              <th style="width:110px">Categoria</th>
+              <th style="width:120px">Valor</th>
+              <th style="width:110px">Data</th>
+            </tr>
+          </thead>
+          <tbody id="fin-caixa-body">
+            <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
 </main>
 </div>
@@ -1760,34 +1790,34 @@
   </div>
 </div>
 
-<!-- ══ MODAL: NOVA MOVIMENTAÇÃO MANUAL ═══════════════ -->
-<div class="modal-overlay" id="modal-mov-manual">
-  <div class="modal" style="max-width:480px">
-    <button class="modal-close" onclick="closeModal('modal-mov-manual')">✕</button>
-    <div class="modal-title">💸 Nova Movimentação</div>
+<!-- ══ MODAL: NOVA TRANSAÇÃO CAIXA ══════════════ -->
+<div class="modal-overlay" id="modal-caixa">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close" onclick="closeModal('modal-caixa')">✕</button>
+    <div class="modal-title" id="modal-caixa-title">Nova Transação</div>
     <div class="form-row">
+      <div class="fg"><label>Data *</label><input id="caixa-data" type="date"></div>
       <div class="fg"><label>Tipo *</label>
-        <select id="mov-tipo">
-          <option value="entrada">💚 Entrada (Recebimento)</option>
-          <option value="despesa">🔴 Saída (Despesa)</option>
-        </select>
-      </div>
-      <div class="fg"><label>Status *</label>
-        <select id="mov-status">
-          <option value="pago">✅ Pago / Realizado</option>
-          <option value="pendente">🟡 Pendente</option>
-        </select>
-      </div>
+        <select id="caixa-tipo">
+          <option value="entrada">💚 Entrada</option>
+          <option value="saida">🔴 Saída</option>
+        </select></div>
     </div>
-    <div class="fg" style="margin-bottom:10px"><label>Descrição *</label><input id="mov-desc" placeholder="Ex: Aluguel, venda avulsa…"></div>
+    <div class="fg" style="margin-bottom:10px"><label>Descrição *</label><input id="caixa-desc" placeholder="Ex: Venda orçamento 324"></div>
     <div class="form-row">
-      <div class="fg"><label>Valor (R$) *</label><input id="mov-valor" type="number" min="0.01" step="0.01" placeholder="0,00"></div>
-      <div class="fg"><label>Data / Vencimento *</label><input id="mov-data" type="date"></div>
+      <div class="fg"><label>Valor (R$) *</label><input id="caixa-valor" type="number" min="0.01" step="0.01" placeholder="0,00"></div>
+      <div class="fg"><label>Categoria</label><input id="caixa-cat" placeholder="Ex: Vendas, Despesa…" list="caixa-cat-list"><datalist id="caixa-cat-list"></datalist></div>
     </div>
-    <div class="fg" style="margin-bottom:10px"><label>Categoria</label><input id="mov-categoria" placeholder="Ex: Vendas, Aluguel, Energia…"></div>
+    <div class="form-row">
+      <div class="fg"><label>Nº Orçamento (opcional)</label><input id="caixa-orc-num" type="number" placeholder="Ex: 324" min="1"></div>
+      <div class="fg"><label>Observações</label><input id="caixa-obs" placeholder="Info adicional…"></div>
+    </div>
+    <input type="hidden" id="caixa-edit-id">
     <div class="btn-row" style="margin-top:14px">
-      <button class="btn btn-primary" onclick="salvarMovimentacaoManual()">💾 Salvar</button>
-      <button class="btn btn-ghost" onclick="closeModal('modal-mov-manual')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarCaixaTransacao()">
+        <span id="caixa-btn-txt">Salvar</span>
+      </button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-caixa')">Cancelar</button>
     </div>
   </div>
 </div>
@@ -1886,21 +1916,6 @@
         <div class="fg"><label>Quantidade</label><input id="prod-m2-qty" type="number" min="1" step="1" value="1" oninput="calcM2Prod()"></div>
       </div>
       <div id="prod-m2-result" style="font-size:12px;color:var(--muted)">Preencha largura e altura para calcular.</div>
-    </div>
-    <!-- Seção: Preços por Quantidade -->
-    <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div style="font-size:12px;font-weight:700;color:var(--azul);letter-spacing:.04em;text-transform:uppercase">📦 Preços por Quantidade (Atacado)</div>
-        <button type="button" class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="addFaixaPreco()">+ Adicionar Faixa</button>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Configure preços menores para pedidos maiores. O sistema aplica automaticamente no pedido.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 36px;gap:6px;margin-bottom:4px">
-        <div style="font-size:11px;font-weight:600;color:var(--muted);padding:0 4px">Qtd Mínima</div>
-        <div style="font-size:11px;font-weight:600;color:var(--muted);padding:0 4px">Preço Unit. (R$)</div>
-        <div></div>
-      </div>
-      <div id="prod-faixas-lista" class="faixas-lista"></div>
-      <div id="prod-faixas-vazio" style="font-size:12px;color:var(--muted);padding:8px 4px">Nenhuma faixa cadastrada — o preço base será usado.</div>
     </div>
     <input type="hidden" id="prod-edit-id">
     <div class="btn-row">
@@ -2024,32 +2039,20 @@
       </div>
     </div>
 
-    <!-- Condição de Pagamento -->
     <div style="background:var(--azul-bg);border:1px solid var(--azul);border-radius:8px;padding:10px 12px;margin-top:10px">
-      <div style="font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--azul);margin-bottom:8px">Condição de Pagamento</div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap">
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;font-weight:600">
-          <input type="radio" name="ped-cond-pag" id="ped-cond-100" value="100" checked onchange="togglePedCondPag()">
-          Pagamento Completo (100%)
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;font-weight:600">
-          <input type="radio" name="ped-cond-pag" id="ped-cond-5050" value="5050" onchange="togglePedCondPag()">
-          Entrada 50% + 50% na Entrega
-        </label>
-      </div>
-      <!-- Mostrado apenas no modo 100% -->
-      <div id="ped-cond-100-extra" style="margin-top:10px">
-        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-          <input type="checkbox" id="ped-pago" onchange="togglePedPago()">
-          <span>Já foi recebido / pago</span>
-        </label>
-        <div id="ped-pago-extra" style="display:none;margin-top:8px">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;cursor:pointer">
+        <input type="checkbox" id="ped-pago" onchange="togglePedPago()">
+        Pedido Pago / Recebido
+      </label>
+      <div id="ped-pago-extra" style="display:none;margin-top:8px">
+        <div class="form-row">
           <div class="fg"><label>Valor Recebido (R$)</label><input type="number" id="ped-valor-recebido" min="0" step="0.01" placeholder="0,00"></div>
+          <div class="fg"><label>Registrar no Caixa</label>
+            <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;cursor:pointer">
+              <input type="checkbox" id="ped-reg-caixa" checked> Criar entrada no Caixa automaticamente
+            </label>
+          </div>
         </div>
-      </div>
-      <!-- Info para modo 50/50 -->
-      <div id="ped-cond-5050-info" style="display:none;margin-top:8px;font-size:12px;color:var(--muted);background:rgba(0,51,153,.07);border-radius:6px;padding:8px 10px">
-        Serão criados 2 lançamentos: <strong>Sinal (50%)</strong> marcado como Pago + <strong>Restante (50%)</strong> como Pendente.
       </div>
     </div>
 
@@ -2422,7 +2425,7 @@ function goPage(p) {
   if(p==='pedidos')                 carregarPedidos();
   if(p==='produtos')                carregarProdutos();
   if(p==='dashboard'&&isAdmin())    carregarDashboard();
-  if(p==='fluxo')                   carregarFluxo();
+  if(p==='caixa')                   carregarCaixa();
   if(p==='logs'&&isAdmin())         carregarLogs();
   if(p==='calculadora')             carregarCalculadora();
   if(p==='calc-banner')             calcBanner();
@@ -2430,6 +2433,7 @@ function goPage(p) {
   if(p==='calc-laser')              calcLaser();
   if(p==='mensagens')               goPageMensagens();
   if(p==='integracao-wpp')          goPageIntegracaoWpp();
+  if(p==='financeiro')              carregarFinanceiro();
   if(p==='aprovacoes')              carregarGestaoAprovacoes();
   if(p==='estoque')                 carregarEstoque();
 }
@@ -2465,7 +2469,7 @@ function _syncMobileUser() {
 function _updateMobileTab(page) {
   document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
   const map = { novo:'mob-tab-novo', historico:'mob-tab-novo', pedidos:'mob-tab-pedidos',
-    clientes:'mob-tab-clientes', crm:'mob-tab-clientes', fluxo:'mob-tab-fluxo', financeiro:'mob-tab-fluxo', caixa:'mob-tab-fluxo' };
+    clientes:'mob-tab-clientes', crm:'mob-tab-clientes', caixa:'mob-tab-caixa', financeiro:'mob-tab-caixa' };
   const tabId = map[page];
   if (tabId) { const el = document.getElementById(tabId); if (el) el.classList.add('active'); }
 }
@@ -3298,10 +3302,7 @@ function renderProdutos(){
             <div class="prod-card-desc">${esc(p.descricao||'Sem descrição')}</div>
           </div>
           <div class="prod-card-footer">
-            <div>
-              <div class="prod-card-preco">${fBRL(p.preco)}</div>
-              ${(Array.isArray(p.faixasPreco)&&p.faixasPreco.length)?`<span class="prod-faixas-badge">📦 ${p.faixasPreco.length} faixa${p.faixasPreco.length>1?'s':''} de atacado</span>`:''}
-            </div>
+            <div class="prod-card-preco">${fBRL(p.preco)}</div>
             <div class="prod-card-actions">
               <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="editarProduto('${p.id}')">✏️ Editar</button>
               ${isAdmin()?`<button class="btn btn-ghost" style="padding:5px 10px;font-size:12px;color:#dc3545;border-color:#dc3545" onclick="excluirProduto('${p.id}','${esc(p.nome)}')">🗑️</button>`:''}
@@ -3315,41 +3316,6 @@ function atualizarDatalistCategorias(){
   const dl=document.getElementById('cat-list');if(!dl)return;
   dl.innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('');
 }
-// ── Faixas de Preço ───────────────────────────────────
-let _prodFaixas = []; // array temporário enquanto edita o modal
-
-function _renderFaixasModal() {
-  const lista = document.getElementById('prod-faixas-lista');
-  const vazio = document.getElementById('prod-faixas-vazio');
-  if (!lista) return;
-  if (!_prodFaixas.length) { lista.innerHTML = ''; if(vazio)vazio.style.display=''; return; }
-  if(vazio)vazio.style.display='none';
-  lista.innerHTML = _prodFaixas.map((f, i) => `
-    <div class="faixa-row">
-      <input type="number" min="1" step="1" placeholder="Ex: 10" value="${f.qtdMin||''}"
-        oninput="_prodFaixas[${i}].qtdMin=parseInt(this.value)||0" style="font-size:13px">
-      <input type="number" min="0" step="0.01" placeholder="Ex: 8,50" value="${f.preco||''}"
-        oninput="_prodFaixas[${i}].preco=parseFloat(this.value)||0" style="font-size:13px">
-      <button type="button" class="faixa-del" onclick="_remFaixa(${i})" title="Remover">×</button>
-    </div>`).join('');
-}
-function addFaixaPreco() {
-  _prodFaixas.push({ qtdMin: '', preco: '' });
-  _renderFaixasModal();
-  // foca no último campo de qtd
-  const rows = document.querySelectorAll('#prod-faixas-lista .faixa-row');
-  if (rows.length) rows[rows.length-1].querySelector('input')?.focus();
-}
-function _remFaixa(i) {
-  _prodFaixas.splice(i, 1);
-  _renderFaixasModal();
-}
-function _getFaixasValidas() {
-  return _prodFaixas
-    .filter(f => f.qtdMin > 0 && f.preco > 0)
-    .sort((a, b) => a.qtdMin - b.qtdMin);
-}
-
 function abrirModalNovoProduto(){
   ['prod-nome','prod-descricao','prod-categoria'].forEach(id=>{ const el=document.getElementById(id);if(el)el.value=''; });
   document.getElementById('prod-preco').value='0';
@@ -3362,8 +3328,6 @@ function abrirModalNovoProduto(){
   document.getElementById('prod-m2-larg').value='';
   document.getElementById('prod-m2-alt').value='';
   document.getElementById('prod-m2-qty').value='1';
-  _prodFaixas = [];
-  _renderFaixasModal();
   openModal('modal-produto');
 }
 function toggleM2Calc(){
@@ -3404,23 +3368,19 @@ function editarProduto(id){
   document.getElementById('prod-m2-larg').value='';
   document.getElementById('prod-m2-alt').value='';
   document.getElementById('prod-m2-qty').value='1';
-  _prodFaixas = (Array.isArray(p.faixasPreco) ? [...p.faixasPreco] : []);
-  _renderFaixasModal();
   toggleM2Calc();
   openModal('modal-produto');
 }
 async function salvarProduto(){
   const nome=document.getElementById('prod-nome').value.trim();
   if(!nome){toast('Nome é obrigatório.','error');return;}
-  const faixasValidas=_getFaixasValidas();
   const payload={
     nome,
-    descricao:   document.getElementById('prod-descricao').value.trim(),
-    categoria:   document.getElementById('prod-categoria').value.trim(),
-    preco:       parseFloat(document.getElementById('prod-preco').value)||0,
-    unidade:     document.getElementById('prod-unidade').value.trim()||'un',
-    ativo:       document.getElementById('prod-ativo').value==='true',
-    faixasPreco: faixasValidas
+    descricao: document.getElementById('prod-descricao').value.trim(),
+    categoria: document.getElementById('prod-categoria').value.trim(),
+    preco:     parseFloat(document.getElementById('prod-preco').value)||0,
+    unidade:   document.getElementById('prod-unidade').value.trim()||'un',
+    ativo:     document.getElementById('prod-ativo').value==='true'
   };
   const editId=document.getElementById('prod-edit-id').value;
   const btn=document.getElementById('btn-salvar-prod');
@@ -3475,20 +3435,13 @@ function renderCatalogo(){
 }
 function adicionarProdutoDosCatalogo(id){
   const p=produtoList.find(x=>x.id===id);if(!p)return;
-  const descricao=p.nome+(p.descricao?' — '+p.descricao:'');
   if(catalogoAlvo==='orc'){
-    addItem(descricao,1,p.preco);
+    addItem(p.nome+(p.descricao?' — '+p.descricao:''),1,p.preco);
   }else{
-    // passa o prodId para habilitar tabela regressiva de preços
-    addPedItem(descricao,1,p.preco,p.id);
-    // seta base-price e dispara calcPedRow para checar faixas com qty=1
-    const lastId='pr'+pedItemCount;
-    const row=document.getElementById(lastId);
-    if(row){row.dataset.basePrice=p.preco;calcPedRow(lastId);}
+    addPedItem(p.nome+(p.descricao?' — '+p.descricao:''),1,p.preco);
   }
   closeModal('modal-catalogo');
-  const temFaixas=Array.isArray(p.faixasPreco)&&p.faixasPreco.length;
-  toast(`"${p.nome}" adicionado!${temFaixas?' Possui '+p.faixasPreco.length+' faixa(s) de desconto.':''}`, 'success');
+  toast(`"${p.nome}" adicionado!`,'success');
 }
 
 // ════ CLIENTES ════════════════════════════════════════
@@ -4138,12 +4091,10 @@ function abrirModalNovoPedido(){
   document.getElementById('ped-desc-tipo').value='pct';
   document.getElementById('ped-desc-val').value='';
   document.getElementById('ped-desc-display').textContent='— R$ 0,00';
-  document.getElementById('ped-cond-100').checked=true;
-  document.getElementById('ped-cond-100-extra').style.display='';
-  document.getElementById('ped-cond-5050-info').style.display='none';
   document.getElementById('ped-pago').checked=false;
   document.getElementById('ped-pago-extra').style.display='none';
   document.getElementById('ped-valor-recebido').value='';
+  document.getElementById('ped-reg-caixa').checked=true;
   addPedItem();
   if(!clienteList.length)API.get('/clientes').then(l=>{clienteList=l;preencherDatalistClientes();}).catch(()=>{});
   openModal('modal-pedido');
@@ -4172,7 +4123,7 @@ function editarPedido(id){
   document.getElementById('ped-pago').checked=!!p.pago;
   document.getElementById('ped-pago-extra').style.display=p.pago?'':'none';
   document.getElementById('ped-valor-recebido').value=p.valorRecebido||'';
-  // ped-reg-caixa removido — fluxo unificado
+  document.getElementById('ped-reg-caixa').checked=false;
   document.getElementById('ped-origem').value=p.origem||'';
   const mockupEl=document.getElementById('ped-mockup-url');
   mockupEl.value=p.mockupUrl||'';
@@ -4186,19 +4137,16 @@ function editarPedido(id){
 }
 
 // Itens do pedido
-function addPedItem(desc='',qty='',unit='',prodId=''){
+function addPedItem(desc='',qty='',unit=''){
   pedItemCount++;
   const id='pr'+pedItemCount;
   const wrap=document.createElement('div');
   wrap.id='w-'+id;
   wrap.innerHTML=`
-    <div class="item-row" id="${id}" data-prod-id="${esc(prodId)}" data-base-price="${unit||''}">
+    <div class="item-row" id="${id}">
       <input type="text" placeholder="Descrição do item" value="${esc(desc)}" oninput="calcPedRow('${id}')">
       <input type="number" placeholder="Qtd" min="0" value="${qty}" id="q-${id}" oninput="calcPedRow('${id}')">
-      <div style="display:flex;flex-direction:column;gap:2px">
-        <input type="number" placeholder="Preço unit." min="0" step="0.01" value="${unit}" id="u-${id}" oninput="onPedUnitChange('${id}')">
-        <span class="badge-atacado" id="badge-${id}" style="display:none">📦 Preço Atacado</span>
-      </div>
+      <input type="number" placeholder="Preço unit." min="0" step="0.01" value="${unit}" oninput="calcPedRow('${id}')">
       <div class="item-total" id="pt-${id}">R$ 0,00</div>
       <div class="item-btns">
         <button type="button" class="m2-btn" id="m2btn-${id}" onclick="toggleM2Row('${id}','ped')" title="Calcular m²">📐</button>
@@ -4217,50 +4165,11 @@ function addPedItem(desc='',qty='',unit='',prodId=''){
   document.getElementById('ped-items-container').appendChild(wrap);
   if(desc&&qty&&unit)calcPedRow(id);
 }
-// Quando o usuário edita o preço manualmente, desvincula do produto (sem atacado automático)
-function onPedUnitChange(id) {
-  const row = document.getElementById(id);
-  if (row) { row.dataset.prodId = ''; row.dataset.basePrice = ''; }
-  const badge = document.getElementById('badge-'+id);
-  if (badge) { badge.style.display = 'none'; }
-  const inp = document.getElementById('u-'+id);
-  if (inp) inp.style.color = '';
-  calcPedRow(id);
-}
 function calcPedRow(id){
   const row=document.getElementById(id);if(!row)return;
   const ins=row.querySelectorAll('input');
-  const qty=parseFloat(ins[1].value)||0;
-  const unitInp=document.getElementById('u-'+id)||ins[2];
-  const badge=document.getElementById('badge-'+id);
-  const prodId=row.dataset.prodId;
-
-  if(prodId){
-    const prod=produtoList.find(p=>p.id===prodId);
-    const precoFaixa=getPrecoFaixa(prod,qty);
-    if(precoFaixa!==null){
-      unitInp.value=precoFaixa.toFixed(2);
-      unitInp.style.color='var(--azul)';
-      if(badge)badge.style.display='';
-    }else{
-      // qty abaixo da menor faixa — volta ao preço base
-      const basePrice=parseFloat(row.dataset.basePrice)||prod?.preco||0;
-      if(basePrice&&parseFloat(unitInp.value)!==basePrice){unitInp.value=basePrice.toFixed(2);}
-      unitInp.style.color='';
-      if(badge)badge.style.display='none';
-    }
-  }
-
-  document.getElementById('pt-'+id).textContent=fBRL(qty*(parseFloat(unitInp.value)||0));
+  document.getElementById('pt-'+id).textContent=fBRL((parseFloat(ins[1].value)||0)*(parseFloat(ins[2].value)||0));
   calcPedGrand();
-}
-
-// Retorna o preço da faixa para a quantidade informada, ou null se não houver faixa aplicável
-function getPrecoFaixa(produto,qty){
-  if(!produto||!Array.isArray(produto.faixasPreco)||!produto.faixasPreco.length)return null;
-  const faixas=[...produto.faixasPreco].sort((a,b)=>b.qtdMin-a.qtdMin);
-  const f=faixas.find(f=>qty>=f.qtdMin);
-  return f?parseFloat(f.preco):null;
 }
 function calcPedGrand(){
   let sub=0;document.querySelectorAll('#ped-items-container .item-total').forEach(el=>sub+=pBRL(el.textContent));
@@ -4280,24 +4189,10 @@ function togglePedPago(){
     document.getElementById('ped-valor-recebido').value=pBRL(document.getElementById('ped-grand-total').textContent).toFixed(2);
   }
 }
-function togglePedCondPag(){
-  const cond = document.querySelector('input[name="ped-cond-pag"]:checked')?.value || '100';
-  document.getElementById('ped-cond-100-extra').style.display = cond === '100' ? '' : 'none';
-  document.getElementById('ped-cond-5050-info').style.display = cond === '5050' ? '' : 'none';
-  if (cond === '5050') {
-    document.getElementById('ped-pago').checked = false;
-    document.getElementById('ped-pago-extra').style.display = 'none';
-  }
-}
 function getPedItems(){
   return [...document.querySelectorAll('#ped-items-container .item-row')].map(row=>{
     const ins=row.querySelectorAll('input');
-    const desc=ins[0].value.trim();
-    const qty=parseFloat(ins[1].value)||0;
-    // busca pelo id específico do campo de preço (u-XX) para pegar o valor correto após atacado
-    const unitId='u-'+row.id;
-    const unitEl=document.getElementById(unitId)||ins[2];
-    const unit=parseFloat(unitEl?.value)||0;
+    const desc=ins[0].value.trim(),qty=parseFloat(ins[1].value)||0,unit=parseFloat(ins[2].value)||0;
     return{desc,qty,unit,total:qty*unit};
   }).filter(i=>i.desc&&i.qty>0);
 }
@@ -4315,9 +4210,9 @@ async function salvarPedido(){
   let desconto=0;
   if(descVal>0){desconto=descTipo==='pct'?Math.min(subtotal*descVal/100,subtotal):Math.min(descVal,subtotal);}
   const total=Math.max(subtotal-desconto,0);
-  const condPag = document.querySelector('input[name="ped-cond-pag"]:checked')?.value || '100';
-  const pago = condPag === '100' && (document.getElementById('ped-pago')?.checked || false);
-  const valorRecebido = pago ? (parseFloat(document.getElementById('ped-valor-recebido').value) || total) : 0;
+  const pago=document.getElementById('ped-pago').checked;
+  const valorRecebido=pago?(parseFloat(document.getElementById('ped-valor-recebido').value)||total):0;
+  const regCaixa=pago&&document.getElementById('ped-reg-caixa').checked;
 
   const payload={
     clienteId:   cli?cli.id:'',
@@ -4352,10 +4247,26 @@ async function salvarPedido(){
       const novo=await API.post('/pedidos',payload);
       pedidoList.unshift(novo);
       savedPed=novo;
-      // Gera lançamentos no Fluxo de Caixa conforme condição escolhida
-      carregarFluxo();
-      gerarLancamentosPedido(novo, condPag, pago);
+      // Gera lançamentos financeiros: 50% sinal (pago) + 50% restante (pendente 30d)
+      carregarFinanceiro(); // garante que o array está atualizado antes de gerar
+      gerarLancamentosPedido(novo);
       toast('Pedido criado!','success');
+    }
+    // Auto-registro no caixa
+    if(pago&&regCaixa&&valorRecebido>0){
+      try{
+        const cxPayload={
+          data:new Date().toISOString().split('T')[0],
+          descricao:'Pedido — '+clienteNome,
+          tipo:'entrada',
+          valor:valorRecebido,
+          categoria:'Pedidos',
+          obs:orcNum?'Orç. N° '+String(orcNum).padStart(3,'0'):''
+        };
+        const nova=await API.post('/caixa',cxPayload);
+        caixaList.unshift(nova);
+        toast('Entrada registrada no Caixa!','success');
+      }catch(ce){toast('Pedido salvo, mas erro no Caixa: '+ce.message,'error');}
     }
     // Sincroniza pagamento com orçamento vinculado
     if(pago&&orcId){
@@ -4397,56 +4308,44 @@ async function excluirPedido(id){
 async function carregarDashboard(){
   aplicarDashOrder(); // aplica a ordem configurada antes de renderizar
   try{
-    const[orcs,pedidos,clientes,produtos,caixaTxs]=await Promise.all([
+    const[orcs,pedidos,clientes,produtos,caixa]=await Promise.all([
       API.get('/orcamentos').catch(()=>[]),
       API.get('/pedidos').catch(()=>[]),
       API.get('/clientes').catch(()=>[]),
       API.get('/produtos').catch(()=>[]),
       API.get('/caixa').catch(()=>[])
     ]);
-
-    // Mescla localStorage + backend Caixa (igual ao Fluxo de Caixa)
-    let fluxo=[];
-    try{fluxo=JSON.parse(localStorage.getItem('lookLancamentos')||'[]');}catch{}
-    const _dashIds=new Set(fluxo.map(l=>l.id));
-    (caixaTxs||[]).forEach(t=>{
-      const id='cx_'+t.id;
-      if(!_dashIds.has(id)){
-        fluxo.push({id,tipo:t.tipo==='saida'?'despesa':'entrada',status:'pago',descricao:t.descricao,valor:t.valor,vencimento:t.data,categoria:t.categoria||'',origem:'caixa'});
-        _dashIds.add(id);
-      }
-    });
-    const fluxoEntradasPagas =fluxo.filter(l=>l.tipo==='entrada'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
-    const fluxoDespesasPagas =fluxo.filter(l=>l.tipo==='despesa'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
-    const fluxoSaldoAtual    =fluxoEntradasPagas-fluxoDespesasPagas;
-    const fluxoAReceber      =fluxo.filter(l=>l.tipo==='entrada'&&l.status!=='pago').reduce((s,l)=>s+l.valor,0);
-    const fluxoAPagar        =fluxo.filter(l=>l.tipo==='despesa'&&l.status!=='pago').reduce((s,l)=>s+l.valor,0);
-
-    const fatTotal=orcs.reduce((s,o)=>s+o.total,0)+pedidos.reduce((s,p)=>s+p.total,0);
     const orcRecebido=orcs.filter(o=>o.pago).reduce((s,o)=>s+(o.valorRecebido||o.total),0);
     const orcARec=orcs.filter(o=>!o.pago).reduce((s,o)=>s+o.total,0);
+    const pedPagos=pedidos.filter(p=>p.pago);
+    const pedRecebido=pedPagos.reduce((s,p)=>s+(p.valorRecebido||p.total),0);
+    const cxEntradas=caixa.filter(t=>t.tipo==='entrada').reduce((s,t)=>s+t.valor,0);
+    const cxSaidas  =caixa.filter(t=>t.tipo==='saida'  ).reduce((s,t)=>s+t.valor,0);
+    const cxSaldo=cxEntradas-cxSaidas;
+    const fatTotal=orcs.reduce((s,o)=>s+o.total,0)+pedidos.reduce((s,p)=>s+p.total,0);
+    const recTotal=orcRecebido+pedRecebido+cxEntradas;
+    const resultado=orcRecebido+pedRecebido+cxEntradas-cxSaidas;
 
     // Hero cards
     document.getElementById('dash-fat-hero').textContent=fBRL(fatTotal);
     document.getElementById('dash-fat-hero-sub').textContent=`${orcs.length} orç. + ${pedidos.length} pedidos`;
-    document.getElementById('dash-recebido-hero').textContent=fBRL(fluxoSaldoAtual);
-    document.getElementById('dash-recebido-hero-sub').textContent=`Saldo Atual (Fluxo de Caixa)`;
+    document.getElementById('dash-recebido-hero').textContent=fBRL(recTotal);
+    document.getElementById('dash-recebido-hero-sub').textContent=`Saldo caixa: ${fBRL(cxSaldo)}`;
     // Mini cards
     document.getElementById('dash-tot-orc').textContent=orcs.length;
     document.getElementById('dash-recebido').textContent=fBRL(orcRecebido);
-    document.getElementById('dash-areceber').textContent=fBRL(fluxoAReceber);
+    document.getElementById('dash-areceber').textContent=fBRL(orcARec);
     document.getElementById('dash-clientes').textContent=clientes.length;
     document.getElementById('dash-pedidos-abertos').textContent=pedidos.filter(p=>!['entregue','cancelado'].includes(p.status)).length;
-    document.getElementById('dash-pedidos-pagos').textContent=fBRL(fluxoEntradasPagas);
-    // Visão Financeira Consolidada — alinhada com Fluxo de Caixa
+    document.getElementById('dash-pedidos-pagos').textContent=fBRL(pedRecebido);
+    // Financeiro consolidado (card existente)
     document.getElementById('dash-fat-total').textContent=fBRL(fatTotal);
-    document.getElementById('dash-total-recebido').textContent=fBRL(fluxoEntradasPagas);
-    document.getElementById('dash-saidas-cx').textContent=fBRL(fluxoDespesasPagas);
+    document.getElementById('dash-total-recebido').textContent=fBRL(recTotal);
+    document.getElementById('dash-saidas-cx').textContent=fBRL(cxSaidas);
     const saldoEl=document.getElementById('dash-saldo-cx');
-    saldoEl.textContent=fBRL(fluxoSaldoAtual);
-    saldoEl.style.color=fluxoSaldoAtual>=0?'#198754':'#dc3545';
+    saldoEl.textContent=fBRL(cxSaldo);
+    saldoEl.style.color=cxSaldo>=0?'#198754':'#dc3545';
     const resEl=document.getElementById('dash-resultado');
-    const resultado=fluxoSaldoAtual;
     resEl.textContent=fBRL(resultado);
     resEl.style.color=resultado>=0?'#198754':'#dc3545';
 
@@ -4909,35 +4808,14 @@ async function solicitarAlteracao(pedidoId) {
  */
 
 // Carrega lançamentos do localStorage + extrato do Caixa da API
-async function carregarFluxo() {
+async function carregarFinanceiro() {
   try { lancamentosFinanceiros = JSON.parse(localStorage.getItem('lookLancamentos') || '[]'); }
   catch { lancamentosFinanceiros = []; }
-  // Mescla transações históricas do backend (Caixa) sem duplicar
-  try {
-    const caixaTxs = await API.get('/caixa').catch(() => []);
-    const ids = new Set(lancamentosFinanceiros.map(l => l.id));
-    (caixaTxs || []).forEach(t => {
-      const id = 'cx_' + t.id;
-      if (!ids.has(id)) {
-        lancamentosFinanceiros.push({
-          id,
-          tipo:       t.tipo === 'saida' ? 'despesa' : 'entrada',
-          status:     'pago',
-          descricao:  t.descricao,
-          valor:      t.valor,
-          vencimento: t.data,
-          categoria:  t.categoria || '',
-          origem:     'caixa'
-        });
-        ids.add(id);
-      }
-    });
-  } catch {}
   _finAtualizarVencidos();
-  renderFluxo();
+  renderFinanceiro();
+  // Carrega extrato do caixa em paralelo (vinculação)
+  await _finCarregarCaixa();
 }
-// alias para compatibilidade interna
-const carregarFinanceiro = carregarFluxo;
 
 // Persiste array no localStorage
 function _finSalvar() {
@@ -4958,70 +4836,77 @@ function _finAtualizarVencidos() {
   if (alterou) _finSalvar();
 }
 
-// Renderiza resumo (cards) + tabela unificada do Fluxo de Caixa
-function renderFluxo() {
-  // Saldo Atual: apenas transações já pagas
-  const entradasPagas  = lancamentosFinanceiros.filter(l => l.tipo === 'entrada' && l.status === 'pago').reduce((s, l) => s + l.valor, 0);
-  const despesasPagas  = lancamentosFinanceiros.filter(l => l.tipo === 'despesa' && l.status === 'pago').reduce((s, l) => s + l.valor, 0);
-  const saldoAtual     = entradasPagas - despesasPagas;
+// Renderiza resumo (cards) + tabela de lançamentos
+function renderFinanceiro() {
+  // Pendentes (ainda não pagos)
+  const aReceber = lancamentosFinanceiros
+    .filter(l => l.tipo === 'entrada' && l.status !== 'pago')
+    .reduce((s, l) => s + l.valor, 0);
+  const aPagar = lancamentosFinanceiros
+    .filter(l => l.tipo === 'despesa' && l.status !== 'pago')
+    .reduce((s, l) => s + l.valor, 0);
 
-  // Previsões: apenas pendentes/atrasados
-  const aReceber = lancamentosFinanceiros.filter(l => l.tipo === 'entrada' && l.status !== 'pago').reduce((s, l) => s + l.valor, 0);
-  const aPagar   = lancamentosFinanceiros.filter(l => l.tipo === 'despesa' && l.status !== 'pago').reduce((s, l) => s + l.valor, 0);
+  // Saldo Real: somente lançamentos já pagos (Entradas pagas - Despesas pagas)
+  const entradasPagas = lancamentosFinanceiros
+    .filter(l => l.tipo === 'entrada' && l.status === 'pago')
+    .reduce((s, l) => s + l.valor, 0);
+  const despesasPagas = lancamentosFinanceiros
+    .filter(l => l.tipo === 'despesa' && l.status === 'pago')
+    .reduce((s, l) => s + l.valor, 0);
+  const saldoReal = entradasPagas - despesasPagas;
 
-  const saldoEl = document.getElementById('fluxo-saldo-atual');
-  if (saldoEl) { saldoEl.textContent = fBRL(saldoAtual); saldoEl.style.color = saldoAtual >= 0 ? 'var(--success)' : 'var(--danger)'; }
-  const recEl = document.getElementById('fluxo-a-receber');
-  if (recEl) recEl.textContent = fBRL(aReceber);
-  const pagEl = document.getElementById('fluxo-a-pagar');
-  if (pagEl) pagEl.textContent = fBRL(aPagar);
+  // Saldo Previsto: tudo (pago + pendente)
+  const todasEntradas = lancamentosFinanceiros
+    .filter(l => l.tipo === 'entrada')
+    .reduce((s, l) => s + l.valor, 0);
+  const todasDespesas = lancamentosFinanceiros
+    .filter(l => l.tipo === 'despesa')
+    .reduce((s, l) => s + l.valor, 0);
+  const saldoPrev = todasEntradas - todasDespesas;
 
-  // Filtragem
-  const tipoFlt   = (document.getElementById('fluxo-tipo-flt')?.value   || '').toLowerCase();
-  const statusFlt = (document.getElementById('fluxo-status-flt')?.value || '').toLowerCase();
-  const busca     = (document.getElementById('fluxo-busca')?.value       || '').toLowerCase();
+  document.getElementById('fin-a-receber').textContent = fBRL(aReceber);
+  document.getElementById('fin-a-pagar').textContent   = fBRL(aPagar);
 
-  let list = [...lancamentosFinanceiros];
-  if (tipoFlt)   list = list.filter(l => l.tipo === tipoFlt);
-  if (statusFlt) list = list.filter(l => l.status === statusFlt);
-  if (busca)     list = list.filter(l => (l.descricao||'').toLowerCase().includes(busca) || (l.categoria||'').toLowerCase().includes(busca));
+  const saldoRealEl = document.getElementById('fin-saldo-real');
+  if (saldoRealEl) { saldoRealEl.textContent = fBRL(saldoReal); saldoRealEl.style.color = saldoReal >= 0 ? 'var(--success)' : 'var(--danger)'; }
 
-  // Ordena por vencimento (mais próximo primeiro)
-  list.sort((a, b) => (a.vencimento||'').localeCompare(b.vencimento||''));
+  const saldoEl = document.getElementById('fin-saldo');
+  saldoEl.textContent = fBRL(saldoPrev);
+  saldoEl.style.color = saldoPrev >= 0 ? 'var(--success)' : 'var(--danger)';
 
-  const tbody = document.getElementById('fluxo-tabela-body');
-  if (!tbody) return;
-  if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">${lancamentosFinanceiros.length ? 'Nenhum lançamento encontrado com estes filtros.' : 'Nenhum lançamento ainda. Crie um pedido ou clique em "Nova Movimentação".'}</td></tr>`;
+  // Ordena por vencimento mais próximo
+  const sorted = [...lancamentosFinanceiros].sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+  const tbody  = document.getElementById('fin-tabela-body');
+  if (!sorted.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhum lançamento registrado. Use "Nova Despesa" ou feche um pedido.</td></tr>';
     return;
   }
-  tbody.innerHTML = list.map(l => {
+  tbody.innerHTML = sorted.map(l => {
+    // Escolhe badge de status
     const badgeCls = l.status === 'pago' ? 'badge-fin-pago' : l.status === 'atrasado' ? 'badge-fin-atrasado' : 'badge-fin-pendente';
     const badgeTxt = l.status === 'pago' ? '✅ Pago' : l.status === 'atrasado' ? '🔴 Atrasado' : '🟡 Pendente';
     const tipoBadge = l.tipo === 'entrada'
       ? '<span class="badge-fin-entrada">↑ Entrada</span>'
-      : '<span class="badge-fin-saida">↓ Saída</span>';
-    const parc    = (l.totalParcelas > 1) ? ` <small style="color:var(--muted)">(${l.parcela}/${l.totalParcelas})</small>` : '';
+      : '<span class="badge-fin-saida">↓ Despesa</span>';
+    // Exibe "parcela X/N" quando há mais de 1
+    const parc = (l.totalParcelas > 1) ? ` <small style="color:var(--muted)">(${l.parcela}/${l.totalParcelas})</small>` : '';
     const vencFmt = l.vencimento ? new Date(l.vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '—';
     const corVal  = l.tipo === 'entrada' ? 'var(--success)' : 'var(--danger)';
     return `<tr>
       <td>${tipoBadge}</td>
-      <td style="font-weight:600">${esc(l.descricao||'')}${parc}</td>
-      <td style="font-size:12px;color:var(--muted)">${esc(l.categoria||'—')}</td>
-      <td style="font-family:var(--mono);color:${corVal};font-weight:700">${fBRL(l.valor)}</td>
-      <td style="font-size:12px">${vencFmt}</td>
+      <td style="font-weight:600">${esc(l.descricao)}${parc}</td>
+      <td style="font-family:var(--mono);color:${corVal};font-weight:600">${fBRL(l.valor)}</td>
+      <td>${vencFmt}</td>
       <td><span class="badge ${badgeCls}">${badgeTxt}</span></td>
       <td>
         <div class="tbl-actions">
-          ${l.status !== 'pago' ? `<button class="ta" onclick="finMarcarPago('${l.id}')" title="Dar baixa">✔</button>` : ''}
+          ${l.status !== 'pago' ? `<button class="ta" onclick="finMarcarPago('${l.id}')" title="Marcar como Pago">✔</button>` : ''}
           <button class="ta del" onclick="finExcluir('${l.id}')" title="Excluir">🗑️</button>
         </div>
       </td>
     </tr>`;
   }).join('');
 }
-// alias retrocompat
-const renderFinanceiro = renderFluxo;
 
 /*
  * Divide o valor total em X parcelas mensais iguais e salva cada uma como
@@ -5071,60 +4956,124 @@ function salvarDespesaParcelada() {
 }
 
 /*
- * Gera lançamentos financeiros ao criar um pedido.
- * condicao = '100' → um único lançamento (pago ou pendente conforme `pago`)
- * condicao = '5050' → dois lançamentos: Sinal 50% (pago) + Restante 50% (pendente 30d)
+ * Chamado ao criar um novo pedido: gera 2 lançamentos de entrada —
+ *   Parcela 1: 50% (Sinal) marcado como 'pago' na data de hoje
+ *   Parcela 2: 50% (Restante) marcado como 'pendente' com vencimento em 30 dias
  */
-function gerarLancamentosPedido(pedido, condicao, pago) {
+function gerarLancamentosPedido(pedido) {
+  // Evita duplicidade se o pedido já gerou lançamentos
   const jaExiste = lancamentosFinanceiros.some(l => l.pedidoId === pedido.id);
   if (jaExiste) return;
 
-  const hoje   = new Date().toISOString().split('T')[0];
-  const venc30 = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+  const sinal    = +(pedido.total * 0.5).toFixed(2);
+  const restante = +(pedido.total - sinal).toFixed(2);
+  const hoje     = new Date().toISOString().split('T')[0];
+  const venc30   = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
 
-  if (condicao === '5050') {
-    const sinal    = +(pedido.total * 0.5).toFixed(2);
-    const restante = +(pedido.total - sinal).toFixed(2);
-    lancamentosFinanceiros.push({
-      id: `fin_${pedido.id}_sinal`, tipo: 'entrada',
-      descricao: `Pedido #${pedido.num||''} — ${pedido.clienteNome} (Sinal 50%)`,
-      valor: sinal, vencimento: hoje, status: 'pago', categoria: 'Pedidos',
-      origem: 'pedido', pedidoId: pedido.id, parcela: 1, totalParcelas: 2
-    });
-    lancamentosFinanceiros.push({
-      id: `fin_${pedido.id}_rest`, tipo: 'entrada',
-      descricao: `Pedido #${pedido.num||''} — ${pedido.clienteNome} (Restante 50%)`,
-      valor: restante, vencimento: venc30, status: 'pendente', categoria: 'Pedidos',
-      origem: 'pedido', pedidoId: pedido.id, parcela: 2, totalParcelas: 2
-    });
-  } else {
-    // 100%: um único lançamento
-    lancamentosFinanceiros.push({
-      id: `fin_${pedido.id}_total`, tipo: 'entrada',
-      descricao: `Pedido #${pedido.num||''} — ${pedido.clienteNome}`,
-      valor: pedido.total, vencimento: hoje, status: pago ? 'pago' : 'pendente', categoria: 'Pedidos',
-      origem: 'pedido', pedidoId: pedido.id, parcela: 1, totalParcelas: 1
-    });
-  }
+  lancamentosFinanceiros.push({
+    id: `fin_${pedido.id}_sinal`, tipo: 'entrada',
+    descricao: `Pedido — ${pedido.clienteNome} (Sinal 50%)`,
+    valor: sinal, vencimento: hoje, status: 'pago',
+    origem: 'pedido', pedidoId: pedido.id, parcela: 1, totalParcelas: 2
+  });
+  lancamentosFinanceiros.push({
+    id: `fin_${pedido.id}_rest`, tipo: 'entrada',
+    descricao: `Pedido — ${pedido.clienteNome} (Restante 50%)`,
+    valor: restante, vencimento: venc30, status: 'pendente',
+    origem: 'pedido', pedidoId: pedido.id, parcela: 2, totalParcelas: 2
+  });
   _finSalvar();
 }
 
 // Marca um lançamento como pago
-function finMarcarPago(id) {
+async function finMarcarPago(id) {
   const l = lancamentosFinanceiros.find(x => x.id === id);
   if (!l) return;
   l.status = 'pago';
   _finSalvar();
-  renderFluxo();
-  toast('Baixa realizada! ✅', 'success');
+  renderFinanceiro();
+  // Registra automaticamente no Caixa (API) para refletir no saldo do caixa
+  try {
+    const tipo = l.tipo === 'entrada' ? 'entrada' : 'saida';
+    await API.post('/caixa', {
+      tipo,
+      descricao: l.descricao,
+      valor: l.valor,
+      categoria: l.categoria === 'compra' ? 'Compra de Estoque' : (l.categoria === 'venda' ? 'Recebimento de Venda' : 'Financeiro'),
+      data: new Date().toISOString().split('T')[0],
+      obs: l.obs || ''
+    });
+    toast('Baixa realizada e lançado no Caixa! ✅', 'success');
+  } catch {
+    toast('Marcado como pago (Caixa não atualizado — verifique conexão).', 'warning');
+  }
 }
 
+// ── Vínculo com Caixa ─────────────────────────────────
+// Busca transações do Caixa na API e renderiza o extrato vinculado
+async function _finCarregarCaixa() {
+  const resumoEl = document.getElementById('fin-caixa-resumo');
+  const bodyEl   = document.getElementById('fin-caixa-body');
+  if (!resumoEl || !bodyEl) return;
 
+  try {
+    // Reutiliza o caixaList se já carregado, senão busca da API
+    const lista = (typeof caixaList !== 'undefined' && caixaList.length)
+      ? caixaList
+      : await API.get('/caixa').catch(() => []);
+
+    const entradas = lista.filter(t => t.tipo === 'entrada').reduce((s,t) => s + t.valor, 0);
+    const saidas   = lista.filter(t => t.tipo === 'saida').reduce((s,t) => s + t.valor, 0);
+    const saldo    = entradas - saidas;
+
+    // Mini-resumo de saldo do caixa
+    resumoEl.innerHTML = `
+      <div class="fin-card fin-card-verde" style="padding:12px">
+        <div class="fin-card-label">Entradas Caixa</div>
+        <div class="fin-card-val" style="font-size:15px;color:var(--success)">${fBRL(entradas)}</div>
+      </div>
+      <div class="fin-card fin-card-vermelho" style="padding:12px">
+        <div class="fin-card-label">Saídas Caixa</div>
+        <div class="fin-card-val" style="font-size:15px;color:var(--danger)">${fBRL(saidas)}</div>
+      </div>
+      <div class="fin-card fin-card-azul" style="padding:12px">
+        <div class="fin-card-label">Saldo Caixa</div>
+        <div class="fin-card-val" style="font-size:15px;color:${saldo>=0?'var(--success)':'var(--danger)'}">${fBRL(saldo)}</div>
+      </div>`;
+
+    if (!lista.length) {
+      bodyEl.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Nenhuma transação no Caixa ainda.</td></tr>';
+      return;
+    }
+
+    // Ordena do mais recente ao mais antigo
+    const sorted = [...lista].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+    bodyEl.innerHTML = sorted.map(t => {
+      const isEntrada = t.tipo === 'entrada';
+      const tipoBadge = isEntrada
+        ? '<span class="badge-fin-entrada">↑ Entrada</span>'
+        : '<span class="badge-fin-saida">↓ Saída</span>';
+      const corVal = isEntrada ? 'var(--success)' : 'var(--danger)';
+      const dataFmt = t.data ? t.data.split('-').reverse().join('/') : '—';
+      return `<tr>
+        <td>${tipoBadge}</td>
+        <td style="font-weight:600">${esc(t.descricao||'—')}${t.obs?`<div style="font-size:10px;color:var(--muted)">${esc(t.obs)}</div>`:''}</td>
+        <td style="font-size:12px;color:var(--muted)">${esc(t.categoria||'—')}</td>
+        <td style="font-family:var(--mono);color:${corVal};font-weight:600">${fBRL(t.valor)}</td>
+        <td style="font-size:12px;color:var(--muted)">${dataFmt}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    bodyEl.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--danger)">Erro ao carregar Caixa: ${esc(e.message)}</td></tr>`;
+  }
+}
+
+// Exclui um lançamento após confirmação
 function finExcluir(id) {
   if (!confirm('Excluir este lançamento?')) return;
   lancamentosFinanceiros = lancamentosFinanceiros.filter(x => x.id !== id);
   _finSalvar();
-  renderFluxo();
+  renderFinanceiro();
   toast('Lançamento excluído.', 'success');
 }
 
@@ -5206,47 +5155,131 @@ async function buscarCNPJ(cnpj){
   }catch{st.textContent='⚠️ Erro ao consultar CNPJ.';}
 }
 
-// ════ FLUXO DE CAIXA — Movimentação Manual ═══════════
-function abrirModalMovManual() {
-  document.getElementById('mov-tipo').value   = 'entrada';
-  document.getElementById('mov-status').value = 'pago';
-  document.getElementById('mov-desc').value   = '';
-  document.getElementById('mov-valor').value  = '';
-  document.getElementById('mov-data').value   = new Date().toISOString().split('T')[0];
-  document.getElementById('mov-categoria').value = '';
-  openModal('modal-mov-manual');
+// ════ CAIXA ═══════════════════════════════════════════
+async function carregarCaixa(){
+  document.getElementById('caixa-content').innerHTML='<div class="empty">Carregando…</div>';
+  const di=document.getElementById('caixa-di').value;
+  const df=document.getElementById('caixa-df').value;
+  try{
+    const params=new URLSearchParams();
+    if(di)params.set('di',di);if(df)params.set('df',df);
+    caixaList=await API.get('/caixa'+(params.toString()?'?'+params:''));
+    renderCaixaStats();renderCaixa();atualizarDatalistCaixaCat();
+  }catch(e){document.getElementById('caixa-content').innerHTML=`<div class="empty">Erro: ${esc(e.message)}</div>`;}
 }
-
-function salvarMovimentacaoManual() {
-  const tipo      = document.getElementById('mov-tipo').value;
-  const status    = document.getElementById('mov-status').value;
-  const descricao = document.getElementById('mov-desc').value.trim();
-  const valor     = parseFloat(document.getElementById('mov-valor').value) || 0;
-  const data      = document.getElementById('mov-data').value;
-  const categoria = document.getElementById('mov-categoria').value.trim();
-
-  if (!descricao) { toast('Informe a descrição.', 'error'); return; }
-  if (valor <= 0) { toast('Informe um valor válido.', 'error'); return; }
-  if (!data)      { toast('Informe a data.', 'error'); return; }
-
-  lancamentosFinanceiros.push({
-    id:          `fin_manual_${Date.now()}`,
-    tipo, status, descricao, valor,
-    vencimento:  data,
-    categoria:   categoria || (tipo === 'entrada' ? 'Entrada Manual' : 'Despesa Manual'),
-    origem:      'manual',
-    parcela: 1, totalParcelas: 1
+function renderCaixaStats(){
+  const entradas=caixaList.filter(t=>t.tipo==='entrada').reduce((s,t)=>s+t.valor,0);
+  const saidas  =caixaList.filter(t=>t.tipo==='saida'  ).reduce((s,t)=>s+t.valor,0);
+  const saldo=entradas-saidas;
+  document.getElementById('caixa-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Saldo</div><div class="stat-val sm ${saldo>=0?'green':'red'}">${fBRL(saldo)}</div></div>
+    <div class="stat-card"><div class="stat-label">Entradas</div><div class="stat-val sm green">${fBRL(entradas)}</div></div>
+    <div class="stat-card"><div class="stat-label">Saídas</div><div class="stat-val sm red">${fBRL(saidas)}</div></div>
+    <div class="stat-card"><div class="stat-label">Transações</div><div class="stat-val">${caixaList.length}</div></div>`;
+}
+function renderCaixa(){
+  const busca=(document.getElementById('caixa-busca').value||'').toLowerCase();
+  const ftp=document.getElementById('caixa-tipo-flt').value;
+  const list=caixaList.filter(t=>{
+    if(ftp&&t.tipo!==ftp)return false;
+    if(busca&&!t.descricao.toLowerCase().includes(busca)&&!(t.categoria||'').toLowerCase().includes(busca))return false;
+    return true;
   });
-  _finSalvar();
-  _finAtualizarVencidos();
-  renderFluxo();
-  closeModal('modal-mov-manual');
-  toast('Movimentação registrada!', 'success');
+  const cont=document.getElementById('caixa-content');
+  if(!list.length){cont.innerHTML='<div class="empty">'+(caixaList.length?'Nenhuma transação encontrada.':'Clique em "Nova Transação" para registrar.')+'</div>';return;}
+  cont.innerHTML=`<div style="overflow-x:auto"><table class="tbl"><thead><tr>
+    <th>Data</th><th>Descrição</th><th>Tipo</th><th>Categoria</th><th>Orç.</th><th>Valor</th><th>Ações</th>
+  </tr></thead><tbody>${list.map(t=>`<tr>
+    <td style="font-size:12px;color:var(--muted);white-space:nowrap">${fmtData(t.data)}</td>
+    <td><div style="font-weight:600">${esc(t.descricao)}</div>${t.obs?`<div style="font-size:10px;color:var(--muted)">${esc(t.obs)}</div>`:''}</td>
+    <td><span class="badge-${t.tipo}">${t.tipo==='entrada'?'💚 Entrada':'🔴 Saída'}</span></td>
+    <td style="font-size:12px;color:var(--muted)">${esc(t.categoria||'—')}</td>
+    <td>${t.orcamentoNum?`<span class="badge badge-orc">${String(t.orcamentoNum).padStart(3,'0')}</span>`:'—'}</td>
+    <td class="${t.tipo==='entrada'?'caixa-entrada':'caixa-saida'}" style="font-family:var(--mono);font-size:13px;font-weight:700;white-space:nowrap">${t.tipo==='saida'?'- ':'+ '}${fBRL(t.valor)}</td>
+    <td><div class="tbl-actions">
+      <button class="ta edit" onclick="editarCaixaTransacao('${t.id}')">✏️</button>
+      <button class="ta del" onclick="excluirCaixaTransacao('${t.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join('')}</tbody></table></div>`;
 }
-
-// compat alias
-async function carregarCaixa(){ carregarFluxo(); }
-function fmtData(s){ if(!s)return'—'; const p=s.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:s; }
+function fmtData(s){
+  if(!s)return'—';
+  const p=s.split('-');if(p.length!==3)return s;
+  return`${p[2]}/${p[1]}/${p[0]}`;
+}
+function atualizarDatalistCaixaCat(){
+  const cats=[...new Set(caixaList.map(t=>t.categoria).filter(Boolean))];
+  const dl=document.getElementById('caixa-cat-list');if(!dl)return;
+  dl.innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('');
+}
+function abrirModalNovaCaixa(){
+  document.getElementById('caixa-edit-id').value='';
+  document.getElementById('modal-caixa-title').textContent='Nova Transação';
+  document.getElementById('caixa-btn-txt').textContent='Salvar';
+  document.getElementById('caixa-data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('caixa-tipo').value='entrada';
+  document.getElementById('caixa-desc').value='';
+  document.getElementById('caixa-valor').value='';
+  document.getElementById('caixa-cat').value='';
+  document.getElementById('caixa-orc-num').value='';
+  document.getElementById('caixa-obs').value='';
+  openModal('modal-caixa');
+}
+function editarCaixaTransacao(id){
+  const t=caixaList.find(x=>x.id===id);if(!t)return;
+  document.getElementById('caixa-edit-id').value=t.id;
+  document.getElementById('modal-caixa-title').textContent='Editar Transação';
+  document.getElementById('caixa-btn-txt').textContent='Salvar Alterações';
+  document.getElementById('caixa-data').value=t.data||'';
+  document.getElementById('caixa-tipo').value=t.tipo;
+  document.getElementById('caixa-desc').value=t.descricao;
+  document.getElementById('caixa-valor').value=t.valor;
+  document.getElementById('caixa-cat').value=t.categoria||'';
+  document.getElementById('caixa-orc-num').value=t.orcamentoNum||'';
+  document.getElementById('caixa-obs').value=t.obs||'';
+  openModal('modal-caixa');
+}
+async function salvarCaixaTransacao(){
+  const descricao=document.getElementById('caixa-desc').value.trim();
+  const tipo=document.getElementById('caixa-tipo').value;
+  const valor=parseFloat(document.getElementById('caixa-valor').value);
+  if(!descricao){toast('Descrição é obrigatória.','error');return;}
+  if(!valor||valor<=0){toast('Informe um valor válido.','error');return;}
+  const payload={
+    data:   document.getElementById('caixa-data').value||new Date().toISOString().split('T')[0],
+    descricao, tipo, valor,
+    categoria:    document.getElementById('caixa-cat').value.trim(),
+    orcamentoNum: parseInt(document.getElementById('caixa-orc-num').value)||null,
+    obs:          document.getElementById('caixa-obs').value.trim()
+  };
+  const editId=document.getElementById('caixa-edit-id').value;
+  const btn=document.querySelector('#modal-caixa .btn-primary');
+  btn.disabled=true;document.getElementById('caixa-btn-txt').textContent='Salvando…';
+  try{
+    if(editId){
+      const updated=await API.put('/caixa/'+editId,payload);
+      const idx=caixaList.findIndex(t=>t.id===editId);
+      if(idx>=0)caixaList[idx]=updated;
+      toast('Transação atualizada!','success');
+    }else{
+      const nova=await API.post('/caixa',payload);
+      caixaList.unshift(nova);
+      toast('Transação registrada!','success');
+    }
+    closeModal('modal-caixa');
+    renderCaixaStats();renderCaixa();atualizarDatalistCaixaCat();
+  }catch(e){toast(e.message,'error');}
+  finally{btn.disabled=false;document.getElementById('caixa-btn-txt').textContent=editId?'Salvar Alterações':'Salvar';}
+}
+async function excluirCaixaTransacao(id){
+  if(!confirm('Excluir esta transação?'))return;
+  try{
+    await API.delete('/caixa/'+id);
+    caixaList=caixaList.filter(t=>t.id!==id);
+    toast('Transação excluída.','success');
+    renderCaixaStats();renderCaixa();
+  }catch(e){toast(e.message,'error');}
+}
 
 // ════ MODAIS ══════════════════════════════════════════
 function openModal(id) {document.getElementById(id).classList.add('open');}
