@@ -4397,16 +4397,25 @@ async function excluirPedido(id){
 async function carregarDashboard(){
   aplicarDashOrder(); // aplica a ordem configurada antes de renderizar
   try{
-    const[orcs,pedidos,clientes,produtos]=await Promise.all([
+    const[orcs,pedidos,clientes,produtos,caixaTxs]=await Promise.all([
       API.get('/orcamentos').catch(()=>[]),
       API.get('/pedidos').catch(()=>[]),
       API.get('/clientes').catch(()=>[]),
-      API.get('/produtos').catch(()=>[])
+      API.get('/produtos').catch(()=>[]),
+      API.get('/caixa').catch(()=>[])
     ]);
 
-    // Lê Fluxo de Caixa do localStorage (fonte única de verdade financeira)
+    // Mescla localStorage + backend Caixa (igual ao Fluxo de Caixa)
     let fluxo=[];
     try{fluxo=JSON.parse(localStorage.getItem('lookLancamentos')||'[]');}catch{}
+    const _dashIds=new Set(fluxo.map(l=>l.id));
+    (caixaTxs||[]).forEach(t=>{
+      const id='cx_'+t.id;
+      if(!_dashIds.has(id)){
+        fluxo.push({id,tipo:t.tipo==='saida'?'despesa':'entrada',status:'pago',descricao:t.descricao,valor:t.valor,vencimento:t.data,categoria:t.categoria||'',origem:'caixa'});
+        _dashIds.add(id);
+      }
+    });
     const fluxoEntradasPagas =fluxo.filter(l=>l.tipo==='entrada'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
     const fluxoDespesasPagas =fluxo.filter(l=>l.tipo==='despesa'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
     const fluxoSaldoAtual    =fluxoEntradasPagas-fluxoDespesasPagas;
@@ -4900,9 +4909,30 @@ async function solicitarAlteracao(pedidoId) {
  */
 
 // Carrega lançamentos do localStorage + extrato do Caixa da API
-function carregarFluxo() {
+async function carregarFluxo() {
   try { lancamentosFinanceiros = JSON.parse(localStorage.getItem('lookLancamentos') || '[]'); }
   catch { lancamentosFinanceiros = []; }
+  // Mescla transações históricas do backend (Caixa) sem duplicar
+  try {
+    const caixaTxs = await API.get('/caixa').catch(() => []);
+    const ids = new Set(lancamentosFinanceiros.map(l => l.id));
+    (caixaTxs || []).forEach(t => {
+      const id = 'cx_' + t.id;
+      if (!ids.has(id)) {
+        lancamentosFinanceiros.push({
+          id,
+          tipo:       t.tipo === 'saida' ? 'despesa' : 'entrada',
+          status:     'pago',
+          descricao:  t.descricao,
+          valor:      t.valor,
+          vencimento: t.data,
+          categoria:  t.categoria || '',
+          origem:     'caixa'
+        });
+        ids.add(id);
+      }
+    });
+  } catch {}
   _finAtualizarVencidos();
   renderFluxo();
 }
